@@ -631,6 +631,14 @@ if ($notice_alerts) {
 }
 $smarty->assign('notices',$notice);
 
+$smarty->assign('start_resources_set',$this->CreateFieldsetStart(null, 'resources',$this->Lang('title_resources')));
+$smarty->assign('resource_links',array(
+ '<a href="http://validator.w3.org">W3C validator</a>',
+ '<a href="http://brokenlinkcheck.com">Link checker</a>',
+ '<a href="http://www.feedthebot.com/tools">FeedtheBot</a>',
+ '<a href="http://www.siteliner.com">Siteliner</a>'
+));
+
 $smarty->assign('title_pages',$this->Lang('title_pages'));
 $smarty->assign('title_active',$this->Lang('title_active'));
 $smarty->assign('title_problem',$this->Lang('title_problem'));

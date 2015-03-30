@@ -16,6 +16,13 @@
  {/foreach}
  {$end_set}
 {/if}
+{if !empty($resource_links)}
+{$start_resources_set}
+<ul>
+{foreach from=$resource_links item=one}<li>{$one}</li>{/foreach}
+</ul>
+{$end_set}
+{/if}
 </div>
 {$end_tab}
 

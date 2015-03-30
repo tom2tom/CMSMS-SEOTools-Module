@@ -81,6 +81,7 @@ $lang['title_alerts_urgent'] = 'Muss sofort behoben werden';
 $lang['title_alerts_important'] = utf8_encode('Sollte schnellstmöglich behoben werden');
 $lang['title_alerts_notices'] = utf8_encode('Kann unter Umständen behoben werden');
 $lang['nothing_to_be_fixed'] = utf8_encode('In dieser Kategorie müssen Sie keine Aktionen vornehmen');
+$lang['title_resources'] = 'Useful external SEO resources';
 
 $lang['save'] = 'Einstellungen speichern';
 $lang['cancel'] = 'Cancel';
@@ -220,14 +221,14 @@ $lang['help_showbase'] = 'Setzen Sie diesen Parameter auf <code>false</code>, um
 $lang['help'] = '<h3>Was tut dieses Modul?</h3>
 <p>Die SEO Tools helfen Ihnen, Ihre SEO (Search Engine Optimization, Suchmaschinenoptimierung) in den Griff zu bekommen. Das Modul f&uuml;gt verschiedene SEO-F&auml;higkeiten zu CMSMS hinzu und warnt Sie, falls Sie irgendetwas SEO-bezogenes &uuml;bersehen haben. Aktuell werden die folgenden Features unterst&uuml;tzt:</p>
 <ul>
-<li>- automatische Erzeugung von Meta-Tags im Standard-HTML-Format, nach der Dublin Core-Spezifikation und OpenGraph</li>
-<li>- automatische Extraktion von Keywords aus Ihren Seiten, die zum Seitentitel und den Meta-Tags hinzugef&uuml;gt werden</li>
-<li>- Festlegen mit einem Klick, ob bestimmte Seiten von Suchmaschinen indiziert werden sollen oder nicht</li>
-<li>- Erzeugung einer sitemap.xml-Datei mit Ihren Seiten w&auml;hrend Sie die volle Kontrolle dar&uuml;ber haben, wie die Priorit&auml;t einzelner Seiten bewertet werden soll</li>
-<li>- Erzeugung einer robots.txt-Datei mit der M&ouml;glichkeit, explizit den Zugriff auf Seiten, die nicht indiziert werden sollen, zu verbieten</li>
-<li>- Ausgabe von Warnungen, wenn mehrere Seiten den gleichen Titel oder die gleiche Beschreibung haben</li>
-<li>- Ausgabe von Warnungen wenn sehr kurze Seitenbeschreibungen gefunden wurden</li>
-<li>- Automatisches Einsenden der aktualisierten Sitemap-Datei zu Google, wenn Inhalte ge&auml;ndert werden</li>
+<li>automatische Erzeugung von Meta-Tags im Standard-HTML-Format, nach der Dublin Core-Spezifikation und OpenGraph</li>
+<li>automatische Extraktion von Keywords aus Ihren Seiten, die zum Seitentitel und den Meta-Tags hinzugef&uuml;gt werden</li>
+<li>Festlegen mit einem Klick, ob bestimmte Seiten von Suchmaschinen indiziert werden sollen oder nicht</li>
+<li>Erzeugung einer sitemap.xml-Datei mit Ihren Seiten w&auml;hrend Sie die volle Kontrolle dar&uuml;ber haben, wie die Priorit&auml;t einzelner Seiten bewertet werden soll</li>
+<li>Erzeugung einer robots.txt-Datei mit der M&ouml;glichkeit, explizit den Zugriff auf Seiten, die nicht indiziert werden sollen, zu verbieten</li>
+<li>Ausgabe von Warnungen, wenn mehrere Seiten den gleichen Titel oder die gleiche Beschreibung haben</li>
+<li>Ausgabe von Warnungen wenn sehr kurze Seitenbeschreibungen gefunden wurden</li>
+<li>Automatisches Einsenden der aktualisierten Sitemap-Datei zu Google, wenn Inhalte ge&auml;ndert werden</li>
 </ul>
 <h3>Wie wird das Modul verwendet?</h3>
 <p>&Ouml;ffnen Sie zun&auml;chst alle Templates, auf denen Sie SEO Tools verwenden m&ouml;chten. Entfernen Sie das komplette &lt;title&gt;-Tag und das {metadata}-Tag (auch wenn da steht, da&szlig; Sie letzteres nie entfernen sollten) und ersetzen Sie beide durch das Tag</p>

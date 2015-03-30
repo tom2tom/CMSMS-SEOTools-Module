@@ -81,6 +81,7 @@ $lang['title_alerts_urgent'] = 'To be fixed immediately';
 $lang['title_alerts_important'] = 'To be fixed as soon as possible';
 $lang['title_alerts_notices'] = 'Things you should consider fixing';
 $lang['nothing_to_be_fixed'] = 'There are no actions you need to take in this category';
+$lang['title_resources'] = 'Useful external SEO resources';
 
 $lang['save'] = 'Save';
 $lang['cancel'] = 'Cancel';
@@ -225,16 +226,16 @@ $lang['additional_meta_tags_help'] = 'Specify additional Meta tags here to be in
 $lang['help_showbase'] = 'Set this parameter to <code>false</code> to suppress the output of the base href tag.';
 
 $lang['help'] = '<h3>What Does This Do?</h3>
-<p>SEO Tools help you in getting your SEO (Search Engine Optimization) right. The module adds several SEO capabilities to your CMSMS installation and alerts you if you missed out on something SEO related. Currently, the following features are supported:</p>
+<p>This helps you get your SEO (Search Engine Optimization) right. The module adds several SEO capabilities to your CMSMS installation and alerts you if you missed out on something SEO related. Currently, the following features are supported:</p>
 <ul>
-<li>- generates Meta tags in standard html, Dublin Core and OpenGraph formats</li>
-<li>- automatically extracts keywords from your pages and adds them to the meta tags and page title</li>
-<li>- lets you determine with a single click whether certain pages should be indexed by search engines or not</li>
-<li>- generates a sitemap.xml file with your pages while giving you full control over the priorities of your pages</li>
-<li>- generates a robots.txt file explicitly disallowing access to pages you don\'t want to be indexed</li>
-<li>- alerts you when there are several pages featuring the same page titles and descriptions</li>
-<li>- alerts you when very short page meta descriptions are detected</li>
-<li>- automatically submits your sitemap file to Google when you change your content</li>
+<li>generate meta tags in standard html, Dublin Core and OpenGraph formats</li>
+<li>extract keywords from site pages and add the keywords to the meta tags and page title</li>
+<li>alerts about multiple pages featuring the same page titles and descriptions</li>
+<li>alerts about very short page meta descriptions</li>
+<li>user-choice whether or not specified site-pages should be indexed by search engines</li>
+<li>generate a sitemap.xml file for the site, with full control over the priorities of site pages</li>
+<li>automatically submit the sitemap file to Google when site content is changed</li>
+<li>generate a robots.txt file explicitly disallowing access to pages you don\'t want to be indexed</li>
 </ul>
 <h3>How Do I Use It</h3>
 <p>First, open each template/page where you want to apply SEO Tools. For each of them:</p>
