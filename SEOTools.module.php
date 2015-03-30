@@ -24,7 +24,7 @@
 
 class SEOTools extends CMSModule
 {
-	public $minorversion; //108, 109, 110, 111, ....
+	public $minorversion; //108, 109, 110, 111, .... 200 ....
 	public $pathstr;
 
 	function __construct()
@@ -137,7 +137,7 @@ class SEOTools extends CMSModule
 	{
 		$url = $this->GetModuleURLPath();
 		$incs = '<script type="text/javascript" src="'.$url.'/include/module-admin.js"></script>'."\n".
-				'<link type="text/css" rel="stylesheet" href="'.$url.'/include/module-admin.css" />'."\n";
+				'<link rel="stylesheet" type="text/css" href="'.$url.'/include/module-admin.css" />';
 		return $incs;
 	}
 
@@ -183,7 +183,7 @@ class SEOTools extends CMSModule
 		return TRUE;
 	}
 
-	function DoEvent($origin, $name, $params)
+	function DoEvent($origin, $name, &$params)
 	{
 		if ($this->GetPreference('create_sitemap',0))
 		{
