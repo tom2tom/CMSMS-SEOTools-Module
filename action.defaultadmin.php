@@ -664,10 +664,10 @@ $smarty->assign('title_keywords',$this->Lang('keywords'));
 $smarty->assign('title_desc',$this->Lang('description'));
 $smarty->assign('title_index',$this->Lang('title_index'));
 
-$iconreset = '<img src="'.$config['root_url'].'/modules/'.$this->GetName().'/img/reset.png" style="vertical-align:middle;" />';
-$iconedit = '<img src="'.$theme_url.'/system/edit.gif" style="vertical-align:middle;" />';
-$icondown = '<img src="'.$theme_url.'/system/arrow-d.gif" style="vertical-align:middle;" />';
-$iconup = '<img src="'.$theme_url.'/system/arrow-u.gif" style="vertical-align:middle;" />';
+$iconreset = '<img src="'.$this->GetModuleURLPath().'/images/reset.png" class="systemicon" />';
+$iconedit = '<img src="'.$theme_url.'/system/edit.gif" class="systemicon" />';
+$icondown = '<img src="'.$theme_url.'/system/arrow-d.gif" class="systemicon" />';
+$iconup = '<img src="'.$theme_url.'/system/arrow-u.gif" class="systemicon" />';
 $default_ogtype = $this->GetPreference('meta_opengraph_type','');
 
 $items = array();
