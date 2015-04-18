@@ -19,7 +19,4 @@ $this->RemovePreference();
 $this->RemoveEventHandler('Core','ContentEditPost');
 $this->RemoveEventHandler('Core','ContentDeletePost');
 
-// put mention into the admin log
-$this->Audit(0, $this->Lang('friendlyname'), $this->Lang('uninstalled'));
-
 ?>
