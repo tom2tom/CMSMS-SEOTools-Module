@@ -110,12 +110,12 @@ class SEOTools extends CMSModule
 
 	function MinimumCMSVersion()
 	{
-		return "1.6.0";
+		return "1.6";
 	}
 
  	function MaximumCMSVersion()
  	{
-		return "1.11.99";
+		return "1.19.99";
  	}
 
 	function InstallPostMessage()
