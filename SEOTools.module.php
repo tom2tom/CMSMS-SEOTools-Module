@@ -180,7 +180,7 @@ class SEOTools extends CMSModule
 	//for CMSMS >= 1.10
 	function LazyLoadFrontend()
 	{
-		return TRUE;
+		return FALSE;
 	}
 
 	function DoEvent($origin, $name, &$params)
