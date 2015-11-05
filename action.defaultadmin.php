@@ -280,22 +280,15 @@ case 'toggle_ignore':
 	}
 	break;
 case 'set_priority':
-	//non-database-specific 'UPSERT' equivalent is needed
-	if (preg_match ('/'.$db->dbtype.'/i', 'mysql')) {
-		$query = "INSERT INTO ".$pre."module_seotools (content_id, priority) VALUES (?,?) ON DUPLICATE KEY UPDATE priority=?";
-		$parms = array((int)$_GET['content_id'],$_GET['priority'],$_GET['priority']);
-	} else {
-		$query = "select content_id from ".$pre."module_seotools where content_id=?";
-		$res = $db->getone($query,array($id));
-		if ($res) {
-			$query = "update ".$pre."module_seotools set priority=? where content_id=?";
-			$parms = array($_get['priority'],(int)$_get['content_id']);
-		} else {
-			$query = "insert into ".$pre."module_seotools (content_id, priority) values (?,?)";
-			$parms = array((int)$_get['content_id'],$_get['priority']);
-		}
-	}
-	$db->execute($query, $parms);
+	//upsert, sort-of
+	$query = "UPDATE ".$pre."module_seotools SET priority=? WHERE content_id=?";
+	$parms = array($_GET['priority'],(int)$_GET['content_id']);
+	$query2 = "INSERT INTO ".$pre.
+"module_seotools (content_id, priority) SELECT ?,? FROM (SELECT 1 AS dmy) Z WHERE NOT EXISTS (SELECT 1 FROM ".
+	$pre."module_seotools T WHERE T.content_id=?)";
+	$parms2 = array((int)$_GET['content_id'],$_GET['priority'],(int)$_GET['content_id']);
+	$db->execute($query,$parms);
+	$db->execute($query2,$parms2);
 /* only manual updates
     if ($this->GetPreference('create_sitemap',0)) {
 		$funcs = new SEO_file();
@@ -495,7 +488,7 @@ if ($urgent_alerts) {
 		else {
 			$onerow->active = '';
 		}
-		
+
 		$urgent[] = $onerow;
 		$j++;
     }
