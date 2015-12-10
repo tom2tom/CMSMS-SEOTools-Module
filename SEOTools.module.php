@@ -24,17 +24,22 @@
 
 class SEOTools extends CMSModule
 {
-	public $minorversion; //108, 109, 110, 111, .... 200 ....
+	public $before20;
 	public $pathstr;
 
 	function __construct()
 	{
 		global $CMS_VERSION;
 		parent::__construct();
-		$vparts = explode ('.', $CMS_VERSION);
-		$this->minorversion = ($vparts[0] < 2 && $vparts[1] < 9) ? 108 :
-		  (int) $vparts[0] * 100 + (int) $vparts[1];
-		$this->pathstr = ($this->minorversion < 110) ? 'sp_' : '_sx_';
+		$this->before20 = (version_compare($CMS_VERSION,'2.0') < 0);
+		if($this->before20) {
+			$vparts = explode ('.', $CMS_VERSION);
+			$minorversion = ($vparts[0] < 2 && $vparts[1] < 9) ? 108 :
+			  (int) $vparts[0] * 100 + (int) $vparts[1];
+			$this->pathstr = ($minorversion < 110) ? 'sp_' : '_sx_';
+		} else {
+			$this->pathstr = '_sk_';
+		}
 	}
 
 	function GetName()
@@ -214,7 +219,8 @@ WHERE (indexable=1 AND keywords IS NULL AND priority IS NULL AND ogtype IS NULL 
 			$adminurl = $config['admin_url'];
 		else
 			$adminurl = $config['root_url'].'/'.$config['admin_dir'];
-		$theme = $gCms->variables['admintheme'];
+		$theme = ($this->before20) ? $gCms->get_variable('admintheme'):
+			cms_utils::get_theme_object();
 		$lnk = '<a class=@"'.$index.'" href="#"><img src="'.$adminurl.'/themes/'
 		 .$theme->themeName.'/images/icons/system/edit.gif"';
 		if ($pagename) {
