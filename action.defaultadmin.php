@@ -19,7 +19,8 @@ function getImportantAlerts(&$mod, $omit_inactive = FALSE, $omit_ignored = FALSE
 	$alerts = array();
 	// Pretty URLs not working
 	if (($config['assume_mod_rewrite'] != 1) && ($config['internal_pretty_urls'] != 1)) {
-	  $theme = $gCms->variables['admintheme'];
+	  $theme = ($mod->before20) ? $gCms->get_variable('admintheme'):
+		cms_utils::get_theme_object();
 	  $alert = array();
 	  $alert['group'] = 'system';
 	  $alert['message'] = $mod->Lang('activate_pretty_urls');
@@ -134,7 +135,7 @@ function getImportantAlerts(&$mod, $omit_inactive = FALSE, $omit_ignored = FALSE
 		$alert = array();
 		$alert['group'] = 'settings';
 		$alert['message'] = $mod->Lang('provide_an_author');
-		$alert['links'][] = $mod->getSeeLink (4,$this->Lang('visit_settings'));
+		$alert['links'][] = $mod->getSeeLink (4,$mod->Lang('visit_settings'));
 		$alerts[] = $alert;
 	}
 	return $alerts;
@@ -152,7 +153,7 @@ function getNoticeAlerts(&$mod)
 	if (!$mod->GetPreference('meta_standard',FALSE)) {
 		$alert = array();
 		$alert['message'] = $mod->Lang('use_standard_meta');
-		$alert['links'][] = getTabLink (4,$this->Lang('visit_settings'));
+		$alert['links'][] = getTabLink (4,$mod->Lang('visit_settings'));
 		$alerts[] = $alert;
 	}
 	// Submit a sitemap
@@ -179,10 +180,6 @@ function getNoticeAlerts(&$mod)
 	return $alerts;
 }
 
-if (! $this->CheckAccess()) {
-    return $this->DisplayErrorPage($this->Lang('accessdenied'));
-}
-
 function getFixLink(&$mod, $sp, $id, $pagename = '')
 {
 	$gCms = cmsms();
@@ -191,7 +188,8 @@ function getFixLink(&$mod, $sp, $id, $pagename = '')
 		$adminurl = $config['admin_url'];
 	else
 		$adminurl = $config['root_url'].'/'.$config['admin_dir'];
-	$theme = $gCms->variables['admintheme'];
+	$theme = ($mod->before20) ? $gCms->get_variable('admintheme'):
+		cms_utils::get_theme_object();
 	$lnk = '<a href="'.$adminurl.'/editcontent.php?'.$mod->pathstr.'='.$sp.'&content_id='.$id
 	 .'"><img src="'.$adminurl.'/themes/'
 	 .$theme->themeName.'/images/icons/system/edit.gif" title = "';
@@ -202,6 +200,10 @@ function getFixLink(&$mod, $sp, $id, $pagename = '')
 	}
 	$lnk .= '" style="vertical-align: middle;" /></a>';
 	return $lnk;
+}
+
+if (! $this->CheckAccess()) {
+    return $this->DisplayErrorPage($this->Lang('accessdenied'));
 }
 
 if (isset($_GET['what'])) {
@@ -391,7 +393,9 @@ if (isset ($config['admin_url']))
 	$adminurl = $config['admin_url'];
 else
 	$adminurl = $config['root_url'].'/'.$config['admin_dir'];
-$theme_url = $adminurl.'/themes/'.$gCms->variables['admintheme']->themeName.'/images/icons';
+$theme = ($this->before20) ? cmsms()->get_variable('admintheme'):
+	cms_utils::get_theme_object();
+$theme_url = $adminurl.'/themes/'.$theme->themeName.'/images/icons';
 $icontrue = '<img src="'.$theme_url.'/system/true.gif" />';
 
 $urgent = array();
@@ -745,7 +749,7 @@ while ($page = $result->fetchRow()) {
 		if ($description != '') {
 			$inm2 = ($description_auto) ? 'warning' : 'true';
 			$onerow->desc ='<img src="'.$theme_url.'/system/'.$inm2.'.gif" title="'.strip_tags($description).'" style="vertical-align:middle;" />';
-		}else{
+		} else {
 			$onerow->desc = '<a href="editcontent.php?'.$this->pathstr.'='.$_GET[$this->pathstr].
 			'&content_id='.$page['content_id'].'"><img src="'.$theme_url.'/system/false.gif" title="'.
 			$this->Lang('click_to_add_description').'" style="vertical-align:middle;" /></a>';
