@@ -33,10 +33,7 @@ class SEOTools extends CMSModule
 		parent::__construct();
 		$this->before20 = (version_compare($CMS_VERSION,'2.0') < 0);
 		if($this->before20) {
-			$vparts = explode ('.', $CMS_VERSION);
-			$minorversion = ($vparts[0] < 2 && $vparts[1] < 9) ? 108 :
-			  (int) $vparts[0] * 100 + (int) $vparts[1];
-			$this->pathstr = ($minorversion < 110) ? 'sp_' : '_sx_';
+			$this->pathstr = (version_compare($CMS_VERSION,'1.10') < 0) ? 'sp_':'_sx_';
 		} else {
 			$this->pathstr = '_sk_';
 		}

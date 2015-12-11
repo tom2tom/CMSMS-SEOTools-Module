@@ -406,7 +406,7 @@ if ($urgent_alerts) {
   //sort ALL alerts into types, count some of them
   foreach ($urgent_alerts as $alert) {
 	if ((!array_key_exists ('active', $alert) || $alert['active'] == TRUE)
-	 && (!array_key_exists ('ignored', $alert) || $alert['ignored'] == FALSE))
+	 && (empty($alert['ignored'])))
 		$count++;
     $groups[$alert['group']][] = $alert;
   }
@@ -510,7 +510,7 @@ if ($important_alerts) {
   $groups = array();
   //sort ALL alerts into types, count some of them
   foreach ($important_alerts as $alert) {
-	if (!array_key_exists ('ignored', $alert) || $alert['ignored'] == FALSE)
+	if (empty($alert['ignored']))
 		$count++;
 	$groups[$alert['group']][] = $alert;
   }

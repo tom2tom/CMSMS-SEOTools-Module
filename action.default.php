@@ -24,9 +24,9 @@ $smarty->assign('default_keywords',$def);
 
 $keywords = explode($sep,$def);
 
-$query = "SELECT * FROM ".cms_db_prefix()."module_seotools WHERE content_id=?";
+$query = 'SELECT * FROM '.cms_db_prefix().'module_seotools WHERE content_id=?';
 $page_info = $db->GetRow($query,array($page_id));
-if (array_key_exists('keywords',$page_info) && $page_info['keywords'] != '')
+if (!empty($page_info['keywords']))
 	$other_keywords = array_flip(explode($sep,$page_info['keywords']));
 else
 {
