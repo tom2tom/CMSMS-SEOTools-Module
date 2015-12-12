@@ -33,6 +33,7 @@ class SEOTools extends CMSModule
 		parent::__construct();
 		$this->before20 = (version_compare($CMS_VERSION,'2.0') < 0);
 		$this->pathstr = constant('CMS_SECURE_PARAM_NAME');
+		$this->RegisterModulePlugin(TRUE);
 	}
 
 	function GetName()
@@ -133,8 +134,11 @@ class SEOTools extends CMSModule
 	function GetHeaderHTML()
 	{
 		$url = $this->GetModuleURLPath();
-		$incs = '<script type="text/javascript" src="'.$url.'/include/module-admin.js"></script>'."\n".
-				'<link rel="stylesheet" type="text/css" href="'.$url.'/include/module-admin.css" />';
+		$incs = <<<EOS
+<script type="text/javascript" src="{$url}/include/module-admin.js"></script>
+<link rel="stylesheet" type="text/css" href="{$url}/include/module-admin.css" />
+
+EOS;
 		return $incs;
 	}
 
@@ -152,26 +156,32 @@ class SEOTools extends CMSModule
 		return FALSE;
 	}
 
+	//for CMSMS < 1.10
 	function SetParameters()
 	{
-		$this->RegisterModulePlugin();
-		$this->AddEventHandler('Core','ContentEditPost',FALSE);
-		$this->AddEventHandler('Core','ContentDeletePost',FALSE);
-
-		$this->restrictUnknownParams(TRUE);
-		$this->CreateParameter('showbase', 'true', $this->Lang('help_showbase'));
+		$this->InitializeAdmin();
+		$this->InitializeFrontend();
 	}
 
 	//for CMSMS >= 1.10
 	function InitializeAdmin()
 	{
-		$this->SetParameters();
+		$this->AddEventHandler('Core','ContentEditPost',FALSE);
+		$this->AddEventHandler('Core','ContentDeletePost',FALSE);
+		$this->CreateParameter('showbase','true',$this->Lang('help_showbase'));
 	}
 
 	//for CMSMS >= 1.10
 	function LazyLoadAdmin()
 	{
 		return FALSE;
+	}
+
+	//for CMSMS >= 1.10
+	function InitializeFrontend()
+	{
+		$this->RestrictUnknownParams();
+		$this->SetParameterType('showbase',CLEAN_STRING);
 	}
 
 	//for CMSMS >= 1.10
