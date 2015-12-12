@@ -118,8 +118,6 @@ if ($this->GetPreference('meta_standard',FALSE))
 if ($this->GetPreference('additional_meta_tags','') != '')
 	echo $this->ProcessTemplateFromData($this->GetPreference('additional_meta_tags',''));
 
-$gCms = cmsms();
-
 // DublinCore META tags
 if ($this->GetPreference('meta_dublincore',FALSE))
 {
@@ -130,7 +128,8 @@ if ($this->GetPreference('meta_dublincore',FALSE))
     echo '<meta name="DC.relation" content="http://dublincore.org/" scheme="DCTERMS.URI" />'."\n";
     echo '<meta name="DC.publisher" content="'.$this->GetPreference('meta_publisher','').'" />'."\n";
     echo '<meta name="DC.contributor" content="'.$this->GetPreference('meta_contributor','').'" />'."\n";
-    echo '<meta name="DC.language" content="'.$gCms->siteprefs['frontendlang'].'" scheme="DCTERMS.RFC3066" />'."\n";
+	$lang = str_replace('_','-',get_site_preference('frontendlang','en'));
+    echo '<meta name="DC.language" content="'.$lang.'" scheme="DCTERMS.RFC3066" />'."\n";
     echo '<meta name="DC.rights" content="'.$this->GetPreference('meta_copyright','').'" />'."\n";
     echo '<meta name="DC.title" content="'.$meta_title.'" />'."\n";
     echo '<meta name="DC.description" content="'.$description.'" />'."\n";
@@ -161,20 +160,21 @@ if ($this->GetPreference('meta_opengraph',FALSE))
 		if ($image) {
     	echo '<meta property="og:image" content="'.$config['root_url'].'/uploads/images/'.$image.'" />'."\n";
     }
-    echo '<meta property="og:site_name" content="'.$this->GetPreference('meta_opengraph_sitename',$gCms->siteprefs['sitename']).'" />'."\n";
+	$defname = get_site_preference('sitename','CMSMS Site');
+   	echo '<meta property="og:site_name" content="'.$this->GetPreference('meta_opengraph_sitename',$defname).'" />'."\n";
     echo '<meta property="og:description" content="'.$description.'" />'."\n";
     if ($this->GetPreference('meta_opengraph_application','') != "") {
       echo '<meta property="fb:app_id" content="'.$this->GetPreference('meta_opengraph_application','').'" />'."\n";
     }else{
       echo '<meta property="fb:admins" content="'.$this->GetPreference('meta_opengraph_admins','').'" />'."\n";
     }
-    if ($this->GetPreference('meta_location','') != "") {
+    if ($this->GetPreference('meta_location','') != '') {
       echo '<meta property="og:locality" content="'.$this->GetPreference('meta_location','').'" />'."\n";
     }
-    if ($this->GetPreference('meta_region','') != "") {
+    if ($this->GetPreference('meta_region','') != '') {
       echo '<meta property="og:region" content="'.$this->GetPreference('meta_region','').'" />'."\n";
     }
-    if (($this->GetPreference('meta_latitude','') != "") && ($this->GetPreference('meta_longitude','') != "")) {
+    if (($this->GetPreference('meta_latitude','') != '') && ($this->GetPreference('meta_longitude','') != '')) {
       echo '<meta property="og:latitude" content="'.$this->GetPreference('meta_latitude','').'" />'."\n";
       echo '<meta property="og:longitude" content="'.$this->GetPreference('meta_longitude','').'" />'."\n";
     }
