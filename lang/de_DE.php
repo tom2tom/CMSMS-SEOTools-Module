@@ -60,6 +60,8 @@ $lang['meta_opengraph_admins_help'] = 'Eine kommagetrennte Liste von Facebook-Ko
 $lang['meta_opengraph_application'] = 'Facebook-Anwendung';
 $lang['meta_opengraph_application_help'] = 'Die ID einer Facebook-Anwendung, die in der Lage ist, die Streams Ihrer Seiten zu bearbeiten';
 
+$lang['title_type'] = 'Pages content type';
+$lang['help_content_type'] = 'A recognised format like: html, html5, xhtml. Applied to all frontend pages';
 $lang['title_title_description'] = 'Seitentitel, Beschreibung und Keywords';
 $lang['title_title'] = 'Seitentitel';
 $lang['title_title_help'] = 'Der Seitentitel wie er in der Browser-Titelzeile erscheinen soll. Sie k&ouml;nnen die Tags {title}, {seo_keywords} und alle Smarty-Tags sowie UDTs benutzen';
@@ -67,8 +69,6 @@ $lang['title_meta_title'] = 'Seitentitel f&uuml;r die Meta-Daten';
 $lang['title_meta_help'] = 'Der Seitentitel, wie er in den Meta-Titel-Tags erscheinen soll. Sie k&ouml;nnen die Tags {title}, {seo_keywords} und alle Smarty-Tags sowie UDTs benutzen';
 $lang['title_description_block'] = 'Name des Seitenbeschreibungs-Contentblocks';
 $lang['description_block_help'] = 'Der Name Ihres Seitenbeschreibungs-Contentblocks. Unten finden Sie eine Erkl&auml;rung hierzu';
-$lang['default_keywords_title'] = 'Keywords, die auf jeder Seite erscheinen sollen';
-$lang['default_keywords_help'] = 'Eine Leerzeichen-getrennte Liste von Keywords die Sie auf jeder Seite einbinden lassen m&ouml;chten';
 
 $lang['title_sitemap_description'] = 'Google-Sitemap und Crawler-Einstellungen';
 $lang['create_sitemap_title'] = 'Eine Google-Sitemap im XML-Format erzeugen*';
@@ -251,12 +251,15 @@ f&uuml;r OpenGraph-Seiten das Sie in den Einstellungen von SEO Tools festgelegt 
 <p>In den Einstellungs-Feldern <i>Seitentitel</i>, <i>Seitentitel f&uuml;r die Meta-Daten</i>, <i>Text f&uuml;r automatisch generierte Beschreibungen</i> und <i>Zus&auml;tzliche Meta-Tags</i> k&ouml;nnen alle auf der Seite verwendeten Smarty-Tags und UDTs verwendet werden. Geben Sie <code>{debug}</code> ein, um eine Liste aller zur Verf&uuml;gung stehenden Tags zu sehen.</p>
 <h3>Welche Smarty-Variablen werden von SEOTools definiert?</h3>
 <code>{$seo_keywords}</code>: Eine kommagetrennte Liste aller f&uuml;r die Seite gesetzten Keywords (einschlie&szlig;lich der Standard-Keywords)<br />
-<code>{$title_keywords}</code>: Eine leerzeichen-getrennte Liste aller f&uuml;r die Seite gesetzten Keywords (einschlie&szlig;lich der Standard-Keywords)<br />
 <code>{$default_keywords}</code>: Eine leerzeichen-getrennte Liste aller Standard-Keywords<br />
 <code>{$page_keywords}</code>: Eine leerzeichen-getrennte Liste aller f&uuml;r die Seite gesetzten Keywords (ohne die Standard-Keywords)
+<code>{$title_keywords}</code>: Eine leerzeichen-getrennte Liste aller f&uuml;r die Seite gesetzten Keywords (einschlie&szlig;lich der Standard-Keywords)<br />
 <h3>Support</h3>
-<p>As per the GPL, this software is provided as-is. Please read the text of the license for the full disclaimer.</p>
+<p>This software is provided as-is. Please read the text of the license (see below) for the full disclaimer.</p>
 <h3>Copyright and License</h3>
-<p>Copyright &copy; 2010-2011, Henning Schaefer <a href="mailto:henning.schaefer@gmail.com">&lt;henning.schaefer@gmail.com&gt;</a>. All Rights Are Reserved.</p>
-<p>This module has been released under the <a href="http://www.gnu.org/licenses/licenses.html#GPL">GNU Public License</a>. You must agree to this license before using the module.</p>';
+<p>Copyright &copy; 2010-2011, Henning Schaefer &lt;henning.schaefer@gmail.com&gt;.<br />
+Copyright &copy; 2014-2015, Tom Phane &lt;tpgww@onepost.net&gt;.<br />
+All rights reserved.</p>
+<p>This module has been released under the <a href="http://www.gnu.org/licenses/licenses.html#AGPL">GNU Affero General Public License</a> version 3.
+You must comply with that license when distributing or using the module.</p>';
 ?>
