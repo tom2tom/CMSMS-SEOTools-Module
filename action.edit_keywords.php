@@ -18,19 +18,22 @@ if (isset($_POST['set_keywords'])) {
 			$query = "INSERT INTO ".$pre."module_seotools (content_id, keywords) VALUES (?,?)
  				ON DUPLICATE KEY UPDATE keywords=?";
 			$parms = array((int)$_POST['content_id'],$_POST['keywords'],$_POST['keywords']);
-		} else {
+		}
+		else {
 			$query = "SELECT content_id FROM ".$pre."module_seotools WHERE content_id=?";
 			$res = $db->GetOne($query,array($id));
 			if ($res) {
 				$query = "UPDATE ".$pre."module_seotools SET keywords=? WHERE content_id=?";
 				$parms = array($_POST['keywords'],(int)$_POST['content_id']);
-			} else {
+			}
+			else {
 				$query = "INSERT INTO ".$pre."module_seotools (content_id, keywords) VALUES (?,?)";
 				$parms = array((int)$_POST['content_id'],$_POST['keywords']);
 			}
 		}
 		$db->Execute($query, $parms);
-	}else{
+	}
+	else {
 		$query = "UPDATE ".$pre."module_seotools SET keywords=NULL WHERE content_id=?";
 		$db->Execute($query,array((int)$_POST['content_id']));
 	}

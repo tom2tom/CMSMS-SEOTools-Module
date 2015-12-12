@@ -18,10 +18,12 @@ else
 if (isset($_POST['urgentsel'])) {
 	$work = $_POST['urgentsel'];
 	$tab = 'urgentfixes';
-} elseif (isset($_POST['importantsel'])) {
+}
+elseif (isset($_POST['importantsel'])) {
 	$work = $_POST['importantsel'];
 	$tab = 'importantfixes';
-} else {
+}
+else {
 	$this->Redirect($id, 'defaultadmin'); //should never happen
 }
 
@@ -41,25 +43,29 @@ foreach ($work as $value) {
 				$codes = explode(',',$res['ignored']);
 				if ($intable) {
 					$codes[] = $ignored;
-				} else {
+				}
+				else {
 					foreach ($codes as $i => $name) {
-					  if($name == $ignored) unset($codes[$i]);
+					  if ($name == $ignored) unset($codes[$i]);
 					}
 				}
 				if ($codes) {
 					$query = "UPDATE ".$pre."module_seotools SET ignored=? WHERE content_id=?";
 					$parms[] = implode(',',$codes);
-				} else {
+				}
+				else {
 					$query = "UPDATE ".$pre."module_seotools SET ignored=NULL WHERE content_id=?";
 				}
-			} elseif ($intable) {
+			}
+			elseif ($intable) {
 				$query = "UPDATE ".$pre."module_seotools SET ignored=? WHERE content_id=?";
 				$parms[] = $ignored;
 			}
 			$parms[] = $id;
 			$db->Execute($query,$parms);
 			unset ($parms);
-		} else if ($intable) {
+		}
+		else if ($intable) {
 			$query = "INSERT INTO ".$pre."module_seotools (content_id,ignored) VALUES (?,?)";
 			$db->Execute($query, array($id,$ignored));
 		}

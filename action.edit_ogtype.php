@@ -17,19 +17,22 @@ if (isset($_POST['set_ogtype'])) {
 		if (preg_match ('/'.$db->dbtype.'/i', 'mysql')) {
 			$query = "INSERT INTO ".$pre."module_seotools (content_id, ogtype) VALUES (?,?) ON DUPLICATE KEY UPDATE ogtype=?";
 			$parms = array((int)$_POST['content_id'],$_POST['og_type'],$_POST['og_type']);
-		} else {
+		}
+		else {
 			$query = "SELECT content_id FROM ".$pre."module_seotools WHERE content_id=?";
 			$res = $db->GetOne($query,array($id));
 			if ($res) {
 				$query = "UPDATE ".$pre."module_seotools SET ogtype=? WHERE content_id=?";
 				$parms = array($_POST['og_type'],(int)$_POST['content_id']);
-			} else {
+			}
+			else {
 				$query = "INSERT INTO ".$pre."module_seotools (content_id, ogtype) VALUES (?,?)";
 				$parms = array((int)$_POST['content_id'],$_POST['og_type']);
 			}
 		}
 		$db->Execute($query, $parms);
-	}else{
+	}
+	else {
 		$query = "UPDATE ".$pre."module_seotools SET ogtype=NULL WHERE content_id=?";
 		$db->Execute($query,array((int)$_POST['content_id']));
 	}

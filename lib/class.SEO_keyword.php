@@ -20,7 +20,8 @@ class SEO_keyword
 		foreach ($keywords as $key=>$value) {
 			if (strlen($value) < $minlength) {
 				unset($keywords[$key]);
-			} else {
+			}
+			else {
 				$keywords[$key] = htmlentities(trim($value));
 			}
 		}
@@ -69,7 +70,7 @@ class SEO_keyword
 
 		/* Generate keywords from page title, description and content */
 		$other_keywords = array();
-		if($page_name) {
+		if ($page_name) {
 			$title_keywords = self::_get_keywords($page_name, $mod->GetPreference('keyword_minlength',6));
 			foreach($title_keywords as $keyword) {
 				if (!isset($other_keywords[$keyword])) {
@@ -80,7 +81,7 @@ class SEO_keyword
 		}
 
 		$description = $db->GetOne($query,array($content_id,$description_id));
-		if($description) {
+		if ($description) {
 			$description_keywords = self::_get_keywords($description, $mod->GetPreference('keyword_minlength',6));
 			foreach($description_keywords as $keyword) {
 				if (!isset($other_keywords[$keyword])) {
@@ -90,7 +91,7 @@ class SEO_keyword
 			}
 		}
 		$content = $db->GetOne($query,array($content_id,'content_en'));
-		if($content) {
+		if ($content) {
 			$headline_keywords = self::_get_keywords(self::_get_headlines($content), $mod->GetPreference('keyword_minlength',6));
 			foreach($headline_keywords as $keyword) {
 				if (!isset($other_keywords[$keyword])) {
@@ -113,7 +114,8 @@ class SEO_keyword
 		foreach ($other_keywords as $key=>$value) {
 			if ($value < $mod->GetPreference('keyword_minimum_weight',7)) {
 				unset($other_keywords[$key]);
-			} elseif (in_array(strtoupper($key),$exclude_list)) {
+			}
+			elseif (in_array(strtoupper($key),$exclude_list)) {
 				unset($other_keywords[$key]);
 			}
 		}

@@ -44,10 +44,10 @@ switch($oldversion)
 	case "1.5":
 		//redundant files
 		$fp = cms_join_path(dirname(__FILE__),'changelog.inc');
-		if(is_file($fp))
+		if (is_file($fp))
 			unlink($fp);
 		$fp = cms_join_path(dirname(__FILE__),'admin-header.html');
-		if(is_file($fp))
+		if (is_file($fp))
 			unlink($fp);
 		//extra preference
 		$this->SetPreference('keyword_block','metakeywords');
@@ -64,14 +64,14 @@ own,same,so,than,too,very,lorem
 EOS;
 		$sep = $this->GetPreference('keyword_separator',' ');
 		$now = trim($this->GetPreference('keyword_exclude'));
-		if($now)
+		if ($now)
 		{
 			$old = explode($sep,$now);
 			$new = explode(',',trim($words));
 			$new = array_unique($old+$new,SORT_STRING);
 			$words = implode($sep,$new);
 		}
-		elseif($sep != ',')
+		elseif ($sep != ',')
 			$words = str_replace(',',$sep,$words);
 		$this->SetPreference('keyword_exclude',$words);
 		break;

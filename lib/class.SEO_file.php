@@ -85,9 +85,11 @@ class SEO_file
 
 						if (isset($info['priority']) && ($info['priority'])) {
 							$priority = (int)$info['priority'];
-						} elseif ($page['default_content'] == 1) {
+						}
+						elseif ($page['default_content'] == 1) {
 							$priority = 100;
-						} else {
+						}
+						else {
 							$priority = 80;
 							for ($i = 0; $i < substr_count($page['hierarchy'],'.'); $i++) {
 								$priority  = $priority / 2;
@@ -112,7 +114,7 @@ class SEO_file
 		{
 			// Push sitemap to google
 			$fp = @fopen("http://www.google.com/webmasters/tools/ping?sitemap=".urlencode($config['root_url']."/sitemap.xml"),"rb");
-			if($fp) fclose($fp);
+			if ($fp) fclose($fp);
 		}
 		return TRUE;
 	}

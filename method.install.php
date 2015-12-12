@@ -20,7 +20,7 @@ ignored X
 ";
 $sqlarray = $dict->CreateTableSQL(cms_db_prefix().'module_seotools',$flds,$taboptarray);
 $result = ($sqlarray) ? ($dict->ExecuteSQLArray($sqlarray,FALSE) == 2) : FALSE;
-if(!$result)
+if (!$result)
 	return $this->Lang('install_database_error');
 
 // permissions
