@@ -32,11 +32,7 @@ class SEOTools extends CMSModule
 		global $CMS_VERSION;
 		parent::__construct();
 		$this->before20 = (version_compare($CMS_VERSION,'2.0') < 0);
-		if($this->before20) {
-			$this->pathstr = (version_compare($CMS_VERSION,'1.10') < 0) ? 'sp_':'_sx_';
-		} else {
-			$this->pathstr = '_sk_';
-		}
+		$this->pathstr = constant('CMS_SECURE_PARAM_NAME');
 	}
 
 	function GetName()
@@ -115,11 +111,10 @@ class SEOTools extends CMSModule
 		return "1.6";
 	}
 
- 	function MaximumCMSVersion()
+/* 	function MaximumCMSVersion()
  	{
-		return "1.19.99";
  	}
-
+*/
 	function InstallPostMessage()
 	{
 		return $this->Lang('postinstall');
