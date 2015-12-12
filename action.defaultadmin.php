@@ -1,10 +1,172 @@
 <?php
 # This file is part of CMS Made Simple module: SEOTools.
-# Copyright (C) 2010-2011 Henning Schaefer <henning.schaefer@gmail.com>
-# Copyright (C) 2014-2015 Tom Phane <tpgww@onepost.net>
+# Copyright(C) 2010-2011 Henning Schaefer <henning.schaefer@gmail.com>
+# Copyright(C) 2014-2015 Tom Phane <tpgww@onepost.net>
 # Refer to licence and other details at the top of file SEOTools.module.php
 
 # Setup and display admin page, after processing any action-request
+
+/*
+function GetNotificationOutput(&$mod, $priority = 2)
+{
+	$alerts = getUrgentAlerts($mod,TRUE,TRUE);
+	if ($alerts)
+	{
+		$obj = new StdClass;
+		$obj->priority = $priority;
+		$obj->html = $mod->Lang('problem_alert',$mod->CreateLink(null, 'defaultadmin', '', $mod->Lang('problem_link_title')));
+
+		return $obj;
+	}
+	return FALSE;
+}
+*/
+function getSeeLink(&$mod, $index, $pagename = '')
+{
+	$gCms = cmsms();
+	$config = $gCms->GetConfig();
+	if (!empty($config['admin_url']))
+		$adminurl = $config['admin_url'];
+	else
+		$adminurl = $config['root_url'].'/'.$config['admin_dir'];
+	$theme = ($mod->before20) ? $gCms->get_variable('admintheme'):
+		cms_utils::get_theme_object();
+	$lnk = '<a class=@"'.$index.'" href="#"><img src="'.$adminurl.'/themes/'
+	 .$theme->themeName.'/images/icons/system/edit.gif"';
+	if ($pagename) {
+		$lnk .= ' title = "'.$pagename.'"';
+	}
+	$lnk .= ' style="vertical-align: middle;" /></a>';
+	return $lnk;
+}
+
+function getUrgentAlerts(&$mod, $omit_inactive = FALSE, $omit_ignored = FALSE)
+{
+	$gCms = cmsms();
+	$alerts = array();
+	// No Meta tags are inserted
+	if (!($mod->GetPreference('meta_standard',FALSE) || $mod->GetPreference('meta_dublincore',FALSE)))
+	{
+		$alert = array();
+		$alert['group'] = 'settings';
+		$alert['message'] = $mod->Lang('use_standard_or_dublincore_meta');
+		$alert['links'][] = getSeeLink($mod,4,$mod->Lang('visit_settings'));
+		$alerts[] = $alert;
+	}
+	$db = $gCms->GetDb();
+	$pre = cms_db_prefix();
+	if (!$mod->GetPreference('description_auto_generate',FALSE))
+	{
+		if ($mod->GetPreference('description_block','') != '') {
+			// Content pages without description
+			$query = 'SELECT C.content_id, C.content_name, C.type, C.active, S.ignored FROM '
+			.$pre.'content C LEFT JOIN '
+			.$pre.'content_props P ON C.content_id = P.content_id LEFT JOIN '
+			.$pre.'module_seotools S ON C.content_id = S.content_id WHERE ';
+			if ($omit_inactive) {
+				$query .= 'C.active=1 AND';
+			}
+			$query .= 'C.type LIKE ? AND P.prop_name=? AND(P.content IS NULL OR P.content=?)';
+			$parms = array('content%'); //can't be an injection risk here
+			$parms[] = str_replace(' ','_',$mod->GetPreference('description_block',''));
+			$parms[] = '';
+			$result = $db->Execute($query, $parms);
+			if ($result) {
+				$code = 'nometa';
+				$keep = !$omit_ignored;
+				while ($problem = $result->fetchRow()) {
+					$ig = $problem['ignored'];
+					if (($ig == null && $keep)
+					  ||($ig != null && strpos($ig,$code) !== FALSE)) {
+						$alert = array();
+						$alert['group'] = 'pages';
+						$alert['active'] = $problem['active'];
+						$alert['pages'] = array($problem['content_name']);
+						$alert['message'] = $mod->Lang('meta_description_missing');
+						$alert['ignored'] = $problem['ignored'];
+						$alert['links_data'][$problem['content_id']] = array($problem['content_name'],$code);
+						$alerts[] = $alert;
+					}
+				}
+			}
+		}
+		else {
+			$alert = array();
+			$alert['group'] = 'settings';
+			$alert['message'] = $mod->Lang('set_up_description_block');
+			$alert['links'][] = getSeeLink($mod,4,$mod->Lang('visit_settings'));
+			$alerts[] = $alert;
+		}
+	}
+	elseif (strpos($mod->GetPreference('description_auto',''),'{keywords}') === FALSE) {
+		$alert = array();
+		$alert['group'] = 'settings';
+		$alert['message'] = $mod->Lang('set_up_auto_description');
+		$alert['links'][] = getSeeLink($mod,4,$mod->Lang('visit_settings'));
+		$alerts[] = $alert;
+	}
+
+	$config = $gCms->GetConfig();
+	// sitemap.xml not writeable
+	if ($mod->GetPreference('create_sitemap',0)) {
+		$path = cms_join_path($config['root_path'],'sitemap.xml');
+		if (file_exists($path) && !is_writeable($path)) {
+			$alert = array();
+			$alert['group'] = 'system';
+			$alert['message'] = $mod->Lang('sitemap_not_writeable');
+			$alert['links'][] = $mod->Lang('chmod_sitemap');
+			$alerts[] = $alert;
+		}
+	}
+
+	// robots.txt not writeable
+	 if ($mod->GetPreference('create_robots',0)) {
+		$path = cms_join_path($config['root_path'],'robots.txt');
+		if (file_exists($path) && !is_writeable($path)) {
+			$alert = array();
+			$alert['group'] = 'system';
+			$alert['message'] = $mod->Lang('robots_not_writeable');
+			$alert['links'][] = $mod->Lang('chmod_robots');
+			$alerts[] = $alert;
+		}
+	}
+
+	if ($mod->GetPreference('meta_opengraph',FALSE)) {
+		// No OpenGraph admin set
+		if (($mod->GetPreference('meta_opengraph_admins','') == '') &&($mod->GetPreference('meta_opengraph_application','') == '')) {
+			$alert = array();
+			$alert['group'] = 'opengraph';
+			$alert['message'] = $mod->Lang('no_opengraph_admins');
+			$alert['links'][] = getSeeLink($mod,4,$mod->Lang('visit_settings'));
+			$alerts[] = $alert;
+		}
+		// No OpenGraph page type set
+		if ($mod->GetPreference('meta_opengraph_type','') == '') {
+			$alert = array();
+			$alert['group'] = 'opengraph';
+			$alert['message'] = $mod->Lang('no_opengraph_type');
+			$alert['links'][] = getSeeLink($mod,4,$mod->Lang('visit_settings'));
+			$alerts[] = $alert;
+		}
+		// No OpenGraph sitename set
+		if ($mod->GetPreference('meta_opengraph_sitename','') == '') {
+			$alert = array();
+			$alert['group'] = 'opengraph';
+			$alert['message'] = $mod->Lang('no_opengraph_sitename');
+			$alert['links'][] = getSeeLink($mod,4,$mod->Lang('visit_settings'));
+			$alerts[] = $alert;
+		}
+		// No OpenGraph image set
+		if ($mod->GetPreference('meta_opengraph_image','') == '') {
+			$alert = array();
+			$alert['group'] = 'opengraph';
+			$alert['message'] = $mod->Lang('no_opengraph_image');
+			$alert['links'][] = getSeeLink($mod,4,$mod->Lang('visit_settings'));
+			$alerts[] = $alert;
+		}
+	}
+	return $alerts;
+}
 
 function getImportantAlerts(&$mod, $omit_inactive = FALSE, $omit_ignored = FALSE)
 {
@@ -12,13 +174,13 @@ function getImportantAlerts(&$mod, $omit_inactive = FALSE, $omit_ignored = FALSE
 	$db = $gCms->GetDb();
 	$pre = cms_db_prefix();
 	$config = $gCms->GetConfig();
-	if (isset ($config['admin_url']))
+	if (isset($config['admin_url']))
 		$adminurl = $config['admin_url'];
 	else
 		$adminurl = $config['root_url'].'/'.$config['admin_dir'];
 	$alerts = array();
 	// Pretty URLs not working
-	if (($config['assume_mod_rewrite'] != 1) && ($config['internal_pretty_urls'] != 1)) {
+	if (($config['assume_mod_rewrite'] != 1) &&($config['internal_pretty_urls'] != 1)) {
 	  $theme = ($mod->before20) ? $gCms->get_variable('admintheme'):
 		cms_utils::get_theme_object();
 	  $alert = array();
@@ -31,14 +193,15 @@ function getImportantAlerts(&$mod, $omit_inactive = FALSE, $omit_ignored = FALSE
 	  $alerts[] = $alert;
 	}
 	// Content pages with short description
-	$query = "SELECT C.content_id, C.content_name, C.active, S.ignored FROM "
-	 .$pre."content C INNER JOIN "
-	 .$pre."content_props P ON C.content_id = P.content_id LEFT JOIN "
-	 .$pre."module_seotools S ON C.content_id = S.content_id WHERE ";
+	$query = 'SELECT C.content_id, C.content_name, C.active, S.ignored FROM '
+	 .$pre.'content C INNER JOIN '
+	 .$pre.'content_props P ON C.content_id = P.content_id LEFT JOIN '
+	 .$pre.'module_seotools S ON C.content_id = S.content_id WHERE ';
 	if ($omit_inactive) {
-		$query .= "C.active=1 AND";
+		$query .= 'C.active=1 AND';
 	}
-	$query .= "C.type LIKE ? AND P.prop_name=? AND P.content<>? AND CHAR_LENGTH(P.content) < 75"; //NOTE not much portable. $db->length dun't work!
+	//TODO CHAR_LENGTH function
+	$query .= 'C.type LIKE ? AND P.prop_name=? AND P.content<>? AND CHAR_LENGTH(P.content) < 75'; //NOTE not much portable. $db->length dun't work!
 	$parms = array('content%'); //can't be an injection risk here
 	$parms[] = str_replace(' ','_',$mod->GetPreference('description_block',''));
 	$parms[] = '';
@@ -63,15 +226,15 @@ function getImportantAlerts(&$mod, $omit_inactive = FALSE, $omit_ignored = FALSE
 	}
 
 	// Any pages with duplicate title
-	$query = "SELECT c1.content_alias AS c1name, c1.content_id AS c1id, c1.active AS c1a,
-	c2.content_alias AS c2name, c2.content_id AS c2id, c2.active as c2a, S.ignored FROM "
-	.$pre."content c1 INNER JOIN "
-	.$pre."content c2 ON c1.content_name = c2.content_name LEFT JOIN "
-	.$pre."module_seotools ON c1.content_id = S.content_id WHERE ";
+	$query = 'SELECT c1.content_alias AS c1name, c1.content_id AS c1id, c1.active AS c1a,
+c2.content_alias AS c2name, c2.content_id AS c2id, c2.active as c2a, S.ignored FROM '
+	.$pre.'content c1 INNER JOIN '
+	.$pre.'content c2 ON c1.content_name = c2.content_name LEFT JOIN '
+	.$pre.'module_seotools ON c1.content_id = S.content_id WHERE ';
 	if ($omit_inactive) {
-		$query .= "c1.active=1 AND c2.active=1 AND ";
+		$query .= 'c1.active=1 AND c2.active=1 AND ';
 	}
-	$query .= "c1.content_id<c2.content_id";
+	$query .= 'c1.content_id<c2.content_id';
 	$result = $db->Execute($query);
 	if ($result) {
 		$code = 'sametitle';
@@ -94,21 +257,21 @@ function getImportantAlerts(&$mod, $omit_inactive = FALSE, $omit_ignored = FALSE
 	}
 
 	// Any pages with duplicate description
-	$query = "SELECT p1.content_id AS p1id, p2.content_id AS p2id, S.ignored FROM "
-	.$pre."content_props p1 INNER JOIN "
-	.$pre."content_props p2 ON p1.prop_name = p2.prop_name LEFT JOIN "
-	.$pre."module_seotools S ON p1.content_id = S.content_id
-	WHERE (p1.prop_name = ? AND p1.content_id < p2.content_id  AND p1.content <> ? AND p2.content = p1.content)";
+	$query = 'SELECT p1.content_id AS p1id, p2.content_id AS p2id, S.ignored FROM '
+	.$pre.'content_props p1 INNER JOIN '
+	.$pre.'content_props p2 ON p1.prop_name = p2.prop_name LEFT JOIN '
+	.$pre.'module_seotools S ON p1.content_id = S.content_id
+WHERE(p1.prop_name = ? AND p1.content_id < p2.content_id  AND p1.content <> ? AND p2.content = p1.content)';
 	$parms = array();
 	$parms[] = str_replace(' ','_',$mod->GetPreference('description_block',''));
 	$parms[] = '';
 	$result = $db->Execute($query, $parms);
 	if ($result) {
-		$query = "SELECT content_id, content_name, active FROM ".$pre."content WHERE ";
+		$query = 'SELECT content_id, content_name, active FROM '.$pre.'content WHERE ';
 		if ($omit_inactive) {
-			$query .= "active=1 AND ";
+			$query .= 'active=1 AND ';
 		}
-		$query .= "(content_id=? OR content_id=?)";
+		$query .= '(content_id=? OR content_id=?)';
 		$code = 'samedesc';
 		$keep = !$omit_ignored;
 		while ($problem = $result->fetchRow()) {
@@ -135,13 +298,13 @@ function getImportantAlerts(&$mod, $omit_inactive = FALSE, $omit_ignored = FALSE
 		$alert = array();
 		$alert['group'] = 'settings';
 		$alert['message'] = $mod->Lang('provide_an_author');
-		$alert['links'][] = $mod->getSeeLink (4,$mod->Lang('visit_settings'));
+		$alert['links'][] = getSeeLink($mod,4,$mod->Lang('visit_settings'));
 		$alerts[] = $alert;
 	}
 	return $alerts;
 }
 
-function getTabLink ($index, $label)
+function getTabLink($index, $label)
 {
 	return '<a class="@'.$index.'" href="#">'.$label.'</a>';
 }
@@ -153,27 +316,28 @@ function getNoticeAlerts(&$mod)
 	if (!$mod->GetPreference('meta_standard',FALSE)) {
 		$alert = array();
 		$alert['message'] = $mod->Lang('use_standard_meta');
-		$alert['links'][] = getTabLink (4,$mod->Lang('visit_settings'));
+		$alert['links'][] = getTabLink(4,$mod->Lang('visit_settings'));
 		$alerts[] = $alert;
 	}
 	// Submit a sitemap
 	if (!$mod->GetPreference('create_sitemap',0)) {
 		$alert = array();
 		$alert['message'] = $mod->Lang('create_a_sitemap');
-		$alert['links'][] = getTabLink (6,$mod->Lang('visit_settings'));
+		$alert['links'][] = getTabLink(6,$mod->Lang('visit_settings'));
 		$alerts[] = $alert;
-	}elseif(!$mod->GetPreference('push_sitemap',0)) {
+	}
+	elseif (!$mod->GetPreference('push_sitemap',0)) {
 	  // Automatically submit the sitemap
 		$alert = array();
 		$alert['message'] = $mod->Lang('automatically_upload_sitemap');
-		$alert['links'][] = getTabLink (6,$mod->Lang('visit_settings'));
+		$alert['links'][] = getTabLink(6,$mod->Lang('visit_settings'));
 		$alerts[] = $alert;
 	}
 	// Create a robots.txt file
 	if (!$mod->GetPreference('create_robots',0)) {
 		$alert = array();
 		$alert['message'] = $mod->Lang('create_robots');
-		$alert['links'][] = getTabLink (6,$mod->Lang('visit_settings'));
+		$alert['links'][] = getTabLink(6,$mod->Lang('visit_settings'));
 		$alerts[] = $alert;
 	}
 	// Set a default image
@@ -184,7 +348,7 @@ function getFixLink(&$mod, $sp, $id, $pagename = '')
 {
 	$gCms = cmsms();
 	$config = $gCms->GetConfig();
-	if (isset ($config['admin_url']))
+	if (isset($config['admin_url']))
 		$adminurl = $config['admin_url'];
 	else
 		$adminurl = $config['root_url'].'/'.$config['admin_dir'];
@@ -195,38 +359,42 @@ function getFixLink(&$mod, $sp, $id, $pagename = '')
 	 .$theme->themeName.'/images/icons/system/edit.gif" title = "';
 	if ($pagename) {
 		$lnk .= $mod->Lang('edit_page',$pagename);
-	} else {
+	}
+	else {
 		$lnk .= $mod->Lang('edit_page2');
 	}
 	$lnk .= '" style="vertical-align: middle;" /></a>';
 	return $lnk;
 }
 
-if (! $this->CheckAccess()) {
+if (!$this->CheckAccess()) {
 	return $this->DisplayErrorPage($this->Lang('accessdenied'));
 }
 
 if (isset($_GET['what'])) {
 	$what = $_GET['what'];
-} else {
+}
+else {
 	$what = FALSE;
 }
 $pre = cms_db_prefix();
 
 // Do the action, if any
-switch ($what)
+switch($what)
 {
 case 'toggle_index':
-	$query = "SELECT indexable FROM ".$pre."module_seotools WHERE content_id=?";
+	$query = 'SELECT indexable FROM '.$pre.'module_seotools WHERE content_id=?';
 	$info = $db->GetOne($query,array($_GET['content_id']));
 	$parms = array();
 	if ($info == FALSE) {
-		$query = "INSERT INTO ".$pre."module_seotools SET content_id=?, indexable=0";
-	} else {
-		$query = "UPDATE ".$pre."module_seotools SET indexable=? WHERE content_id=?";
+		$query = 'INSERT INTO '.$pre.'module_seotools SET content_id=?, indexable=0';
+	}
+	else {
+		$query = 'UPDATE '.$pre.'module_seotools SET indexable=? WHERE content_id=?';
 		if ($info == '1') {
 			$parms[] = 0;
-		} else {
+		}
+		else {
 			$parms[] = 1;
 		}
 	}
@@ -244,50 +412,54 @@ case 'toggle_index':
 	$_GET['tab'] = 'pagedescriptions';
 	break;
 case 'toggle_ignore':
-	$pages = explode ('@',$_GET['content_data']);
-	unset ($pages[0]);
-	foreach ($pages as $sig) {
-		list ($id,$ignored) = explode ('-', $sig);
+	$pages = explode('@',$_GET['content_data']);
+	unset($pages[0]);
+	foreach($pages as $sig) {
+		list($id,$ignored) = explode('-', $sig);
 		$id = (int)$id;
-		$query = "SELECT content_id,ignored FROM ".$pre."module_seotools WHERE content_id=?";
+		$query = 'SELECT content_id,ignored FROM '.$pre.'module_seotools WHERE content_id=?';
 		$res = $db->GetRow($query,array($id));
 		$parms = array();
 		if ($res) {
 			if ($res['ignored']) {
 				$codes = explode(',',$res['ignored']);
 				if (in_array($ignored, $codes)) {
-					foreach ($codes as $i => $name) {
+					foreach($codes as $i => $name) {
 					  if ($name == $ignored) unset($codes[$i]);
 					}
-				} else {
+				}
+				else {
 					$codes[] = $ignored;
 				}
 				if ($codes) {
-					$query = "UPDATE ".$pre."module_seotools SET ignored=? WHERE content_id=?";
+					$query = 'UPDATE '.$pre.'module_seotools SET ignored=? WHERE content_id=?';
 					$parms[] = implode(',',$codes);
-				} else {
-					$query = "UPDATE ".$pre."module_seotools SET ignored=NULL WHERE content_id=?";
 				}
-			} else {
-				$query = "UPDATE ".$pre."module_seotools SET ignored=? WHERE content_id=?";
+				else {
+					$query = 'UPDATE '.$pre.'module_seotools SET ignored=NULL WHERE content_id=?';
+				}
+			}
+			else {
+				$query = 'UPDATE '.$pre.'module_seotools SET ignored=? WHERE content_id=?';
 				$parms[] = $ignored;
 			}
-		} else {
-			$query = "INSERT INTO ".$pre."module_seotools (ignored,content_id) VALUES (?,?)";
+		}
+		else {
+			$query = 'INSERT INTO '.$pre.'module_seotools(ignored,content_id) VALUES(?,?)';
 			$parms[] = $ignored;
 		}
 		$parms[] = $id;
 		$db->Execute($query,$parms);
-		unset ($parms);
+		unset($parms);
 	}
 	break;
 case 'set_priority':
 	//upsert, sort-of
-	$query = "UPDATE ".$pre."module_seotools SET priority=? WHERE content_id=?";
+	$query = 'UPDATE '.$pre.'module_seotools SET priority=? WHERE content_id=?';
 	$parms = array($_GET['priority'],(int)$_GET['content_id']);
-	$query2 = "INSERT INTO ".$pre.
-"module_seotools (content_id, priority) SELECT ?,? FROM (SELECT 1 AS dmy) Z WHERE NOT EXISTS (SELECT 1 FROM ".
-	$pre."module_seotools T WHERE T.content_id=?)";
+	$query2 = 'INSERT INTO '.$pre.
+'module_seotools(content_id, priority) SELECT ?,? FROM(SELECT 1 AS dmy) Z WHERE NOT EXISTS(SELECT 1 FROM '.
+	$pre.'module_seotools T WHERE T.content_id=?)';
 	$parms2 = array((int)$_GET['content_id'],$_GET['priority'],(int)$_GET['content_id']);
 	$db->execute($query,$parms);
 	$db->execute($query2,$parms2);
@@ -300,7 +472,7 @@ case 'set_priority':
 	$_GET['tab'] = 'pagedescriptions';
 	break;
 case 'reset_priority':
-	$query = "UPDATE ".$pre."module_seotools SET priority=NULL WHERE content_id=?";
+	$query = 'UPDATE '.$pre.'module_seotools SET priority=NULL WHERE content_id=?';
 	$db->Execute($query,array($_GET['content_id']));
 /* only manual updates
 	if ($this->GetPreference('create_sitemap',0)) {
@@ -311,12 +483,12 @@ case 'reset_priority':
 	$_GET['tab'] = 'pagedescriptions';
 	break;
 case 'reset_ogtype':
-	$query = "UPDATE ".$pre."module_seotools SET ogtype=NULL WHERE content_id=?";
+	$query = 'UPDATE '.$pre.'module_seotools SET ogtype=NULL WHERE content_id=?';
 	$db->Execute($query,array($_GET['content_id']));
 	$_GET['tab'] = 'pagedescriptions';
 	break;
 case 'reset_keywords':
-	$query = "UPDATE ".$pre."module_seotools SET keywords=NULL WHERE content_id=?";
+	$query = 'UPDATE '.$pre.'module_seotools SET keywords=NULL WHERE content_id=?';
 	$db->Execute($query,array($_GET['content_id']));
 	$_GET['tab'] = 'pagedescriptions';
 	break;
@@ -329,16 +501,17 @@ case 'edit_keywords':
 }
 
 if (isset($_GET['message'])) {
-  if (isset($_GET['warning'])) {
-	$smarty->assign('message',$this->ShowErrors($this->Lang($_GET['message'])));
-  } else {
-	$smarty->assign('message',$this->ShowMessage($this->Lang($_GET['message'])));
-  }
+	if (isset($_GET['warning'])) {
+		$smarty->assign('message',$this->ShowErrors($this->Lang($_GET['message'])));
+	}
+	else {
+		$smarty->assign('message',$this->ShowMessage($this->Lang($_GET['message'])));
+	}
 }
 
 $indx = 0;
-if (isset ($_GET['tab'])) {
-	switch ($_GET['tab']) {
+if (isset($_GET['tab'])) {
+	switch($_GET['tab']) {
 	case 'urgentfixes':
 		$indx = 1;
 		break;
@@ -389,7 +562,7 @@ $smarty->assign('start_important_set',$this->CreateFieldsetStart($id, 'alerts_im
 $smarty->assign('start_notice_set',$this->CreateFieldsetStart($id, 'alerts_notices', $this->Lang('title_alerts_notices')));
 $smarty->assign('end_set',$this->CreateFieldsetEnd());
 
-if (isset ($config['admin_url']))
+if (isset($config['admin_url']))
 	$adminurl = $config['admin_url'];
 else
 	$adminurl = $config['root_url'].'/'.$config['admin_dir'];
@@ -399,211 +572,221 @@ $theme_url = $adminurl.'/themes/'.$theme->themeName.'/images/icons';
 $icontrue = '<img src="'.$theme_url.'/system/true.gif" />';
 
 $urgent = array();
-$urgent_alerts = $this->getUrgentAlerts();
+$urgent_alerts = getUrgentAlerts($this);
 if ($urgent_alerts) {
-  $count = 0;
-  $groups = array();
-  //sort ALL alerts into types, count some of them
-  foreach ($urgent_alerts as $alert) {
-	if ((!array_key_exists ('active', $alert) || $alert['active'] == TRUE)
-	 && (empty($alert['ignored'])))
-		$count++;
-	$groups[$alert['group']][] = $alert;
-  }
-  $icon = '<img src="'.$theme_url.'/Notifications/1.gif" />';
-  if ($count) {
-	$smarty->assign('urgent_icon',$icon);
-	$smarty->assign('urgent_text',$this->Lang('summary_urgent', $count));
-	$smarty->assign('urgent_link','['
-	.getTabLink(1,$this->Lang('view_all'))
-	.']');
-  }else{
+		$count = 0;
+		$groups = array();
+		//sort ALL alerts into types, count some of them
+		foreach($urgent_alerts as $alert) {
+			if ((!array_key_exists('active', $alert) || $alert['active'] == TRUE)
+			 &&(empty($alert['ignored'])))
+				$count++;
+			$groups[$alert['group']][] = $alert;
+		}
+		$icon = '<img src="'.$theme_url.'/Notifications/1.gif" />';
+		if ($count) {
+			$smarty->assign('urgent_icon',$icon);
+			$smarty->assign('urgent_text',$this->Lang('summary_urgent', $count));
+			$smarty->assign('urgent_link','['
+			.getTabLink(1,$this->Lang('view_all'))
+			.']');
+		}
+		else {
+			$smarty->assign('urgent_icon',$icontrue);
+			$smarty->assign('urgent_text',$this->Lang('nothing_to_be_fixed'));
+		}
+		$j = 0;
+		foreach($groups as $group => $galerts) {
+		foreach($galerts as $alert) {
+			$onerow = new stdClass;
+			$onerow->rowclass = 'row'.($j % 2 + 1);
+			if (isset($alert['pages']))
+				$onerow->pages = implode('<br />',$alert['pages']);
+			else
+				$onerow->pages = '';
+			$onerow->problem = $alert['message'];
+			if (array_key_exists('links_data', $alert)) {
+				$links = $alert['links_data'];
+				if (count($links) == 1) {
+					foreach($links as $id => $data) {
+						$onerow->action = getFixLink($this, $_GET[$this->pathstr], $id);
+						$sig = '@'.$id.'-'.$data[1];
+					}
+				}
+				else {
+					$s = array();
+					$sig = '';
+					foreach($links as $id => $data) {
+						$s[] = getFixLink($this, $_GET[$this->pathstr], $id, $data[0]);
+						$sig .= '@'.$id.'-'.$data[1];
+					}
+					$onerow->action = implode('<br />', $s);
+					unset($s);
+				}
+			}
+			elseif (array_key_exists('links', $alert)) {
+				$links = 'TODO'; //QQQ
+				$onerow->action = implode('<br />',$alert['links']);
+				$sig = '';
+			}
+			else {
+				$links = 'NONE'; //CHECKME
+				$onerow->action = '';
+				$sig = '';
+			}
+			if (array_key_exists('ignored', $alert)) {
+				$iname = ($alert['ignored']) ? 'true':'false';
+				$onerow->ignored = $this->CreateTooltipLink(null, 'defaultadmin', '',
+				'<img src="'.$theme_url.'/system/'.$iname.'.gif" style="vertical-align:middle;" />',
+				$this->Lang('toggle'), array('what'=>'toggle_ignore','content_data'=>$sig,'tab'=>'urgentfixes'));
+				$onerow->checkval = $sig;
+				$onerow->sel = ''; //TODO
+			}
+			else {
+				$onerow->checkval = '';
+				$onerow->sel = '';
+			}
+			if (array_key_exists('active', $alert)) {
+				if (strpos($alert['active'],',') === FALSE) {
+					$act1 = $alert['active'];
+					$act2 = FALSE;
+				}
+				else {
+					list($act1, $act2) = explode(',',$alert['active']);
+					$act1 = (int)$act1;
+					$act2 = (int)$act2;
+				}
+				$cb = '<input type="checkbox" disabled="disabled"';
+				if ($act1) $cb .= ' checked="checked"';
+				$cb .= ' />';
+				if ($act2 !== FALSE) {
+					$cb .= '<br /><input type="checkbox" disabled="disabled"';
+					if ($act2) $cb .= ' checked="checked"';
+					$cb .= ' />';
+				}
+				$onerow->active = $cb;
+			}
+			else {
+				$onerow->active = '';
+			}
+
+			$urgent[] = $onerow;
+			$j++;
+		}
+	}
+}
+else {
 	$smarty->assign('urgent_icon',$icontrue);
 	$smarty->assign('urgent_text',$this->Lang('nothing_to_be_fixed'));
-  }
-  $j = 0;
-  foreach($groups as $group => $galerts) {
-	foreach ($galerts as $alert) {
-		$onerow = new stdClass;
-		$onerow->rowclass = 'row'.($j % 2 + 1);
-		if (isset ($alert['pages']))
-		 $onerow->pages = implode('<br />',$alert['pages']);
-		else
-		 $onerow->pages = '';
-		$onerow->problem = $alert['message'];
-		if (array_key_exists ('links_data', $alert)) {
-			$links = $alert['links_data'];
-			if (count ($links) == 1) {
-				foreach ($links as $id => $data) {
-					$onerow->action = getFixLink ($this, $_GET[$this->pathstr], $id);
-					$sig = '@'.$id.'-'.$data[1];
-				}
-			} else {
-				$s = array();
-				$sig = '';
-				foreach ($links as $id => $data) {
-					$s[] = getFixLink ($this, $_GET[$this->pathstr], $id, $data[0]);
-					$sig .= '@'.$id.'-'.$data[1];
-				}
-				$onerow->action = implode('<br />', $s);
-				unset ($s);
-			}
-		} elseif (array_key_exists ('links', $alert)) {
-			$links = 'TODO'; //QQQ
-			$onerow->action = implode('<br />',$alert['links']);
-			$sig = '';
-		}
-		else {
-			$links = 'NONE'; //CHECKME
-			$onerow->action = '';
-			$sig = '';
-		}
-		if (array_key_exists ('ignored', $alert)) {
-			$iname = ($alert['ignored']) ? 'true':'false';
-			$onerow->ignored = $this->CreateTooltipLink(null, 'defaultadmin', '',
-			'<img src="'.$theme_url.'/system/'.$iname.'.gif" style="vertical-align:middle;" />',
-			$this->Lang('toggle'), array('what'=>'toggle_ignore','content_data'=>$sig,'tab'=>'urgentfixes'));
-			$onerow->checkval = $sig;
-			$onerow->sel = ''; //TODO
-		}
-		else {
-			$onerow->checkval = '';
-			$onerow->sel = '';
-		}
-		if (array_key_exists ('active', $alert)) {
-			if(strpos ($alert['active'],',') === FALSE) {
-				$act1 = $alert['active'];
-				$act2 = FALSE;
-			} else {
-				list($act1, $act2) = explode(',',$alert['active']);
-				$act1 = (int)$act1;
-				$act2 = (int)$act2;
-			}
-			$cb = '<input type="checkbox" disabled="disabled"';
-			if ($act1) $cb .= ' checked="checked"';
-			$cb .= ' />';
-			if ($act2 !== FALSE) {
-				$cb .= '<br /><input type="checkbox" disabled="disabled"';
-				if ($act2) $cb .= ' checked="checked"';
-				$cb .= ' />';
-			}
-			$onerow->active = $cb;
-		}
-		else {
-			$onerow->active = '';
-		}
-
-		$urgent[] = $onerow;
-		$j++;
-	}
-  }
-}else{
-  $smarty->assign('urgent_icon',$icontrue);
-  $smarty->assign('urgent_text',$this->Lang('nothing_to_be_fixed'));
 }
 $smarty->assign('urgents',$urgent);
 
 $important = array();
 $important_alerts = getImportantAlerts($this);
 if ($important_alerts) {
-  $count = 0;
-  $groups = array();
-  //sort ALL alerts into types, count some of them
-  foreach ($important_alerts as $alert) {
-	if (empty($alert['ignored']))
-		$count++;
-	$groups[$alert['group']][] = $alert;
-  }
-  $icon = '<img src="'.$theme_url.'/Notifications/2.gif" />';
-  if ($count) {
-	$smarty->assign('important_icon',$icon);
-	$smarty->assign('important_text',$this->Lang('summary_important', $count));
-	$smarty->assign('important_link','['
-//	.$this->CreateLink(null, 'defaultadmin', null, $this->Lang('view_all'), array('tab'=>'importantfixes')).
-	.getTabLink(2,$this->Lang('view_all'))
-	.']');
-  }else{
-	$smarty->assign('important_icon',$icontrue);
-	$smarty->assign('important_text',$this->Lang('nothing_to_be_fixed'));
-  }
-  $j = 0;
-  foreach($groups as $group => $galerts) {
-	foreach ($galerts as $alert) {
-		$onerow = new stdClass;
-		$onerow->rowclass = 'row'.($j % 2 + 1);
-		if (isset ($alert['pages']))
-			$onerow->pages = implode('<br />',$alert['pages']);
-		else
-			$onerow->pages = '';
-		$onerow->problem = $alert['message'];
-		if (array_key_exists ('links_data', $alert)) {
-			$links = $alert['links_data'];
-			if (count ($links) == 1) {
-				foreach ($links as $id => $data) {
-					$onerow->action = getFixLink ($this, $_GET[$this->pathstr], $id);
-					$sig = '@'.$id.'-'.$data[1];
-				}
-			} else {
-				$s = array();
-				$sig = '';
-				foreach ($links as $id => $data) {
-					$s[] = getFixLink ($this, $_GET[$this->pathstr], $id, $data[0]);
-					$sig .= '@'.$id.'-'.$data[1];
-				}
-				$onerow->action = implode('<br />', $s);
-				$onerow->checkval = $sig;
-				unset ($s);
-			}
-		} elseif (array_key_exists ('links', $alert)) {
-			$links = 'TODO'; //QQQ
-			$onerow->action = implode('<br />',$alert['links']);
-			$sig = '';
-		}
-		else {
-			$links = 'NONE';
-			$sig = '';
-		}
-
-		if (array_key_exists ('ignored', $alert)) {
-			$iname = ($alert['ignored']) ? 'true':'false';
-			$onerow->ignored = $this->CreateTooltipLink(null, 'defaultadmin', '',
-			 '<img src="'.$theme_url.'/system/'.$iname.'.gif" style="vertical-align:middle;" />',
-			 $this->Lang('toggle'), array('what'=>'toggle_ignore','content_data'=>$sig,'tab'=>'importantfixes'));
-			$onerow->checkval = $sig;
-		}
-		else {
-			$onerow->ignored = '';
-			$onerow->checkval = '';
-		}
-		if (array_key_exists ('active', $alert)) {
-			if(strpos ($alert['active'],',') === FALSE) {
-				$act1 = $alert['active'];
-				$act2 = FALSE;
-			} else {
-				list($act1, $act2) = explode(',',$alert['active']);
-				$act1 = (int)$act1;
-				$act2 = (int)$act2;
-			}
-			$cb = '<input type="checkbox" disabled="disabled"';
-			if ($act1) $cb .= ' checked="checked"';
-			$cb .= ' />';
-			if ($act2 !== FALSE) {
-				$cb .= '<br /><input type="checkbox" disabled="disabled"';
-				if ($act2) $cb .= ' checked="checked"';
-				$cb .= ' />';
-			}
-			$onerow->active = $cb;
-			$onerow->sel = ''; //TODO
-		}
-		else {
-			$onerow->active = '';
-			$onerow->sel = ''; //TODO
-		}
-		$important[] = $onerow;
-		$j++;
+	$count = 0;
+	$groups = array();
+	//sort ALL alerts into types, count some of them
+	foreach($important_alerts as $alert) {
+		if (empty($alert['ignored']))
+			$count++;
+		$groups[$alert['group']][] = $alert;
 	}
-  }
-}else{
+	$icon = '<img src="'.$theme_url.'/Notifications/2.gif" />';
+	if ($count) {
+		$smarty->assign('important_icon',$icon);
+		$smarty->assign('important_text',$this->Lang('summary_important', $count));
+		$smarty->assign('important_link','['
+		//	.$this->CreateLink(null, 'defaultadmin', null, $this->Lang('view_all'), array('tab'=>'importantfixes')).
+		.getTabLink(2,$this->Lang('view_all'))
+		.']');
+	}
+	else {
+		$smarty->assign('important_icon',$icontrue);
+		$smarty->assign('important_text',$this->Lang('nothing_to_be_fixed'));
+	}
+	$j = 0;
+	foreach($groups as $group => $galerts) {
+		foreach($galerts as $alert) {
+			$onerow = new stdClass;
+			$onerow->rowclass = 'row'.($j % 2 + 1);
+			if (isset($alert['pages']))
+				$onerow->pages = implode('<br />',$alert['pages']);
+			else
+				$onerow->pages = '';
+			$onerow->problem = $alert['message'];
+			if (array_key_exists('links_data', $alert)) {
+				$links = $alert['links_data'];
+				if (count($links) == 1) {
+					foreach($links as $id => $data) {
+						$onerow->action = getFixLink($this, $_GET[$this->pathstr], $id);
+						$sig = '@'.$id.'-'.$data[1];
+					}
+				}
+				else {
+					$s = array();
+					$sig = '';
+					foreach($links as $id => $data) {
+						$s[] = getFixLink($this, $_GET[$this->pathstr], $id, $data[0]);
+						$sig .= '@'.$id.'-'.$data[1];
+					}
+					$onerow->action = implode('<br />', $s);
+					$onerow->checkval = $sig;
+					unset($s);
+				}
+			}
+			elseif (array_key_exists('links', $alert)) {
+				$links = 'TODO'; //QQQ
+				$onerow->action = implode('<br />',$alert['links']);
+				$sig = '';
+			}
+			else {
+				$links = 'NONE';
+				$sig = '';
+			}
+
+			if (array_key_exists('ignored', $alert)) {
+				$iname = ($alert['ignored']) ? 'true':'false';
+				$onerow->ignored = $this->CreateTooltipLink(null, 'defaultadmin', '',
+				 '<img src="'.$theme_url.'/system/'.$iname.'.gif" style="vertical-align:middle;" />',
+				 $this->Lang('toggle'), array('what'=>'toggle_ignore','content_data'=>$sig,'tab'=>'importantfixes'));
+				$onerow->checkval = $sig;
+			}
+			else {
+				$onerow->ignored = '';
+				$onerow->checkval = '';
+			}
+			if (array_key_exists('active', $alert)) {
+				if (strpos($alert['active'],',') === FALSE) {
+					$act1 = $alert['active'];
+					$act2 = FALSE;
+				}
+				else {
+					list($act1, $act2) = explode(',',$alert['active']);
+					$act1 = (int)$act1;
+					$act2 = (int)$act2;
+				}
+				$cb = '<input type="checkbox" disabled="disabled"';
+				if ($act1) $cb .= ' checked="checked"';
+				$cb .= ' />';
+				if ($act2 !== FALSE) {
+					$cb .= '<br /><input type="checkbox" disabled="disabled"';
+					if ($act2) $cb .= ' checked="checked"';
+					$cb .= ' />';
+				}
+				$onerow->active = $cb;
+				$onerow->sel = ''; //TODO
+			}
+			else {
+				$onerow->active = '';
+				$onerow->sel = ''; //TODO
+			}
+			$important[] = $onerow;
+			$j++;
+		}
+	}
+}
+else {
 	$smarty->assign('important_icon',$icontrue);
 	$smarty->assign('important_text',$this->Lang('nothing_to_be_fixed'));
 }
@@ -612,19 +795,20 @@ $smarty->assign('importants',$important);
 $notice = array();
 $notice_alerts = getNoticeAlerts($this);
 if ($notice_alerts) {
-  $icon = '<img src="'.$theme_url.'/Notifications/3.gif" />';
-  foreach ($notice_alerts as $alert) {
+	$icon = '<img src="'.$theme_url.'/Notifications/3.gif" />';
+	foreach($notice_alerts as $alert) {
+		$onerow = new stdClass;
+		$onerow->icon = $icon;
+		$onerow->text = $alert['message'];
+		if (isset($alert['links'])) $onerow->link = '['.implode(' | ',$alert['links']).']';
+		$notice[] = $onerow;
+	}
+}
+else {
 	$onerow = new stdClass;
-	$onerow->icon = $icon;
-	$onerow->text = $alert['message'];
-	if (isset ($alert['links'])) $onerow->link = '['.implode(' | ',$alert['links']).']';
+	$onerow->icon = $icontrue;
+	$onerow->text = $this->Lang('nothing_to_be_fixed');
 	$notice[] = $onerow;
-  }
-}else{
-  $onerow = new stdClass;
-  $onerow->icon = $icontrue;
-  $onerow->text = $this->Lang('nothing_to_be_fixed');
-  $notice[] = $onerow;
 }
 $smarty->assign('notices',$notice);
 
@@ -679,8 +863,8 @@ while ($page = $result->fetchRow()) {
 
 	$prefix = '';
 	$auto_priority = 80;
-	$n = substr_count ($page['hierarchy'],'.');
-	for ($i = 0; $i < $n; $i++) {
+	$n = substr_count($page['hierarchy'],'.');
+	for($i = 0; $i < $n; $i++) {
 		$prefix .= '&raquo; ';
 		$auto_priority  = $auto_priority / 2;
 	}
@@ -692,15 +876,15 @@ while ($page = $result->fetchRow()) {
 	$onerow->rowclass = 'row'.($j % 2 + 1);
 	$onerow->name = $prefix.' '.$page['content_name'];
 
-	if (strpos ($page['type'],'content') === 0) { //any content type
-		$query = "SELECT content FROM ".$pre."content_props WHERE content_id = ? AND prop_name = ?";
+	if (strpos($page['type'],'content') === 0) { //any content type
+		$query = 'SELECT content FROM '.$pre.'content_props WHERE content_id = ? AND prop_name = ?';
 		$parms = array($page['content_id']);
 		$parms[] = str_replace(' ','_',$this->GetPreference('description_block',''));
 		$description = $db->GetOne($query,$parms);
 		$description_auto = FALSE;
 		$funcs = new SEO_keyword();
 		$kw = array_flip($funcs->getKeywordSuggestions($page['content_id'],$this));
-		if (($description == FALSE) && ($this->GetPreference('description_auto_generate',FALSE))) {
+		if (($description == FALSE) &&($this->GetPreference('description_auto_generate',FALSE))) {
 			$last_keyword = array_pop($kw);
 			$keywords = implode(', ',$kw) . " " . $this->Lang('and') . " " . $last_keyword;
 			$description = $this->Lang('auto_generated').": ".str_replace('{keywords}',$keywords,$this->GetPreference('description_auto',''));
@@ -720,7 +904,7 @@ while ($page = $result->fetchRow()) {
 		$keywords = '('.$this->Lang('auto').') '.count($kw).' '.$this->CreateTooltipLink(null, 'defaultadmin', '', $iconedit, implode(', ',$kw).'; '.$this->Lang('edit_value'), array('what'=>'edit_keywords','content_id'=>$page['content_id']));
 		$iname = 'true';
 
-		$query = "SELECT * FROM ".$pre."module_seotools WHERE content_id = ?";
+		$query = 'SELECT * FROM '.$pre.'module_seotools WHERE content_id = ?';
 		$info = $db->GetRow($query,array($page['content_id']));
 		if ($info && $info['content_id'] != '') {
 			if ($info['priority'] != 0) {
@@ -741,7 +925,7 @@ while ($page = $result->fetchRow()) {
 			  $iname = 'false';
 			}
 		}
-		unset ($info);
+		unset($info);
 
 		$onerow->priority = $updown.' '.$priority;
 		$onerow->ogtype = $ogtype;
@@ -749,7 +933,8 @@ while ($page = $result->fetchRow()) {
 		if ($description != '') {
 			$inm2 = ($description_auto) ? 'warning' : 'true';
 			$onerow->desc ='<img src="'.$theme_url.'/system/'.$inm2.'.gif" title="'.strip_tags($description).'" style="vertical-align:middle;" />';
-		} else {
+		}
+		else {
 			$onerow->desc = '<a href="editcontent.php?'.$this->pathstr.'='.$_GET[$this->pathstr].
 			'&content_id='.$page['content_id'].'"><img src="'.$theme_url.'/system/false.gif" title="'.
 			$this->Lang('click_to_add_description').'" style="vertical-align:middle;" /></a>';
@@ -759,7 +944,8 @@ while ($page = $result->fetchRow()) {
 			$this->Lang('toggle'), array('what'=>'toggle_index','content_id'=>$page['content_id']));
 		$onerow->checkval = $page['content_id'];
 		$onerow->sel = ''; //TODO
-	} else {
+	}
+	else {
 		$onerow->priority = '---';
 		$onerow->ogtype = '';
 		$onerow->keywords = '';
@@ -781,7 +967,7 @@ $smarty->assign('unindex',$this->CreateInputSubmit(null, 'unindex_selected',
 
 // Get image files from /uploads/images
 $files_list = array('('.$this->Lang('none').')'=>'');
-$dp = opendir (cms_join_path ($config['root_path'],'uploads','images'));
+$dp = opendir(cms_join_path($config['root_path'],'uploads','images'));
 while ($file = readdir($dp)) {
 	if (strpos(substr($file, -5),'.gif') !== FALSE) {
 		$files_list[$file] = $file;
@@ -889,7 +1075,8 @@ $smarty->assign('in_create_map',$this->CreateInputCheckbox(null, 'create_sitemap
 $smarty->assign('pr_push_map',$this->Lang('push_sitemap_title'));
 if (ini_get('allow_url_fopen')) {
 	$smarty->assign('in_push_map',$this->CreateInputCheckbox(null, 'push_sitemap', 1, $this->GetPreference('push_sitemap',0)));
-} else {
+}
+else {
 	$smarty->assign('input_push_map',$this->Lang('no_url_fopen'));
 }
 $smarty->assign('pr_verify_code',$this->Lang('verification_title'));
