@@ -20,8 +20,8 @@ $work = $_POST['indxsel'];
 foreach ($work as $value)
 {
 	$parms = array();
-    $query = "SELECT indexable FROM ".$pre."module_seotools WHERE content_id=?";
-    if ($db->GetOne($query,array($value)) === FALSE)
+	$query = "SELECT indexable FROM ".$pre."module_seotools WHERE content_id=?";
+	if ($db->GetOne($query,array($value)) === FALSE)
 	{
 		if ($indx)
 		{

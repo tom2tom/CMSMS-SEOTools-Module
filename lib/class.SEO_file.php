@@ -105,7 +105,7 @@ class SEO_file
 					unset ($info);
 				}
 			}
-	    }
+		}
 		fwrite($fp, "\n</urlset>");
 		fclose($fp);
 		if ($mod->GetPreference('push_sitemap',0))

@@ -254,12 +254,12 @@ WHERE (indexable=1 AND keywords IS NULL AND priority IS NULL AND ogtype IS NULL 
 			  $parms[] = '';
 			  $result = $db->Execute($query, $parms);
 			  if ($result) {
-			    $code = 'nometa';
+				$code = 'nometa';
 				$keep = !$omit_ignored;
 				while ($problem = $result->fetchRow()) {
 				  $ig = $problem['ignored'];
 				  if (($ig == null && $keep)
-				    ||($ig != null && strpos($ig,$code) !== FALSE)) {
+					||($ig != null && strpos($ig,$code) !== FALSE)) {
 					$alert = array();
 					$alert['group'] = 'pages';
 					$alert['active'] = $problem['active'];
@@ -274,81 +274,80 @@ WHERE (indexable=1 AND keywords IS NULL AND priority IS NULL AND ogtype IS NULL 
 			}else{
 			  $alert = array();
 			  $alert['group'] = 'settings';
-	          $alert['message'] = $this->Lang('set_up_description_block');
-	          $alert['links'][] = $this->getSeeLink (4,$this->Lang('visit_settings'));
-	          $alerts[] = $alert;
+			  $alert['message'] = $this->Lang('set_up_description_block');
+			  $alert['links'][] = $this->getSeeLink (4,$this->Lang('visit_settings'));
+			  $alerts[] = $alert;
 			}
 		}elseif(strpos($this->GetPreference('description_auto',''),'{keywords}') === FALSE) {
 			$alert = array();
 			$alert['group'] = 'settings';
-	        $alert['message'] = $this->Lang('set_up_auto_description');
-            $alert['links'][] = $this->getSeeLink (4,$this->Lang('visit_settings'));
-	        $alerts[] = $alert;
+			$alert['message'] = $this->Lang('set_up_auto_description');
+			$alert['links'][] = $this->getSeeLink (4,$this->Lang('visit_settings'));
+			$alerts[] = $alert;
 		}
 
 		$config = $gCms->GetConfig();
-        // sitemap.xml not writeable
-        if ($this->GetPreference('create_sitemap',0)) {
+		// sitemap.xml not writeable
+		if ($this->GetPreference('create_sitemap',0)) {
 		  $path = cms_join_path($config['root_path'],'sitemap.xml');
 		  if (file_exists($path) && !is_writeable($path)) {
 		  	$alert = array();
 		  	$alert['group'] = 'system';
-            $alert['message'] = $this->Lang('sitemap_not_writeable');
-            $alert['links'][] = $this->Lang('chmod_sitemap');
-            $alerts[] = $alert;
+			$alert['message'] = $this->Lang('sitemap_not_writeable');
+			$alert['links'][] = $this->Lang('chmod_sitemap');
+			$alerts[] = $alert;
 		  }
 		}
 
-        // robots.txt not writeable
+		// robots.txt not writeable
 	   if ($this->GetPreference('create_robots',0)) {
 	   	  $path = cms_join_path($config['root_path'],'robots.txt');
-          if (file_exists($path) && !is_writeable($path)) {
-            $alert = array();
-            $alert['group'] = 'system';
-            $alert['message'] = $this->Lang('robots_not_writeable');
-            $alert['links'][] = $this->Lang('chmod_robots');
-            $alerts[] = $alert;
-          }
-        }
+		  if (file_exists($path) && !is_writeable($path)) {
+			$alert = array();
+			$alert['group'] = 'system';
+			$alert['message'] = $this->Lang('robots_not_writeable');
+			$alert['links'][] = $this->Lang('chmod_robots');
+			$alerts[] = $alert;
+		  }
+		}
 
-       if ($this->GetPreference('meta_opengraph',FALSE)) {
-        // No OpenGraph admin set
-        if (($this->GetPreference('meta_opengraph_admins','') == '') && ($this->GetPreference('meta_opengraph_application','') == '')) {
-        	$alert = array();
-        	$alert['group'] = 'opengraph';
-            $alert['message'] = $this->Lang('no_opengraph_admins');
-            $alert['links'][] = $this->getSeeLink (4,$this->Lang('visit_settings'));
-            $alerts[] = $alert;
-        }
-        // No OpenGraph page type set
-        if ($this->GetPreference('meta_opengraph_type','') == '') {
-            $alert = array();
-            $alert['group'] = 'opengraph';
-            $alert['message'] = $this->Lang('no_opengraph_type');
-            $alert['links'][] = $this->getSeeLink (4,$this->Lang('visit_settings'));
-            $alerts[] = $alert;
-        }
-        // No OpenGraph sitename set
-        if ($this->GetPreference('meta_opengraph_sitename','') == '') {
-            $alert = array();
-            $alert['group'] = 'opengraph';
-            $alert['message'] = $this->Lang('no_opengraph_sitename');
-            $alert['links'][] = $this->getSeeLink (4,$this->Lang('visit_settings'));
-            $alerts[] = $alert;
-        }
-        // No OpenGraph image set
-        if ($this->GetPreference('meta_opengraph_image','') == '') {
-            $alert = array();
-            $alert['group'] = 'opengraph';
-            $alert['message'] = $this->Lang('no_opengraph_image');
-            $alert['links'][] = $this->getSeeLink (4,$this->Lang('visit_settings'));
-            $alerts[] = $alert;
-        }
-       }
+	   if ($this->GetPreference('meta_opengraph',FALSE)) {
+		// No OpenGraph admin set
+		if (($this->GetPreference('meta_opengraph_admins','') == '') && ($this->GetPreference('meta_opengraph_application','') == '')) {
+			$alert = array();
+			$alert['group'] = 'opengraph';
+			$alert['message'] = $this->Lang('no_opengraph_admins');
+			$alert['links'][] = $this->getSeeLink (4,$this->Lang('visit_settings'));
+			$alerts[] = $alert;
+		}
+		// No OpenGraph page type set
+		if ($this->GetPreference('meta_opengraph_type','') == '') {
+			$alert = array();
+			$alert['group'] = 'opengraph';
+			$alert['message'] = $this->Lang('no_opengraph_type');
+			$alert['links'][] = $this->getSeeLink (4,$this->Lang('visit_settings'));
+			$alerts[] = $alert;
+		}
+		// No OpenGraph sitename set
+		if ($this->GetPreference('meta_opengraph_sitename','') == '') {
+			$alert = array();
+			$alert['group'] = 'opengraph';
+			$alert['message'] = $this->Lang('no_opengraph_sitename');
+			$alert['links'][] = $this->getSeeLink (4,$this->Lang('visit_settings'));
+			$alerts[] = $alert;
+		}
+		// No OpenGraph image set
+		if ($this->GetPreference('meta_opengraph_image','') == '') {
+			$alert = array();
+			$alert['group'] = 'opengraph';
+			$alert['message'] = $this->Lang('no_opengraph_image');
+			$alert['links'][] = $this->getSeeLink (4,$this->Lang('visit_settings'));
+			$alerts[] = $alert;
+		}
+	   }
 
 		return $alerts;
 	}
-
 }
 
 ?>

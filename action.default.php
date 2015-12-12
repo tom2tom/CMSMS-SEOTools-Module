@@ -99,20 +99,20 @@ if ($this->GetPreference('meta_standard',FALSE))
 {
 	echo '<meta name="title" content="'.$meta_title.'" />'."\n";
 	echo '<meta name="description" content="'.$description.'" />'."\n";
-    echo '<meta name="date" content="'.date('Y-m-d\TH:i:sP',$content->GetCreationDate()).'" />'."\n";
-    echo '<meta name="lastupdate" content="'.$page_mdate.'" />'."\n";
-    echo '<meta name="revised" content="'.$page_mdate.'" />'."\n";
-    echo '<meta name="author" content="'.$this->GetPreference('meta_publisher','').'" />'."\n";
-    if ($this->GetPreference('meta_location','') != "") {
-      echo '<meta name="geo.placename" content="'.$this->GetPreference('meta_location','').'" />'."\n";
-    }
-    if ($this->GetPreference('meta_region','') != "") {
-      echo '<meta name="geo.region" content="'.$this->GetPreference('meta_region','').'" />'."\n";
-    }
-    if (($this->GetPreference('meta_latitude','') != "") && ($this->GetPreference('meta_longitude','') != "")) {
-      echo '<meta name="geo.position" content="'.$this->GetPreference('meta_latitude','').';'.$this->GetPreference('meta_longitude','').'" />'."\n";
-      echo '<meta name="ICBM" content="'.$this->GetPreference('meta_latitude','').', '.$this->GetPreference('meta_longitude','').'" />'."\n";
-    }
+	echo '<meta name="date" content="'.date('Y-m-d\TH:i:sP',$content->GetCreationDate()).'" />'."\n";
+	echo '<meta name="lastupdate" content="'.$page_mdate.'" />'."\n";
+	echo '<meta name="revised" content="'.$page_mdate.'" />'."\n";
+	echo '<meta name="author" content="'.$this->GetPreference('meta_publisher','').'" />'."\n";
+	if ($this->GetPreference('meta_location','') != "") {
+	  echo '<meta name="geo.placename" content="'.$this->GetPreference('meta_location','').'" />'."\n";
+	}
+	if ($this->GetPreference('meta_region','') != "") {
+	  echo '<meta name="geo.region" content="'.$this->GetPreference('meta_region','').'" />'."\n";
+	}
+	if (($this->GetPreference('meta_latitude','') != "") && ($this->GetPreference('meta_longitude','') != "")) {
+	  echo '<meta name="geo.position" content="'.$this->GetPreference('meta_latitude','').';'.$this->GetPreference('meta_longitude','').'" />'."\n";
+	  echo '<meta name="ICBM" content="'.$this->GetPreference('meta_latitude','').', '.$this->GetPreference('meta_longitude','').'" />'."\n";
+	}
 }
 
 if ($this->GetPreference('additional_meta_tags','') != '')
@@ -121,20 +121,20 @@ if ($this->GetPreference('additional_meta_tags','') != '')
 // DublinCore META tags
 if ($this->GetPreference('meta_dublincore',FALSE))
 {
-    echo '<link rel="schema.DC" href="http://purl.org/dc/elements/1.1/" />'."\n";
-    echo '<link rel="schema.DCTERMS" href="http://purl.org/dc/terms/" />'."\n";
-    echo '<meta name="DC.type" content="Text" scheme="DCTERMS.DCMIType" />'."\n";
-    echo '<meta name="DC.format" content="text/html" scheme="DCTERMS.IMT" />'."\n";
-    echo '<meta name="DC.relation" content="http://dublincore.org/" scheme="DCTERMS.URI" />'."\n";
-    echo '<meta name="DC.publisher" content="'.$this->GetPreference('meta_publisher','').'" />'."\n";
-    echo '<meta name="DC.contributor" content="'.$this->GetPreference('meta_contributor','').'" />'."\n";
+	echo '<link rel="schema.DC" href="http://purl.org/dc/elements/1.1/" />'."\n";
+	echo '<link rel="schema.DCTERMS" href="http://purl.org/dc/terms/" />'."\n";
+	echo '<meta name="DC.type" content="Text" scheme="DCTERMS.DCMIType" />'."\n";
+	echo '<meta name="DC.format" content="text/html" scheme="DCTERMS.IMT" />'."\n";
+	echo '<meta name="DC.relation" content="http://dublincore.org/" scheme="DCTERMS.URI" />'."\n";
+	echo '<meta name="DC.publisher" content="'.$this->GetPreference('meta_publisher','').'" />'."\n";
+	echo '<meta name="DC.contributor" content="'.$this->GetPreference('meta_contributor','').'" />'."\n";
 	$lang = str_replace('_','-',get_site_preference('frontendlang','en'));
-    echo '<meta name="DC.language" content="'.$lang.'" scheme="DCTERMS.RFC3066" />'."\n";
-    echo '<meta name="DC.rights" content="'.$this->GetPreference('meta_copyright','').'" />'."\n";
-    echo '<meta name="DC.title" content="'.$meta_title.'" />'."\n";
-    echo '<meta name="DC.description" content="'.$description.'" />'."\n";
-    echo '<meta name="DC.date" content="'.$page_mdate.'" scheme="DCTERMS.W3CDTF" />'."\n";
-    echo '<meta name="DC.identifier" content="'.$page_url.'" scheme="DCTERMS.URI" />'."\n";
+	echo '<meta name="DC.language" content="'.$lang.'" scheme="DCTERMS.RFC3066" />'."\n";
+	echo '<meta name="DC.rights" content="'.$this->GetPreference('meta_copyright','').'" />'."\n";
+	echo '<meta name="DC.title" content="'.$meta_title.'" />'."\n";
+	echo '<meta name="DC.description" content="'.$description.'" />'."\n";
+	echo '<meta name="DC.date" content="'.$page_mdate.'" scheme="DCTERMS.W3CDTF" />'."\n";
+	echo '<meta name="DC.identifier" content="'.$page_url.'" scheme="DCTERMS.URI" />'."\n";
 }
 
 // OpenGraph META tags
@@ -143,41 +143,41 @@ if ($this->GetPreference('meta_opengraph',FALSE))
 	$opengraph_title = $this->GetPreference('meta_opengraph_title','{title}');
 	$opengraph_title = str_replace('{title}',$page_name,$opengraph_title);
 	$opengraph_title = $this->ProcessTemplateFromData($opengraph_title);
-    echo '<meta property="og:title" content="'.$opengraph_title.'" />'."\n";
+	echo '<meta property="og:title" content="'.$opengraph_title.'" />'."\n";
 
-    if ($page_info['ogtype'] == "") {
-      echo '<meta property="og:type" content="'.$this->GetPreference('meta_opengraph_type','').'" />'."\n";
-    }else{
-      echo '<meta property="og:type" content="'.$page_info['ogtype'].'" />'."\n";
-    }
-    echo '<meta property="og:url" content="'.$page_url.'" />'."\n";
+	if ($page_info['ogtype'] == "") {
+	  echo '<meta property="og:type" content="'.$this->GetPreference('meta_opengraph_type','').'" />'."\n";
+	}else{
+	  echo '<meta property="og:type" content="'.$page_info['ogtype'].'" />'."\n";
+	}
+	echo '<meta property="og:url" content="'.$page_url.'" />'."\n";
 
-    if ($page_image) {
-    	$image = $page_image;
+	if ($page_image) {
+		$image = $page_image;
 		} else {
-    	$image = $this->GetPreference('meta_opengraph_image','');
-    }
+		$image = $this->GetPreference('meta_opengraph_image','');
+	}
 		if ($image) {
-    	echo '<meta property="og:image" content="'.$config['root_url'].'/uploads/images/'.$image.'" />'."\n";
-    }
+		echo '<meta property="og:image" content="'.$config['root_url'].'/uploads/images/'.$image.'" />'."\n";
+	}
 	$defname = get_site_preference('sitename','CMSMS Site');
    	echo '<meta property="og:site_name" content="'.$this->GetPreference('meta_opengraph_sitename',$defname).'" />'."\n";
-    echo '<meta property="og:description" content="'.$description.'" />'."\n";
-    if ($this->GetPreference('meta_opengraph_application','') != "") {
-      echo '<meta property="fb:app_id" content="'.$this->GetPreference('meta_opengraph_application','').'" />'."\n";
-    }else{
-      echo '<meta property="fb:admins" content="'.$this->GetPreference('meta_opengraph_admins','').'" />'."\n";
-    }
-    if ($this->GetPreference('meta_location','') != '') {
-      echo '<meta property="og:locality" content="'.$this->GetPreference('meta_location','').'" />'."\n";
-    }
-    if ($this->GetPreference('meta_region','') != '') {
-      echo '<meta property="og:region" content="'.$this->GetPreference('meta_region','').'" />'."\n";
-    }
-    if (($this->GetPreference('meta_latitude','') != '') && ($this->GetPreference('meta_longitude','') != '')) {
-      echo '<meta property="og:latitude" content="'.$this->GetPreference('meta_latitude','').'" />'."\n";
-      echo '<meta property="og:longitude" content="'.$this->GetPreference('meta_longitude','').'" />'."\n";
-    }
+	echo '<meta property="og:description" content="'.$description.'" />'."\n";
+	if ($this->GetPreference('meta_opengraph_application','') != "") {
+	  echo '<meta property="fb:app_id" content="'.$this->GetPreference('meta_opengraph_application','').'" />'."\n";
+	}else{
+	  echo '<meta property="fb:admins" content="'.$this->GetPreference('meta_opengraph_admins','').'" />'."\n";
+	}
+	if ($this->GetPreference('meta_location','') != '') {
+	  echo '<meta property="og:locality" content="'.$this->GetPreference('meta_location','').'" />'."\n";
+	}
+	if ($this->GetPreference('meta_region','') != '') {
+	  echo '<meta property="og:region" content="'.$this->GetPreference('meta_region','').'" />'."\n";
+	}
+	if (($this->GetPreference('meta_latitude','') != '') && ($this->GetPreference('meta_longitude','') != '')) {
+	  echo '<meta property="og:latitude" content="'.$this->GetPreference('meta_latitude','').'" />'."\n";
+	  echo '<meta property="og:longitude" content="'.$this->GetPreference('meta_longitude','').'" />'."\n";
+	}
 }
 
 // Image-Link

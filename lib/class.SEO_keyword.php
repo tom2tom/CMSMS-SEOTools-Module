@@ -7,61 +7,61 @@
 class SEO_keyword
 {
 	private function _get_keywords($source, $minlength = 6) {
-	    $source = preg_replace('/\{[^\}]+\}/isU', '', utf8_decode($source));
-	    $source = str_replace("\n"," ",strip_tags($source));
-	    $source = str_replace('-',' ',$source);
-	    $source = str_replace('.',' ',$source);
-	    $source = str_replace(',',' ',$source);
-	    $source = str_replace('!',' ',$source);
-	    $source = str_replace('?',' ',$source);
-	    $source = str_replace(':',' ',$source);
-	    $source = str_replace('  ',' ',$source);
-	    $keywords = explode(' ',$source);
-	    foreach ($keywords as $key=>$value) {
-	        if (strlen($value) < $minlength) {
-	            unset($keywords[$key]);
-	        }else{
-	        	$keywords[$key] = htmlentities(trim($value));
-	        }
-	    }
-	    return $keywords;
+		$source = preg_replace('/\{[^\}]+\}/isU', '', utf8_decode($source));
+		$source = str_replace("\n"," ",strip_tags($source));
+		$source = str_replace('-',' ',$source);
+		$source = str_replace('.',' ',$source);
+		$source = str_replace(',',' ',$source);
+		$source = str_replace('!',' ',$source);
+		$source = str_replace('?',' ',$source);
+		$source = str_replace(':',' ',$source);
+		$source = str_replace('	',' ',$source);
+		$keywords = explode(' ',$source);
+		foreach ($keywords as $key=>$value) {
+			if (strlen($value) < $minlength) {
+				unset($keywords[$key]);
+			} else {
+				$keywords[$key] = htmlentities(trim($value));
+			}
+		}
+		return $keywords;
 	}
 
 	private function _get_headlines($file) {
-      $h1tags = preg_match_all("/(<h1.*>)(\w.*)(<\/h1>)/isxmU",$file,$patterns);
-      $content = "";
-      foreach($patterns[2] as $tag) {
-      	$content .= " ".$tag;
-      }
-      $h2tags = preg_match_all("/(<h2.*>)(\w.*)(<\/h2>)/isxmU",$file,$patterns);
-      foreach($patterns[2] as $tag) {
-      	$content .= " ".$tag;
-      }
-      $h3tags = preg_match_all("/(<h3.*>)(\w.*)(<\/h3>)/isxmU",$file,$patterns);
-      foreach($patterns[2] as $tag) {
-      	$content .= " ".$tag;
-      }
-      $h4tags = preg_match_all("/(<h4.*>)(\w.*)(<\/h4>)/isxmU",$file,$patterns);
-      foreach($patterns[2] as $tag) {
-      	$content .= " ".$tag;
-      }
-      $h5tags = preg_match_all("/(<h5.*>)(\w.*)(<\/h5>)/isxmU",$file,$patterns);
-      foreach($patterns[2] as $tag) {
-      	$content .= " ".$tag;
-      }
-      $h6tags = preg_match_all("/(<h6.*>)(\w.*)(<\/h6>)/isxmU",$file,$patterns);
-      foreach($patterns[2] as $tag) {
-      	$content .= " ".$tag;
-      }
-      return $content;
-    }
+		$h1tags = preg_match_all("/(<h1.*>)(\w.*)(<\/h1>)/isxmU",$file,$patterns);
+		$content = "";
+		foreach($patterns[2] as $tag) {
+			$content .= " ".$tag;
+		}
+		$h2tags = preg_match_all("/(<h2.*>)(\w.*)(<\/h2>)/isxmU",$file,$patterns);
+		foreach($patterns[2] as $tag) {
+			$content .= " ".$tag;
+		}
+		$h3tags = preg_match_all("/(<h3.*>)(\w.*)(<\/h3>)/isxmU",$file,$patterns);
+		foreach($patterns[2] as $tag) {
+			$content .= " ".$tag;
+		}
+		$h4tags = preg_match_all("/(<h4.*>)(\w.*)(<\/h4>)/isxmU",$file,$patterns);
+		foreach($patterns[2] as $tag) {
+			$content .= " ".$tag;
+		}
+		$h5tags = preg_match_all("/(<h5.*>)(\w.*)(<\/h5>)/isxmU",$file,$patterns);
+		foreach($patterns[2] as $tag) {
+			$content .= " ".$tag;
+		}
+		$h6tags = preg_match_all("/(<h6.*>)(\w.*)(<\/h6>)/isxmU",$file,$patterns);
+		foreach($patterns[2] as $tag) {
+			$content .= " ".$tag;
+		}
+		return $content;
+	}
 
 	public function getKeywordSuggestions($content_id, $mod) {
 		$gCms = cmsms();
 		$contentops = $gCms->GetContentOperations();
-    if (!$content = $contentops->LoadContentFromId ($content_id)) {
-      return;
-    }
+		if (!$content = $contentops->LoadContentFromId ($content_id)) {
+			return;
+		}
 		$page_name = $content->Name();
 		$description_id = str_replace(' ','_',$mod->GetPreference('description_block',''));
 		$db = $gCms->GetDb();
@@ -111,15 +111,14 @@ class SEO_keyword
 		$exclude_list = explode(' ',strtoupper(utf8_decode($mod->GetPreference('keyword_exclude',''))));
 
 		foreach ($other_keywords as $key=>$value) {
-		    if ($value < $mod->GetPreference('keyword_minimum_weight',7)) {
-		        unset($other_keywords[$key]);
-		    }elseif (in_array(strtoupper($key),$exclude_list)) {
-		    	unset($other_keywords[$key]);
-		    }
+			if ($value < $mod->GetPreference('keyword_minimum_weight',7)) {
+				unset($other_keywords[$key]);
+			} elseif (in_array(strtoupper($key),$exclude_list)) {
+				unset($other_keywords[$key]);
+			}
 		}
 		return $other_keywords;
 	}
-
 }
 
 ?>

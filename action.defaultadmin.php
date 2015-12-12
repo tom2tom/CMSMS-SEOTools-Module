@@ -203,7 +203,7 @@ function getFixLink(&$mod, $sp, $id, $pagename = '')
 }
 
 if (! $this->CheckAccess()) {
-    return $this->DisplayErrorPage($this->Lang('accessdenied'));
+	return $this->DisplayErrorPage($this->Lang('accessdenied'));
 }
 
 if (isset($_GET['what'])) {
@@ -231,17 +231,17 @@ case 'toggle_index':
 		}
 	}
 	$parms[] = $_GET['content_id'];
-    $db->Execute($query,$parms);
+	$db->Execute($query,$parms);
 /* only manual updates
 	$funcs = new SEO_file();
 	if ($this->GetPreference('create_robots',0)) {
-        $funcs->createRobotsTXT($this);
-    }
-    if ($this->GetPreference('create_sitemap',0)) {
-        $funcs->createSitemap($this);
-    }
+		$funcs->createRobotsTXT($this);
+	}
+	if ($this->GetPreference('create_sitemap',0)) {
+		$funcs->createSitemap($this);
+	}
 */
-    $_GET['tab'] = 'pagedescriptions';
+	$_GET['tab'] = 'pagedescriptions';
 	break;
 case 'toggle_ignore':
 	$pages = explode ('@',$_GET['content_data']);
@@ -277,7 +277,7 @@ case 'toggle_ignore':
 			$parms[] = $ignored;
 		}
 		$parms[] = $id;
-    	$db->Execute($query,$parms);
+		$db->Execute($query,$parms);
 		unset ($parms);
 	}
 	break;
@@ -292,33 +292,33 @@ case 'set_priority':
 	$db->execute($query,$parms);
 	$db->execute($query2,$parms2);
 /* only manual updates
-    if ($this->GetPreference('create_sitemap',0)) {
+	if ($this->GetPreference('create_sitemap',0)) {
 		$funcs = new SEO_file();
-        $funcs->createSitemap($this);
-    }
+		$funcs->createSitemap($this);
+	}
 */
 	$_GET['tab'] = 'pagedescriptions';
 	break;
 case 'reset_priority':
-    $query = "UPDATE ".$pre."module_seotools SET priority=NULL WHERE content_id=?";
-    $db->Execute($query,array($_GET['content_id']));
+	$query = "UPDATE ".$pre."module_seotools SET priority=NULL WHERE content_id=?";
+	$db->Execute($query,array($_GET['content_id']));
 /* only manual updates
-    if ($this->GetPreference('create_sitemap',0)) {
+	if ($this->GetPreference('create_sitemap',0)) {
 		$funcs = new SEO_file();
-        $funcs->createSitemap($this);
-    }
+		$funcs->createSitemap($this);
+	}
 */
-    $_GET['tab'] = 'pagedescriptions';
+	$_GET['tab'] = 'pagedescriptions';
 	break;
 case 'reset_ogtype':
-    $query = "UPDATE ".$pre."module_seotools SET ogtype=NULL WHERE content_id=?";
-    $db->Execute($query,array($_GET['content_id']));
-    $_GET['tab'] = 'pagedescriptions';
+	$query = "UPDATE ".$pre."module_seotools SET ogtype=NULL WHERE content_id=?";
+	$db->Execute($query,array($_GET['content_id']));
+	$_GET['tab'] = 'pagedescriptions';
 	break;
 case 'reset_keywords':
-    $query = "UPDATE ".$pre."module_seotools SET keywords=NULL WHERE content_id=?";
-    $db->Execute($query,array($_GET['content_id']));
-    $_GET['tab'] = 'pagedescriptions';
+	$query = "UPDATE ".$pre."module_seotools SET keywords=NULL WHERE content_id=?";
+	$db->Execute($query,array($_GET['content_id']));
+	$_GET['tab'] = 'pagedescriptions';
 	break;
 case 'edit_ogtype':
 	$this->Redirect($id, 'edit_ogtype', $returnid, array('content_id'=>$_GET['content_id']));
@@ -408,7 +408,7 @@ if ($urgent_alerts) {
 	if ((!array_key_exists ('active', $alert) || $alert['active'] == TRUE)
 	 && (empty($alert['ignored'])))
 		$count++;
-    $groups[$alert['group']][] = $alert;
+	$groups[$alert['group']][] = $alert;
   }
   $icon = '<img src="'.$theme_url.'/Notifications/1.gif" />';
   if ($count) {
@@ -495,7 +495,7 @@ if ($urgent_alerts) {
 
 		$urgent[] = $onerow;
 		$j++;
-    }
+	}
   }
 }else{
   $smarty->assign('urgent_icon',$icontrue);
@@ -677,22 +677,22 @@ $result = $db->Execute($query);
 $j = 0;
 while ($page = $result->fetchRow()) {
 
-    $prefix = '';
-    $auto_priority = 80;
-    $n = substr_count ($page['hierarchy'],'.');
-    for ($i = 0; $i < $n; $i++) {
-        $prefix .= '&raquo; ';
-        $auto_priority  = $auto_priority / 2;
-    }
-    if ($page['default_content'] == 1) {
-        $auto_priority = 100;
-    }
+	$prefix = '';
+	$auto_priority = 80;
+	$n = substr_count ($page['hierarchy'],'.');
+	for ($i = 0; $i < $n; $i++) {
+		$prefix .= '&raquo; ';
+		$auto_priority  = $auto_priority / 2;
+	}
+	if ($page['default_content'] == 1) {
+		$auto_priority = 100;
+	}
 
-    $onerow = new stdClass;
-    $onerow->rowclass = 'row'.($j % 2 + 1);
-    $onerow->name = $prefix.' '.$page['content_name'];
+	$onerow = new stdClass;
+	$onerow->rowclass = 'row'.($j % 2 + 1);
+	$onerow->name = $prefix.' '.$page['content_name'];
 
-    if (strpos ($page['type'],'content') === 0) { //any content type
+	if (strpos ($page['type'],'content') === 0) { //any content type
 		$query = "SELECT content FROM ".$pre."content_props WHERE content_id = ? AND prop_name = ?";
 		$parms = array($page['content_id']);
 		$parms[] = str_replace(' ','_',$this->GetPreference('description_block',''));
@@ -710,7 +710,7 @@ while ($page = $result->fetchRow()) {
 
 		$updown = '';
 		if ($auto_priority > 10) {
-	    	$updown .= $this->CreateTooltipLink(null, 'defaultadmin', '', $icondown, $this->Lang('decrease_priority'), array('what'=>'set_priority','priority'=>$auto_priority-10,'content_id'=>$page['content_id']));
+			$updown .= $this->CreateTooltipLink(null, 'defaultadmin', '', $icondown, $this->Lang('decrease_priority'), array('what'=>'set_priority','priority'=>$auto_priority-10,'content_id'=>$page['content_id']));
 		}
 		if ($auto_priority <= 90) {
 			$updown .= $this->CreateTooltipLink(null, 'defaultadmin', '', $iconup, $this->Lang('increase_priority'), array('what'=>'set_priority','priority'=>$auto_priority+10,'content_id'=>$page['content_id']));
@@ -768,8 +768,8 @@ while ($page = $result->fetchRow()) {
 		$onerow->checkval = '';
 		$onerow->sel = '';
 	}
-    $items[] = $onerow;
-    $j++;
+	$items[] = $onerow;
+	$j++;
 }
 $smarty->assign('items',$items);
 $smarty->assign('index',$this->CreateInputSubmit(null, 'index_selected',
@@ -783,18 +783,18 @@ $smarty->assign('unindex',$this->CreateInputSubmit(null, 'unindex_selected',
 $files_list = array('('.$this->Lang('none').')'=>'');
 $dp = opendir (cms_join_path ($config['root_path'],'uploads','images'));
 while ($file = readdir($dp)) {
-    if (strpos(substr($file, -5),'.gif') !== FALSE) {
-        $files_list[$file] = $file;
-    }
-    if (strpos(substr($file, -5),'.png') !== FALSE) {
-        $files_list[$file] = $file;
-    }
-    if (strpos(substr($file, -5),'.jpg') !== FALSE) {
-        $files_list[$file] = $file;
-    }
-    if (strpos(substr($file, -5),'.jpeg') !== FALSE) {
-        $files_list[$file] = $file;
-    }
+	if (strpos(substr($file, -5),'.gif') !== FALSE) {
+		$files_list[$file] = $file;
+	}
+	if (strpos(substr($file, -5),'.png') !== FALSE) {
+		$files_list[$file] = $file;
+	}
+	if (strpos(substr($file, -5),'.jpg') !== FALSE) {
+		$files_list[$file] = $file;
+	}
+	if (strpos(substr($file, -5),'.jpeg') !== FALSE) {
+		$files_list[$file] = $file;
+	}
 }
 closedir($dp);
 
