@@ -8,13 +8,13 @@
 
 // Get page data
 
-$content = $smarty->get_template_vars('content_obj');
+$content = cms_utils::get_current_content(); //CMSMS 1.9+ older = $gCms->variables['content_obj']
 $page_id = (int)$content->Id();
 $page_name = $content->Name();
 $page_url = $content->GetURL();
 $page_mdate = date('Y-m-d\TH:i:sP',$content->GetModifiedDate());
 $page_image = $content->GetPropertyValue('image');
-if($page_image == -1) $page_image = '';
+if ($page_image == -1) $page_image = '';
 
 // Keyword generator
 
@@ -146,18 +146,20 @@ if ($this->GetPreference('meta_opengraph',FALSE))
 	echo '<meta property="og:title" content="'.$opengraph_title.'" />'."\n";
 
 	if ($page_info['ogtype'] == "") {
-	  echo '<meta property="og:type" content="'.$this->GetPreference('meta_opengraph_type','').'" />'."\n";
-	}else{
-	  echo '<meta property="og:type" content="'.$page_info['ogtype'].'" />'."\n";
+		echo '<meta property="og:type" content="'.$this->GetPreference('meta_opengraph_type','').'" />'."\n";
+	}
+	else {
+		echo '<meta property="og:type" content="'.$page_info['ogtype'].'" />'."\n";
 	}
 	echo '<meta property="og:url" content="'.$page_url.'" />'."\n";
 
 	if ($page_image) {
 		$image = $page_image;
-		} else {
+	}
+	else {
 		$image = $this->GetPreference('meta_opengraph_image','');
 	}
-		if ($image) {
+	if ($image) {
 		echo '<meta property="og:image" content="'.$config['root_url'].'/uploads/images/'.$image.'" />'."\n";
 	}
 	$defname = get_site_preference('sitename','CMSMS Site');
@@ -165,7 +167,8 @@ if ($this->GetPreference('meta_opengraph',FALSE))
 	echo '<meta property="og:description" content="'.$description.'" />'."\n";
 	if ($this->GetPreference('meta_opengraph_application','') != "") {
 	  echo '<meta property="fb:app_id" content="'.$this->GetPreference('meta_opengraph_application','').'" />'."\n";
-	}else{
+	}
+	else {
 	  echo '<meta property="fb:admins" content="'.$this->GetPreference('meta_opengraph_admins','').'" />'."\n";
 	}
 	if ($this->GetPreference('meta_location','') != '') {
