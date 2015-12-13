@@ -49,6 +49,9 @@ switch($oldversion)
 		$fp = cms_join_path(dirname(__FILE__),'admin-header.html');
 		if (is_file($fp))
 			unlink($fp);
+		$fp = cms_join_path(dirname(__FILE__),'include','module-admin.css');
+		if (is_file($fp))
+			unlink($fp);
 		//extra preference
 		$this->SetPreference('keyword_block','metakeywords');
 		//modify preference
