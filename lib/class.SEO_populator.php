@@ -210,8 +210,8 @@ class SEO_populator
 		if ($omit_inactive) {
 			$query .= 'C.active=1 AND';
 		}
-		//TODO CHAR_LENGTH function
-		$query .= 'C.type LIKE ? AND P.prop_name=? AND P.content<>? AND CHAR_LENGTH(P.content) < 75'; //NOTE not much portable. $db->length dun't work!
+		// MySQL and PostgreSQL support CHAR_LENGTH() $db->length dun't work!
+		$query .= 'C.type LIKE ? AND P.prop_name=? AND P.content<>? AND CHAR_LENGTH(P.content) < 75';
 		$parms = array('content%'); //can't be an injection risk here
 		$parms[] = str_replace(' ','_',$mod->GetPreference('description_block',''));
 		$parms[] = '';
