@@ -27,9 +27,10 @@
 {$end_tab}
 
 {$start_urgent_tab}
+{if !empty($urgents)}
 {$startform_problems}
 <div class="pageoverflow">
-<table class="pagetable" cellspacing="0" cellpadding="3">
+<table class="pagetable" style="border-spacing:0;">
  <tr>
   <th>{$title_pages}</th>
   <th>{$title_active}</th>
@@ -38,7 +39,6 @@
   <th>{$title_ignored}</th>
   <th class="checkbox seocb"><input id="allurgent" type="checkbox" onclick="select_all('urgent');" /></th>
  </tr>
-{if isset($urgents)}
 {foreach from=$urgents item=entry}
  <tr class="{$entry->rowclass}" onmouseover="this.className='{$entry->rowclass}hover';" onmouseout="this.className='{$entry->rowclass}';">
   <td>{$entry->pages}</td>
@@ -49,20 +49,19 @@
   <td><input type="checkbox" name="urgentsel[]"{if ($entry->sel)} checked="checked"{/if} value="{$entry->checkval}" /></td>
  </tr>
 {/foreach}
-{/if}
 </table>
 <br />
-{if isset($urgents)}
 <div style="float:right;">{$unignore1}&nbsp;{$ignore1}</div><div style="clear:right;"></div>
-{/if}
 </div>
 {$end_form}
+{/if}
 {$end_tab}
 
 {$start_important_tab}
+{if !empty($importants)}
 {$startform_problems}
 <div class="pageoverflow">
-<table class="pagetable" cellspacing="0" cellpadding="3">
+<table class="pagetable" style="border-spacing:0;">
  <tr>
   <th>{$title_pages}</th>
   <th>{$title_active}</th>
@@ -71,7 +70,6 @@
   <th>{$title_ignored}</th>
   <th class="checkbox seocb"><input id="allimportant" type="checkbox" onclick="select_all('important');" /></th>
  </tr>
-{if isset($importants)}
 {foreach from=$importants item=entry}
  <tr class="{$entry->rowclass}" onmouseover="this.className='{$entry->rowclass}hover';" onmouseout="this.className='{$entry->rowclass}';">
   <td>{$entry->pages}</td>
@@ -82,20 +80,18 @@
   <td><input type="checkbox" name="importantsel[]"{if ($entry->sel)} checked="checked"{/if} value="{$entry->checkval}" /></td>
  </tr>
 {/foreach}
-{/if}
 </table>
 <br />
-{if isset($importants)}
 <div style="float:right;">{$unignore2}&nbsp;{$ignore2}</div><div style="clear:right;"></div>
-{/if}
 </div>
 {$end_form}
+{/if}
 {$end_tab}
 
 {$start_description_tab}
 {$startform_pages}
 <div class="pageoverflow">
-<table class="pagetable">
+<table class="pagetable" style="border-spacing:0;">
  <tr>
   <th>{$title_name}</th>
   <th>{$title_priority}</th>
