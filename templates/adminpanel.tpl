@@ -36,7 +36,7 @@
   <th>{$title_problem}</th>
   <th>{$title_action}</th>
   <th>{$title_ignored}</th>
-  <th class="checkbox" style="width:20px;"><input id="allurgent" type="checkbox" onclick="select_all('urgent');" /></th>
+  <th class="checkbox seocb"><input id="allurgent" type="checkbox" onclick="select_all('urgent');" /></th>
  </tr>
 {if isset($urgents)}
 {foreach from=$urgents item=entry}
@@ -69,7 +69,7 @@
   <th>{$title_problem}</th>
   <th>{$title_action}</th>
   <th>{$title_ignored}</th>
-  <th class="checkbox" style="width:20px;"><input id="allimportant" type="checkbox" onclick="select_all('important');" /></th>
+  <th class="checkbox seocb"><input id="allimportant" type="checkbox" onclick="select_all('important');" /></th>
  </tr>
 {if isset($importants)}
 {foreach from=$importants item=entry}
@@ -103,7 +103,7 @@
   <th>{$title_keywords}</th>
   <th>{$title_desc}</th>
   <th>{$title_index}</th>
-  <th class="checkbox" style="width:20px;"><input id="allindx" type="checkbox" onclick="select_all('indx');" /></th>
+  <th class="checkbox seocb"><input id="allindx" type="checkbox" onclick="select_all('indx');" /></th>
  </tr>
 {if isset($items)}
  {foreach from=$items item=entry}
