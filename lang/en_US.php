@@ -79,8 +79,8 @@ $lang['verification_help'] = 'The code you obtain from Google Webmaster Tools, j
 
 $lang['title_alerts_urgent'] = 'To be fixed immediately';
 $lang['title_alerts_important'] = 'To be fixed as soon as possible';
-$lang['title_alerts_notices'] = 'Things you should consider fixing';
-$lang['nothing_to_be_fixed'] = 'There are no actions you need to take in this category';
+$lang['title_alerts_notices'] = 'Changes to be considered';
+$lang['nothing_to_be_fixed'] = 'Nothing';
 $lang['title_resources'] = 'Useful external SEO resources';
 
 $lang['save'] = 'Save';
@@ -154,14 +154,14 @@ $lang['help_new_ogtype'] = 'Leave blank to revert to the default setting';
 $lang['enter_new_keywords'] = 'Keywords for page \'%s\'';
 $lang['help_new_keywords'] = 'Series of word(s) and/or group(s) of words. Use the defined separator. Leave blank to revert to auto generated keywords';
 
-$lang['summary_urgent'] = 'We have detected %d urgent problem(s)';
-$lang['summary_important'] = 'We have detected %d important problem(s)';
-//$lang['grouptitle_opengraph'] = 'We have detected %s OpenGraph related problem(s)';
-//$lang['grouptitle_system'] = 'We have detected %s problem(s) with your system configuration';
-//$lang['grouptitle_pages'] = 'We have detected %s problem(s) on your content pages';
-//$lang['grouptitle_settings'] = 'We have detected %s problem(s) with your SEO Settings';
-//$lang['grouptitle_descriptions'] = 'We have detected %s problem(s) with your page descriptions';
-//$lang['grouptitle_titles'] = 'We have detected %s problem(s) with your page titles';
+$lang['summary_urgent'] = '%d urgent problem(s) detected';
+$lang['summary_important'] = '%d important problem(s) detected';
+//$lang['grouptitle_opengraph'] = '%d OpenGraph-related problem(s) detected';
+//$lang['grouptitle_system'] = '%d system-configuration problem(s) detected';
+//$lang['grouptitle_pages'] = '%d content-page problem(s) detected';
+//$lang['grouptitle_settings'] = '%d SEO-settings problem(s) detected';
+//$lang['grouptitle_descriptions'] = '%d page-description problem(s) detected';
+//$lang['grouptitle_titles'] = '%d page-title problem(s) detected';
 
 $lang['view_all'] = 'View all';
 
