@@ -120,7 +120,7 @@ function getUrgentAlerts(&$mod, $omit_inactive = FALSE, $omit_ignored = FALSE)
 	}
 
 	// robots.txt not writeable
-	 if ($mod->GetPreference('create_robots',0)) {
+	if ($mod->GetPreference('create_robots',0)) {
 		$path = cms_join_path($config['root_path'],'robots.txt');
 		if (file_exists($path) && !is_writeable($path)) {
 			$alert = array();
