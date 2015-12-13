@@ -266,13 +266,12 @@ if ($urgent_alerts) {
 				$sig = '';
 			}
 			else {
-				$links = 'NONE'; //CHECKME
+				$links = 'NONE'; //TODO CHECKME
 				$onerow->action = '';
 				$sig = '';
 			}
 			if (array_key_exists('ignored', $alert)) {
 				$iname = ($alert['ignored']) ? 'true':'false';
-QQQ; //CreateTooltipLink
 				$onerow->ignored = $this->CreateTooltipLink(null, 'defaultadmin', '',
 				'<img src="'.$theme_url.'/system/'.$iname.'.gif" class="systemicon" />',
 				$this->Lang('toggle'), array('what'=>'toggle_ignore','content_data'=>$sig,'tab'=>'urgentfixes'));
