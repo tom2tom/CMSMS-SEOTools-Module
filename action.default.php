@@ -4,11 +4,11 @@
 # Copyright (C) 2014-2015 Tom Phane <tpgww@onepost.net>
 # Refer to licence and other details at the top of file SEOTools.module.php
 
-# Creates the SEO content for each page
+# Creates the SEO content for each page that has a {SEOTools} tag
 
 // Get page data
-
-$content = cms_utils::get_current_content(); //CMSMS 1.9+ older = $gCms->variables['content_obj']
+//{CMSMS 1.6,1.7,1.8}::index.php if(...) $smarty->assign('content_obj',$contentobj);
+$content = cms_utils::get_current_content(); //CMSMS 1.9+
 $page_id = (int)$content->Id();
 $page_name = $content->Name();
 $page_url = $content->GetURL();
