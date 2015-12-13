@@ -25,22 +25,24 @@ class SEO_populator
 	*/
 	private function getSeeLink(&$mod, $priority, $title = '')
 	{
+		$gCms = cmsms();
 		if ($this->adminurl == NULL) {
-			$gCms = cmsms();
 			$config = $gCms->GetConfig();
 			$this->adminurl = (!empty($config['admin_url'])) ?
 				$config['admin_url']:
 				$config['root_url'].'/'.$config['admin_dir'];
+		}
+		if ($this->theme == NULL) {
 			$this->theme = ($mod->before20) ?
 				$gCms->get_variable('admintheme'):
 				cms_utils::get_theme_object();
 		}
 		$lnk = '<a class=@"'.$priority.'" href="#"><img src="'.$this->adminurl.'/themes/'
-		 .$this->theme->themeName.'/images/icons/system/edit.gif"';
+		 .$this->theme->themeName.'/images/icons/system/edit.gif" class="systemicon"';
 		if ($title) {
 			$lnk .= ' title = "'.$title.'"';
 		}
-		$lnk .= ' style="vertical-align: middle;" /></a>';
+		$lnk .= ' /></a>';
 		return $lnk;
 	}
 
@@ -197,7 +199,7 @@ class SEO_populator
 			$alert['links'][] =
 '<a href="http://docs.cmsmadesimple.org/configuration/pretty-url" onclick="window.open(this.href,\'_blank\');return false;"><img src="'
 .$this->adminurl.'/themes/'.$this->theme->themeName.'/images/icons/system/info-external.gif" title = "'
-.$mod->Lang('get_help').'" style="vertical-align: middle;" /></a>';
+.$mod->Lang('get_help').'" class="systemicon" /></a>';
 			$alerts[] = $alert;
 		}
 		// Content pages with short description
@@ -324,54 +326,59 @@ WHERE(p1.prop_name = ? AND p1.content_id < p2.content_id  AND p1.content <> ? AN
 		if (!$mod->GetPreference('meta_standard',FALSE)) {
 			$alert = array();
 			$alert['message'] = $mod->Lang('use_standard_meta');
-			$alert['links'][] = getTabLink(4,$mod->Lang('visit_settings'));
+			$alert['links'][] = self::getTabLink(4,$mod->Lang('visit_settings'));
 			$alerts[] = $alert;
 		}
 		// Submit a sitemap
 		if (!$mod->GetPreference('create_sitemap',0)) {
 			$alert = array();
 			$alert['message'] = $mod->Lang('create_a_sitemap');
-			$alert['links'][] = getTabLink(6,$mod->Lang('visit_settings'));
+			$alert['links'][] = self::getTabLink(6,$mod->Lang('visit_settings'));
 			$alerts[] = $alert;
 		}
 		elseif (!$mod->GetPreference('push_sitemap',0)) {
 		  // Automatically submit the sitemap
 			$alert = array();
 			$alert['message'] = $mod->Lang('automatically_upload_sitemap');
-			$alert['links'][] = getTabLink(6,$mod->Lang('visit_settings'));
+			$alert['links'][] = self::getTabLink(6,$mod->Lang('visit_settings'));
 			$alerts[] = $alert;
 		}
 		// Create a robots.txt file
 		if (!$mod->GetPreference('create_robots',0)) {
 			$alert = array();
 			$alert['message'] = $mod->Lang('create_robots');
-			$alert['links'][] = getTabLink(6,$mod->Lang('visit_settings'));
+			$alert['links'][] = self::getTabLink(6,$mod->Lang('visit_settings'));
 			$alerts[] = $alert;
 		}
 		// Set a default image
+		//TODO
 		return $alerts;
 	}
 
 	public function getFixLink(&$mod, $sp, $id, $pagename = '')
 	{
 		$gCms = cmsms();
-		$config = $gCms->GetConfig();
-		if (isset($config['admin_url']))
-			$adminurl = $config['admin_url'];
-		else
-			$adminurl = $config['root_url'].'/'.$config['admin_dir'];
-		$theme = ($mod->before20) ? $gCms->get_variable('admintheme'):
-			cms_utils::get_theme_object();
-		$lnk = '<a href="'.$adminurl.'/editcontent.php?'.$mod->pathstr.'='.$sp.'&content_id='.$id
-		 .'"><img src="'.$adminurl.'/themes/'
-		 .$theme->themeName.'/images/icons/system/edit.gif" title = "';
+		if ($this->adminurl == NULL) {
+			$config = $gCms->GetConfig();
+			$this->adminurl = (isset($config['admin_url'])) ?
+				$config['admin_url']:
+				$config['root_url'].'/'.$config['admin_dir'];
+		}
+		if ($this->theme == NULL) {
+			$this->theme = ($mod->before20) ?
+				$gCms->get_variable('admintheme'):
+				cms_utils::get_theme_object();
+		}
+		$lnk = '<a href="'.$this->adminurl.'/editcontent.php?'.$mod->pathstr.'='.$sp.'&content_id='.$id
+		 .'"><img src="'.$this->adminurl.'/themes/'
+		 .$this->theme->themeName.'/images/icons/system/edit.gif" title = "';
 		if ($pagename) {
 			$lnk .= $mod->Lang('edit_page',$pagename);
 		}
 		else {
 			$lnk .= $mod->Lang('edit_page2');
 		}
-		$lnk .= '" style="vertical-align: middle;" /></a>';
+		$lnk .= '" class="systemicon" /></a>';
 		return $lnk;
 	}
 }
