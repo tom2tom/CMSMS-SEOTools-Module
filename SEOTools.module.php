@@ -77,6 +77,12 @@ class SEOTools extends CMSModule
 		return TRUE;
 	}
 
+	//for CMSMS >= 1.11
+	function AllowSmartyCaching()
+	{
+		return FALSE; //may need freshly-assigned smarty var(s): $default_keywords etc
+	}
+
 	function HasAdmin()
 	{
 		return TRUE;
