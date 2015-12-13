@@ -160,7 +160,7 @@ EOS;
 	//for CMSMS >= 1.10
 	function LazyLoadAdmin()
 	{
-		return TRUE;
+		return FALSE; //capture events ASAP
 	}
 
 	//for CMSMS >= 1.10
