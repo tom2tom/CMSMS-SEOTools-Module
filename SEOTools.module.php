@@ -136,7 +136,7 @@ class SEOTools extends CMSModule
 		$url = $this->GetModuleURLPath();
 		$incs = <<<EOS
 <script type="text/javascript" src="{$url}/include/module-admin.js"></script>
-<link rel="stylesheet" type="text/css" href="{$url}/include/module-admin.css" />
+<link rel="stylesheet" type="text/css" href="{$url}/css/module-admin.css" />
 
 EOS;
 		return $incs;
