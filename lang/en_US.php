@@ -175,7 +175,7 @@ $lang['description_auto_help'] = 'You <b>must</b> include the tag {keywords} her
 
 $lang['set_up_auto_description'] = 'Set up the description auto-generator and ensure the text contains the tag {keywords}';
 $lang['auto_generated'] = 'Automatically generated';
-$lang['and'] = 'and';
+$lang['and'] = '%s and %s';
 
 $lang['title_keyword_block'] = 'Name of keywords content-block';
 $lang['keyword_block_help'] = 'The name of each page\'s keywords content-block. Please read the module help for an explanation';
@@ -225,8 +225,11 @@ $lang['additional_meta_tags_help'] = 'Specify additional Meta tags here to be in
 
 $lang['help_showbase'] = 'Set this parameter to <code>false</code> to suppress the output of the base href tag.';
 
-$lang['help'] = '<h3>What Does This Do?</h3>
-<p>This helps you get your SEO (Search Engine Optimization) right. The module adds several SEO capabilities to your CMSMS installation and alerts you if you missed out on something SEO related. Currently, the following features are supported:</p>
+$lang['help'] = <<<EOS
+<h3>What Does This Do?</h3>
+<p>This module helps to get a website's SEO (Search Engine Optimization) right.
+Specifically, it adds several SEO capabilities and provides alerts about SEO-related
+problems. Currently, the following features are supported:</p>
 <ul>
 <li>generate meta tags in standard html, Dublin Core and OpenGraph formats</li>
 <li>extract keywords from site pages and add the keywords to the meta tags and page title</li>
@@ -235,42 +238,80 @@ $lang['help'] = '<h3>What Does This Do?</h3>
 <li>user-choice whether or not specified site-pages should be indexed by search engines</li>
 <li>generate a sitemap.xml file for the site, with full control over the priorities of site pages</li>
 <li>automatically submit the sitemap file to Google when site content is changed</li>
-<li>generate a robots.txt file explicitly disallowing access to pages you don\'t want to be indexed</li>
+<li>generate a robots.txt file explicitly disallowing access to pages you don't want to be indexed</li>
 </ul>
 <h3>How Do I Use It</h3>
 <p>First, open each template/page where you want to apply SEO Tools. For each of them:</p>
 <ol>
 <li>Remove the whole &lt;title&gt;&lt;/title&gt; line, and the {metadata} tag (even if it says to never remove it) and replace them with the tag
-<pre>{SEOTools}</pre></li>
-<li>If page-title metadata is to be updated each time the page is constructed, insert at the bottom (after the closing &lt;/body&gt; tag), insert code like the following:
-<pre>{content assign=\'meta_description\' block=\'meta_description\' label=\'Your block label\' wysiwyg=\'false\'}</pre>
-The assigned value may include variable(s).</li>
-The content block name is your choice, and you\'ll need to record it as one of the module preferences. This block will be available to enter a short page description (one or two sentences).<br />
-As an alternative to the content block, you can enable the SEO Tools option "Automatically generate descriptions where none is given". This is not as good, but better than nothing.<br />
-With either of these approaches, the provided description will appear in the search engine\'s results and if, for example, someone shares a link to your page on facebook.</li>
+<code>{SEOTools}</code></li>
+<li>Insert at the bottom (after the closing &lt;/body&gt; element), a tag to create a block
+for entering a page description, like the following:<br />
+<code>{content assign='meta_description' block='metadescription' label='Your block label' wysiwyg=false}</code><br />
+The content block name is your choice, and it must be recorded as one of the SEOTools module preferences.
+<br />
+As an alternative to this content block, you can enable the SEO Tools option
+'Automatically generate descriptions where none is given'. This is not as good, but better than nothing.</li>
+<li>After that, optionally insert another tag to create a block for entering page keywords,
+like the following:<br />
+<code>{content assign='meta_keyworkds' block='metakeywords' label='Your next block label' wysiwyg=false oneline=true size=70}</code><br />
+Again, the content block name is your choice, and it must be recorded as one of the SEOTools module preferences.<br />
+This content block can be omitted, in which case keywords will be generated from page title, description and content.</li>
 </ol><br />
-<p>Next, visit the module\'s settings tabs to record page title & meta information, sitemap & crawler settings and keyword settings for the site.<br />
-Under "Name of page description content-block" you need to enter the name of the content-block you just added to your templates ("Page Description" in our example).<br />
-You should also consider signing up your site with Google Webmaster tools. There, select "Meta tag validation" and paste the verification code (quite a long string of characters and numbers) into the box "Verification Code" in "SEO Settings" to automatically verify that you are really
-the owner of your page (no need to paste the Google Meta-code into your template).<br />
-To set your own keywords (instead of the automatically generated ones) or OpenGraph type for certain pages, visit the "Page settings" tab where you\'ll find a list of all pages you have in your system. There, you can also change the sitemap priority (which is auto-calculated by default) of a page to indicate that it should
-be considered more important for search engine matches on your page or exclude certain pages from the search index.<br />
-The module will also automatically insert a link to the image to be used as the main image of your page if you select an "Image" for the page from within your page\'s "Options" tab (this is important for people submitting a link to your page e.g. on facebook). Also, if you are using OpenGraph, the image selected here
-will override the default OpenGraph image you specified from within "SEO Settings". Please be aware that you need to upload those images to your /uploads/images directory.</p>
-<p>Last, visit the module\'s "Alerts" and "Fixes" tabs and deal with any problems detected. Take care to insert a (unique) page description on every page you edit in the field "Page Description" at the bottom of your "Edit Page" form.</p>
+<p>Next, visit the module's settings tabs to record page title & meta information,
+sitemap & crawler settings and keyword settings for the site.<br /><br />
+Under 'Name of page description content-block' and 'Name of page keywords content-block'
+you must enter the name of the content-blocks added to site pages/templates
+('metadescription' and 'metakeywords' in the above example).<br /><br />
+You should also consider signing up the site with Google Webmaster tools.
+Having done so, paste the Google verification code (a long string of characters and numbers)
+into the box 'Verification Code' in 'SEO Settings' to automatically verify that
+you are really the owner of your page (no need to paste the Google Meta-code
+into your template).<br /><br />
+To set your own keywords (instead of the automatically generated ones) or
+OpenGraph type for certain pages, visit the 'Page settings' tab where you'll find
+a list of all pages you have in your system. There, you can also change the sitemap
+priority (which is auto-calculated by default) of a page to indicate that it should
+be considered more important for search engine matches on your page or exclude
+certain pages from the search index.<br /><br />
+The module will also automatically insert a link to the image to be used as the
+main image of your page if you select an 'Image' for the page from within your
+page's 'Options' tab (this is important for people submitting a link to your page
+e.g. on facebook). Also, if you are using OpenGraph, the image selected here will
+override the default OpenGraph image you specified from within 'SEO Settings'.
+Please be aware that you need to upload those images to your /uploads/images directory.</p>
+<p>Next, on each relevant website page<br />
+<ul>
+<li>in the page-description content block you've added, insert a unique page description, 75 or more chars long,
+one or two sentences. The description may include smarty tag(s).</li>
+<li>in the page-keywords content block (if you've added one), insert relevant keywords/phrases,
+using the separator specified in the module preferences</li>
+</ul></p>
+<p>Last, visit the module's 'Alerts' and 'Fixes' tabs and deal with any problems detected.
+Or if you're really sure about ignoring any such problem(s), tag it/them as such.</p>
 <h3>Can I use smarty variables?</h3>
-<p>You can use all smarty variables and UDTs within the settings fields <i>Page title</i>, <i>Meta page title</i>, <i>Automatically generated descriptions</i> and <i>Additional meta tags</i>. Enter <code>{debug}</code> to see a list of all available variables.</p>
+<p>You can use all smarty variables and UDTs within the settings fields
+<em>Page title</em>, <em>Meta page title</em>, <em>Automatically generated descriptions</em>
+and <em>Additional meta tags</em>.
+Include <code>{debug}</code> in a page or template to see a list of all available variables.</p>
 <h3>Which smarty variables are exported by this module?</h3>
-<code>{$seo_keywords}</code>: A string comprised of all page-specific and default keywords or groups of keywords, using the module\'s default separator<br />
-<code>{$default_keywords}</code>: As for {$seo_keywords}, without page-specific keywords<br />
-<code>{$page_keywords}</code>: As for {$seo_keywords}, without default keywords<br />
-<code>{$title_keywords}</code>: As for {$seo_keywords}, except the separator is always a space-character
+<p>Several such variables are set, and may be included (after <code>{SEOTools}</code>)
+in any page or template, as follows:</p>
+<ul>
+<li><code>{\$seo_keywords}</code> : prints a string comprised of all page-specific and default keywords
+or groups of keywords, using the module's default separator</li>
+<li><code>{\$default_keywords}</code> : as for {\$seo_keywords}, without page-specific keywords</li>
+<li><code>{\$page_keywords}</code> : as for {\$seo_keywords}, without default keywords</li>
+<li><code>{\$title_keywords}</code> : as for {\$seo_keywords}, except the separator is always a space-character</li>
+</ul>
 <h3>Support</h3>
-<p>This software is provided as-is. Please read the text of the license (see below) for the full disclaimer.</p>
+<p>This software is provided as-is. Please read the text of the license (see below)
+for the full disclaimer.</p>
 <h3>Copyright and License</h3>
-<p>Copyright &copy; 2010-2011, Henning Schaefer &lt;henning.schaefer@gmail.com&gt;.<br />
-Copyright &copy; 2014-2015, Tom Phane &lt;tpgww@onepost.net&gt;.<br />
+<p>Portions copyright &copy; 2010-2011, Henning Schaefer &lt;henning.schaefer@gmail.com&gt;.<br />
+Portions copyright &copy; 2011-2015, Tom Phane &lt;tpgww@onepost.net&gt;.<br />
 All rights reserved.</p>
 <p>This module has been released under the <a href="http://www.gnu.org/licenses/licenses.html#AGPL">GNU Affero General Public License</a> version 3.
-You must comply with that license when distributing or using the module.</p>';
+You must comply with that license when distributing or using the module.</p>
+EOS;
 ?>
