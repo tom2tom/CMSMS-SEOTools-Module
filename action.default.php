@@ -148,6 +148,7 @@ if ($this->GetPreference('meta_dublincore',FALSE))
 	if ($pref) echo '<meta name="DC.rights" content="'.$pref.'" />'."\n";
 	if ($meta_title) echo '<meta name="DC.title" content="'.$meta_title.'" />'."\n";
 	if ($description) echo '<meta name="DC.description" content="'.$description.'" />'."\n";
+	if ($merged) echo '<meta name="DC.subject" content="'.implode($sep, $merged).'" />'."\n";
 	echo '<meta name="DC.date" content="'.$page_mdate.'" scheme="DCTERMS.W3CDTF" />'."\n";
 	echo '<meta name="DC.identifier" content="'.$page_url.'" scheme="DCTERMS.URI" />'."\n";
 }
