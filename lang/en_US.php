@@ -282,8 +282,8 @@ override the default OpenGraph image you specified from within 'SEO Settings'.
 Please be aware that you need to upload those images to your /uploads/images directory.</p>
 <p>Next, on each relevant website page<br />
 <ul>
-<li>in the page-description content block you've added, insert a unique page description, 75 or more chars long,
-one or two sentences. The description may include smarty tag(s).</li>
+<li>in the page-description content block you've added, insert a unique page description,
+75 to 200 chars long, one or two sentences. The description may include smarty tag(s).</li>
 <li>in the page-keywords content block (if you've added one), insert relevant keywords/phrases,
 using the separator specified in the module preferences</li>
 </ul></p>
