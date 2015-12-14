@@ -40,16 +40,18 @@ if (isset($_POST['set_keywords'])) {
 	$this->Redirect($id, 'defaultadmin', '', array('tab'=>'pagedescriptions'));
 }
 
-$query = "SELECT content_name FROM ".$pre."content WHERE content_id=?";
+$query = 'SELECT content_name FROM '.$pre.'content WHERE content_id=?';
 $name = $db->GetOne($query,array($_GET['content_id']));
 if ($name == FALSE) {
 	$name = '?';
 }
-$query = "SELECT keywords FROM ".$pre."module_seotools WHERE content_id=?";
+$query = 'SELECT keywords FROM '.$pre.'module_seotools WHERE content_id=?';
 $kw = $db->GetOne($query,array($_GET['content_id']));
 if ($kw == FALSE) {
 	$funcs = new SEO_keyword();
-	$kw = strtolower(implode(' ',array_flip($funcs->getKeywordSuggestions($_GET['content_id'],$this))));
+	$sep = $this->GetPreference('keyword_separator',' ');
+	//TODO don't assume ascii encoded >> iconv() ?
+	$kw = strtolower(implode($sep,$funcs->getKeywordSuggestions($this,$_GET['content_id'])));
 }
 
 $smarty->assign('startform',$this->CreateFormStart(null, 'edit_keywords'));

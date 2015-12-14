@@ -217,7 +217,7 @@ if ($urgent_alerts) {
 		//sort ALL alerts into types, count some of them
 		foreach($urgent_alerts as $alert) {
 			if ((!array_key_exists('active', $alert) || $alert['active'] == TRUE)
-			 &&(empty($alert['ignored'])))
+			 && (empty($alert['ignored'])))
 				$count++;
 			$groups[$alert['group']][] = $alert;
 		}
@@ -516,10 +516,15 @@ while ($page = $result->fetchRow()) {
 		$description = $db->GetOne($query,$parms);
 		$description_auto = FALSE;
 		$funcs = new SEO_keyword();
-		$kw = array_flip($funcs->getKeywordSuggestions($page['content_id'],$this));
-		if (($description == FALSE) &&($this->GetPreference('description_auto_generate',FALSE))) {
-			$last_keyword = array_pop($kw);
-			$keywords = implode(', ',$kw) . " " . $this->Lang('and') . " " . $last_keyword;
+		$kw = $funcs->getKeywordSuggestions($this,$page['content_id']);
+		if ($kw && $description == FALSE && $this->GetPreference('description_auto_generate',FALSE)) {
+			if (count($kw) > 1) {
+				$last_keyword = array_pop($kw);
+				$keywords = $this->Lang('and',implode(',',$kw),$last_keyword);
+			}
+			else {
+				$keywords = reset($kw);
+			}
 			$description = $this->Lang('auto_generated').": ".str_replace('{keywords}',$keywords,$this->GetPreference('description_auto',''));
 			$description = str_replace('{title}',$page['content_name'],$description);
 			$description_auto = TRUE;

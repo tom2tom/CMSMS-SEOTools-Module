@@ -28,19 +28,18 @@ $keywords = explode($sep,$pref);
 $query = 'SELECT * FROM '.cms_db_prefix().'module_seotools WHERE content_id=?';
 $page_info = $db->GetRow($query,array($page_id));
 if (!empty($page_info['keywords']))
-	$other_keywords = array_flip(explode($sep,$page_info['keywords']));
+	$other_keywords = explode($sep,$page_info['keywords']);
 else
 {
 	$funcs = new SEO_keyword();
-	$other_keywords = $funcs->getKeywordSuggestions($page_id,$this);
+	$other_keywords = $funcs->getKeywordSuggestions($this,$page_id,$content);
 }
-$smarty->assign('page_keywords', implode($sep, array_flip($other_keywords)));
+$smarty->assign('page_keywords', implode($sep, $other_keywords));
 
-$merged = array_unique(array_merge($keywords, array_flip($other_keywords)));
+$merged = array_unique(array_merge($keywords, $other_keywords));
 foreach ($merged as $i => $val) {
 	if ($val == '') unset ($merged[$i]);
 }
-
 $smarty->assign('seo_keywords', implode($sep, $merged)); //CHECKME was always comma-separator
 $title_keywords = implode(' ',$merged);
 $smarty->assign('title_keywords', $title_keywords); //never a comma-separator
@@ -56,9 +55,14 @@ if ($description == FALSE)
 if ($description == FALSE && $this->GetPreference('description_auto_generate',FALSE))
 {
 	$description = str_replace('{title}',$page_name,$description);
-	$kw = array_flip($other_keywords);
-	$last_keyword = array_pop($kw);
-	$keywords = implode(', ',$kw) . " " . $this->Lang('and') . " " . $last_keyword;
+	if (count($other_keywords) > 1) {
+		$kw = $other_keywords;
+		$last_keyword = array_pop($kw);
+		$keywords = $this->Lang('and',implode(',',$kw),$last_keyword);
+	}
+	else {
+		$keywords = reset($other_keywords);
+	}
 	$description = str_replace('{keywords}',$keywords,$this->GetPreference('description_auto',''));
 	$description = $this->ProcessTemplateFromData($description);
 }
@@ -110,6 +114,7 @@ if ($this->GetPreference('meta_standard',FALSE))
 {
 	if ($meta_title) echo '<meta name="title" content="'.$meta_title.'" />'."\n";
 	if ($description) echo '<meta name="description" content="'.$description.'" />'."\n";
+	if ($merged) echo '<meta name="keywords" content="'.implode($sep, $merged).'" />'."\n";
 	echo '<meta name="date" content="'.date('Y-m-d\TH:i:sP',$content->GetCreationDate()).'" />'."\n";
 	echo '<meta name="lastupdate" content="'.$page_mdate.'" />'."\n";
 	echo '<meta name="revised" content="'.$page_mdate.'" />'."\n";
