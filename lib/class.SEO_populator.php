@@ -63,7 +63,8 @@ class SEO_populator
 		$pre = cms_db_prefix();
 		if (!$mod->GetPreference('description_auto_generate',FALSE))
 		{
-			if ($mod->GetPreference('description_block','') != '') {
+			$pref = $mod->GetPreference('description_block',''); 
+			if ($pref) {
 				// Content pages without description
 				$query = 'SELECT C.content_id, C.content_name, C.type, C.active, S.ignored FROM '
 				.$pre.'content C LEFT JOIN '
@@ -74,7 +75,7 @@ class SEO_populator
 				}
 				$query .= 'C.type LIKE ? AND P.prop_name=? AND(P.content IS NULL OR P.content=?)';
 				$parms = array('content%'); //can't be an injection risk here
-				$parms[] = str_replace(' ','_',$mod->GetPreference('description_block',''));
+				$parms[] = str_replace(' ','_',$pref);
 				$parms[] = '';
 				$result = $db->Execute($query, $parms);
 				if ($result) {
@@ -139,7 +140,7 @@ class SEO_populator
 
 		if ($mod->GetPreference('meta_opengraph',FALSE)) {
 			// No OpenGraph admin set
-			if (($mod->GetPreference('meta_opengraph_admins','') == '') &&($mod->GetPreference('meta_opengraph_application','') == '')) {
+			if (($mod->GetPreference('meta_opengraph_admins','') == '') && ($mod->GetPreference('meta_opengraph_application','') == '')) {
 				$alert = array();
 				$alert['group'] = 'opengraph';
 				$alert['message'] = $mod->Lang('no_opengraph_admins');
@@ -187,7 +188,7 @@ class SEO_populator
 		$pre = cms_db_prefix();
 		$alerts = array();
 		// Pretty URLs not working
-		if (($config['assume_mod_rewrite'] != 1) &&($config['internal_pretty_urls'] != 1)) {
+		if (($config['assume_mod_rewrite'] != 1) && ($config['internal_pretty_urls'] != 1)) {
 			if($this->theme == NULL) {
 				$this->theme = ($mod->before20) ?
 					$gCms->get_variable('admintheme'):
@@ -203,6 +204,7 @@ class SEO_populator
 			$alerts[] = $alert;
 		}
 		// Content pages with short description
+		// Not empty description, that's an urgent alert
 		$query = 'SELECT C.content_id, C.content_name, C.active, S.ignored FROM '
 		 .$pre.'content C INNER JOIN '
 		 .$pre.'content_props P ON C.content_id = P.content_id LEFT JOIN '
@@ -211,10 +213,9 @@ class SEO_populator
 			$query .= 'C.active=1 AND';
 		}
 		// MySQL and PostgreSQL support CHAR_LENGTH() $db->length dun't work!
-		$query .= 'C.type LIKE ? AND P.prop_name=? AND P.content<>? AND CHAR_LENGTH(P.content) < 75';
+		$query .= 'C.type LIKE ? AND P.prop_name=? AND P.content!="" AND CHAR_LENGTH(P.content) < 75';
 		$parms = array('content%'); //can't be an injection risk here
 		$parms[] = str_replace(' ','_',$mod->GetPreference('description_block',''));
-		$parms[] = '';
 		$result = $db->Execute($query, $parms);
 		if ($result) {
 			$code = 'shortmeta';
