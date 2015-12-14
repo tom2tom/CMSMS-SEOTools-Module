@@ -6,26 +6,27 @@
 
 class SEO_keyword
 {
-	private function _get_keywords($source, $minlength = 6) {
+	private function _get_keywords($source, $sep = ' ', $minlength = 6) {
+		//TODO not utf8_decode() >> iconv()?
 		$source = preg_replace('/\{[^\}]+\}/isU', '', utf8_decode($source));
-		$source = str_replace("\n"," ",strip_tags($source));
-		$source = str_replace('-',' ',$source);
-		$source = str_replace('.',' ',$source);
-		$source = str_replace(',',' ',$source);
-		$source = str_replace('!',' ',$source);
-		$source = str_replace('?',' ',$source);
-		$source = str_replace(':',' ',$source);
-		$source = str_replace('	',' ',$source);
-		$keywords = explode(' ',$source);
-		foreach ($keywords as $key=>$value) {
+		$source = str_replace("\n",' ',strip_tags($source));
+		foreach (array('-','.',',','!','?',':',';') as $ch) {
+			if($ch != $sep)
+				$source = str_replace($ch,' ',$source);
+		}
+		$keywords = explode($sep,$source);
+		foreach ($keywords as &$value) {
+			$value = trim($value);
 			if (strlen($value) < $minlength) {
-				unset($keywords[$key]);
+				$value = '';
 			}
 			else {
-				$keywords[$key] = htmlentities(trim($value));
+				$value = htmlentities($value);
 			}
 		}
-		return $keywords;
+		unset($value);
+
+		return array_filter($keywords,'strlen');
 	}
 
 	private function _get_headlines($file) {
@@ -57,69 +58,92 @@ class SEO_keyword
 		return $content;
 	}
 
-	public function getKeywordSuggestions($content_id, $mod) {
+	public function getKeywordSuggestions($mod,$content_id = FALSE,$content = NULL) {
 		$gCms = cmsms();
-		$contentops = $gCms->GetContentOperations();
-		if (!$content = $contentops->LoadContentFromId ($content_id)) {
-			return;
+		if ($content == NULL) {
+			$contentops = $gCms->GetContentOperations();
+			if (!$content = $contentops->LoadContentFromId ($content_id)) {
+				return '';
+			}
 		}
-		$page_name = $content->Name();
-		$description_id = str_replace(' ','_',$mod->GetPreference('description_block',''));
+		elseif ($content_id == FALSE)
+			$content_id = (int)$content->Id();
+
+		$word_len = $mod->GetPreference('keyword_minlength',6);
+		$word_minwt = $mod->GetPreference('keyword_minimum_weight',7);
+		$propname = str_replace(' ','_',$mod->GetPreference('keyword_block',''));
 		$db = $gCms->GetDb();
 		$query = 'SELECT content FROM '.cms_db_prefix().'content_props WHERE content_id=? AND prop_name=?';
 
-		/* Generate keywords from page title, description and content */
 		$other_keywords = array();
-		if ($page_name) {
-			$title_keywords = self::_get_keywords($page_name, $mod->GetPreference('keyword_minlength',6));
-			foreach($title_keywords as $keyword) {
-				if (!isset($other_keywords[$keyword])) {
-					$other_keywords[$keyword] = 0;
+		/* Try for explicit stored keywords */
+		$stored_keywords = $db->GetOne($query,array($content_id,$propname));
+		if ($stored_keywords) {
+			$sep = $mod->GetPreference('keyword_separator',' ');
+			$stored_keywords = self::_get_keywords($stored_keywords,$sep,$word_len);
+			if ($stored_keywords) {
+				foreach($stored_keywords as $keyword) {
+					$other_keywords[$keyword] = $word_minwt;
 				}
-				$other_keywords[$keyword] = $mod->GetPreference('keyword_title_weight',6);
 			}
+		}
+		if (!$other_keywords) {
+			/* Generate keywords from page title, description and content */
+			$page_name = $content->Name();
+			if ($page_name) {
+				$wt = $mod->GetPreference('keyword_title_weight',6);
+				$title_keywords = self::_get_keywords($page_name,' ',$word_len);
+				foreach($title_keywords as $keyword) {
+					if (!isset($other_keywords[$keyword])) {
+						$other_keywords[$keyword] = 0;
+					}
+					$other_keywords[$keyword] += $wt;
+				}
+			}
+			$propname = str_replace(' ','_',$mod->GetPreference('description_block',''));
+			$description = $db->GetOne($query,array($content_id,$propname));
+			if ($description) {
+				$wt = $mod->GetPreference('keyword_description_weight',4);
+				$description_keywords = self::_get_keywords($description,' ',$word_len);
+				foreach($description_keywords as $keyword) {
+					if (!isset($other_keywords[$keyword])) {
+						$other_keywords[$keyword] = 0;
+					}
+					$other_keywords[$keyword] += $wt;
+				}
+			}
+			$content = $db->GetOne($query,array($content_id,'content_en'));
+			if ($content) {
+				$wt = $mod->GetPreference('keyword_headline_weight',2);
+				$headline_keywords = self::_get_keywords(self::_get_headlines($content),' ',$word_len);
+				foreach($headline_keywords as $keyword) {
+					if (!isset($other_keywords[$keyword])) {
+						$other_keywords[$keyword] = 0;
+					}
+					$other_keywords[$keyword] += $wt;
+				}
+				$wt = $mod->GetPreference('keyword_content_weight',1);
+				$content_keywords = self::_get_keywords($content,' ',$word_len);
+				foreach($content_keywords as $keyword) {
+					if (!isset($other_keywords[$keyword])) {
+						$other_keywords[$keyword] = 0;
+					}
+					$other_keywords[$keyword] += $wt;
+				}
+			}
+			arsort($other_keywords);
 		}
 
-		$description = $db->GetOne($query,array($content_id,$description_id));
-		if ($description) {
-			$description_keywords = self::_get_keywords($description, $mod->GetPreference('keyword_minlength',6));
-			foreach($description_keywords as $keyword) {
-				if (!isset($other_keywords[$keyword])) {
-					$other_keywords[$keyword] = 0;
-				}
-				$other_keywords[$keyword] += $mod->GetPreference('keyword_description_weight',4);
+		//TODO not utf8_decode() >> iconv()?
+		$exclude_list = utf8_decode($mod->GetPreference('keyword_exclude',''));
+		foreach ($other_keywords as $key=>&$value) {
+			if ($value < $word_minwt || ($exclude_list && strpos($key,$exclude_list) !== FALSE)) {
+				$value = '';
 			}
 		}
-		$content = $db->GetOne($query,array($content_id,'content_en'));
-		if ($content) {
-			$headline_keywords = self::_get_keywords(self::_get_headlines($content), $mod->GetPreference('keyword_minlength',6));
-			foreach($headline_keywords as $keyword) {
-				if (!isset($other_keywords[$keyword])) {
-					$other_keywords[$keyword] = 0;
-				}
-				$other_keywords[$keyword] += $mod->GetPreference('keyword_headline_weight',2);
-			}
-			$content_keywords = self::_get_keywords($content, $mod->GetPreference('keyword_minlength',6));
-			foreach($content_keywords as $keyword) {
-				if (!isset($other_keywords[$keyword])) {
-					$other_keywords[$keyword] = 0;
-				}
-				$other_keywords[$keyword] += $mod->GetPreference('keyword_content_weight',1);
-			}
-		}
-		arsort($other_keywords);
+		unset($value);
 
-		$exclude_list = explode(' ',strtoupper(utf8_decode($mod->GetPreference('keyword_exclude',''))));
-
-		foreach ($other_keywords as $key=>$value) {
-			if ($value < $mod->GetPreference('keyword_minimum_weight',7)) {
-				unset($other_keywords[$key]);
-			}
-			elseif (in_array(strtoupper($key),$exclude_list)) {
-				unset($other_keywords[$key]);
-			}
-		}
-		return $other_keywords;
+		return array_keys(array_filter($other_keywords,'is_numeric'));
 	}
 }
 
