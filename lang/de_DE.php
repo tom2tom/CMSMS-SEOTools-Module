@@ -175,7 +175,7 @@ $lang['description_auto_help'] = 'Sie <b>m&uuml;ssen</b> das {keywords}-Tag hier
 
 $lang['set_up_auto_description'] = 'Setzen Sie den Generator für automatische Beschreibungen auf und stellen Sie sicher, da&szlig; der Text das Tag {keywords} enth&auml;lt';
 $lang['auto_generated'] = 'Automatisch erzeugt';
-$lang['and'] = 'und';
+$lang['and'] = '%s und %s';
 
 $lang['title_keyword_block'] = 'Name of keywords content-block';
 $lang['keyword_block_help'] = 'The name of each page\'s keywords content-block. Please read the module help for an explanation';
