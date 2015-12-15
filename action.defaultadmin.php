@@ -201,9 +201,14 @@ $smarty->assign('start_important_set',$this->CreateFieldsetStart($id, 'alerts_im
 $smarty->assign('start_notice_set',$this->CreateFieldsetStart($id, 'alerts_notices', $this->Lang('title_alerts_notices')));
 $smarty->assign('end_set',$this->CreateFieldsetEnd());
 
-$adminurl = (!empty($config['admin_url'])) ? $config['admin_url']:
-	$config['root_url'].'/'.$config['admin_dir'];
-$theme = ($this->before20) ? cmsms()->get_variable('admintheme'):
+if (isset($config['admin_url'])) {
+	$adminurl = $config['admin_url'];
+}
+else {
+	$rooturl = (empty($_SERVER['HTTPS'])) ? $config['root_url'] : $config['ssl_url'];
+	$adminurl = $rooturl.'/'.$config['admin_dir'];
+}
+$theme = ($this->before20) ? cmsms()->get_variable('admintheme'): //CMSMS 1.9+
 	cms_utils::get_theme_object();
 $theme_url = $adminurl.'/themes/'.$theme->themeName.'/images/icons';
 $icontrue = '<img src="'.$theme_url.'/system/true.gif" class="systemicon" />';
@@ -234,18 +239,18 @@ if ($urgent_alerts) {
 		$j = 0;
 		foreach($groups as $group => $galerts) {
 		foreach($galerts as $alert) {
-			$onerow = new stdClass;
-			$onerow->rowclass = 'row'.($j % 2 + 1);
+			$oneset = new stdClass;
+			$oneset->rowclass = 'row'.($j % 2 + 1);
 			if (isset($alert['pages']))
-				$onerow->pages = implode('<br />',$alert['pages']);
+				$oneset->pages = implode('<br />',$alert['pages']);
 			else
-				$onerow->pages = '';
-			$onerow->problem = $alert['message'];
+				$oneset->pages = '';
+			$oneset->problem = $alert['message'];
 			if (array_key_exists('links_data', $alert)) {
 				$links = $alert['links_data'];
 				if (count($links) == 1) {
 					foreach($links as $id => $data) {
-						$onerow->action = $funcs->getFixLink($this, $_GET[$this->pathstr], $id);
+						$oneset->action = $funcs->getFixLink($this, $_GET[$this->pathstr], $id);
 						$sig = '@'.$id.'-'.$data[1];
 					}
 				}
@@ -256,31 +261,31 @@ if ($urgent_alerts) {
 						$s[] = $funcs->getFixLink($this, $_GET[$this->pathstr], $id, $data[0]);
 						$sig .= '@'.$id.'-'.$data[1];
 					}
-					$onerow->action = implode('<br />', $s);
+					$oneset->action = implode('<br />', $s);
 					unset($s);
 				}
 			}
 			elseif (array_key_exists('links', $alert)) {
 				$links = 'TODO'; //QQQ
-				$onerow->action = implode('<br />',$alert['links']);
+				$oneset->action = implode('<br />',$alert['links']);
 				$sig = '';
 			}
 			else {
 				$links = 'NONE'; //TODO CHECKME
-				$onerow->action = '';
+				$oneset->action = '';
 				$sig = '';
 			}
 			if (array_key_exists('ignored', $alert)) {
 				$iname = ($alert['ignored']) ? 'true':'false';
-				$onerow->ignored = $this->CreateTooltipLink(null, 'defaultadmin', '',
+				$oneset->ignored = $this->CreateTooltipLink(null, 'defaultadmin', '',
 				'<img src="'.$theme_url.'/system/'.$iname.'.gif" class="systemicon" />',
 				$this->Lang('toggle'), array('what'=>'toggle_ignore','content_data'=>$sig,'tab'=>'urgentfixes'));
-				$onerow->checkval = $sig;
-				$onerow->sel = ''; //TODO
+				$oneset->checkval = $sig;
+				$oneset->sel = ''; //TODO
 			}
 			else {
-				$onerow->checkval = '';
-				$onerow->sel = '';
+				$oneset->checkval = '';
+				$oneset->sel = '';
 			}
 			if (array_key_exists('active', $alert)) {
 				if (strpos($alert['active'],',') === FALSE) {
@@ -300,13 +305,13 @@ if ($urgent_alerts) {
 					if ($act2) $cb .= ' checked="checked"';
 					$cb .= ' />';
 				}
-				$onerow->active = $cb;
+				$oneset->active = $cb;
 			}
 			else {
-				$onerow->active = '';
+				$oneset->active = '';
 			}
 
-			$urgent[] = $onerow;
+			$urgent[] = $oneset;
 			$j++;
 		}
 	}
@@ -341,18 +346,18 @@ if ($important_alerts) {
 	$j = 0;
 	foreach($groups as $group => $galerts) {
 		foreach($galerts as $alert) {
-			$onerow = new stdClass;
-			$onerow->rowclass = 'row'.($j % 2 + 1);
+			$oneset = new stdClass;
+			$oneset->rowclass = 'row'.($j % 2 + 1);
 			if (isset($alert['pages']))
-				$onerow->pages = implode('<br />',$alert['pages']);
+				$oneset->pages = implode('<br />',$alert['pages']);
 			else
-				$onerow->pages = '';
-			$onerow->problem = $alert['message'];
+				$oneset->pages = '';
+			$oneset->problem = $alert['message'];
 			if (array_key_exists('links_data', $alert)) {
 				$links = $alert['links_data'];
 				if (count($links) == 1) {
 					foreach($links as $id => $data) {
-						$onerow->action = $funcs->getFixLink($this, $_GET[$this->pathstr], $id);
+						$oneset->action = $funcs->getFixLink($this, $_GET[$this->pathstr], $id);
 						$sig = '@'.$id.'-'.$data[1];
 					}
 				}
@@ -363,14 +368,14 @@ if ($important_alerts) {
 						$s[] = $funcs->getFixLink($this, $_GET[$this->pathstr], $id, $data[0]);
 						$sig .= '@'.$id.'-'.$data[1];
 					}
-					$onerow->action = implode('<br />', $s);
-					$onerow->checkval = $sig;
+					$oneset->action = implode('<br />', $s);
+					$oneset->checkval = $sig;
 					unset($s);
 				}
 			}
 			elseif (array_key_exists('links', $alert)) {
 				$links = 'TODO'; //QQQ
-				$onerow->action = implode('<br />',$alert['links']);
+				$oneset->action = implode('<br />',$alert['links']);
 				$sig = '';
 			}
 			else {
@@ -380,14 +385,14 @@ if ($important_alerts) {
 
 			if (array_key_exists('ignored', $alert)) {
 				$iname = ($alert['ignored']) ? 'true':'false';
-				$onerow->ignored = $this->CreateTooltipLink(null, 'defaultadmin', '',
+				$oneset->ignored = $this->CreateTooltipLink(null, 'defaultadmin', '',
 				 '<img src="'.$theme_url.'/system/'.$iname.'.gif" class="systemicon" />',
 				 $this->Lang('toggle'), array('what'=>'toggle_ignore','content_data'=>$sig,'tab'=>'importantfixes'));
-				$onerow->checkval = $sig;
+				$oneset->checkval = $sig;
 			}
 			else {
-				$onerow->ignored = '';
-				$onerow->checkval = '';
+				$oneset->ignored = '';
+				$oneset->checkval = '';
 			}
 			if (array_key_exists('active', $alert)) {
 				if (strpos($alert['active'],',') === FALSE) {
@@ -407,14 +412,14 @@ if ($important_alerts) {
 					if ($act2) $cb .= ' checked="checked"';
 					$cb .= ' />';
 				}
-				$onerow->active = $cb;
-				$onerow->sel = ''; //TODO
+				$oneset->active = $cb;
+				$oneset->sel = ''; //TODO
 			}
 			else {
-				$onerow->active = '';
-				$onerow->sel = ''; //TODO
+				$oneset->active = '';
+				$oneset->sel = ''; //TODO
 			}
-			$important[] = $onerow;
+			$important[] = $oneset;
 			$j++;
 		}
 	}
@@ -430,18 +435,18 @@ $notice_alerts = $funcs->getNoticeAlerts($this);
 if ($notice_alerts) {
 	$icon = '<img src="'.$theme_url.'/Notifications/3.gif" class="systemicon" />';
 	foreach($notice_alerts as $alert) {
-		$onerow = new stdClass;
-		$onerow->icon = $icon;
-		$onerow->text = $alert['message'];
-		if (isset($alert['links'])) $onerow->link = '['.implode(' | ',$alert['links']).']';
-		$notice[] = $onerow;
+		$oneset = new stdClass;
+		$oneset->icon = $icon;
+		$oneset->text = $alert['message'];
+		if (isset($alert['links'])) $oneset->link = '['.implode(' | ',$alert['links']).']';
+		$notice[] = $oneset;
 	}
 }
 else {
-	$onerow = new stdClass;
-	$onerow->icon = $icontrue;
-	$onerow->text = $this->Lang('nothing_to_be_fixed');
-	$notice[] = $onerow;
+	$oneset = new stdClass;
+	$oneset->icon = $icontrue;
+	$oneset->text = $this->Lang('nothing_to_be_fixed');
+	$notice[] = $oneset;
 }
 $smarty->assign('notices',$notice);
 
@@ -492,31 +497,31 @@ $query = 'SELECT * FROM '.$pre.'content ORDER BY hierarchy ASC';
 $result = $db->Execute($query);
 
 $j = 0;
-while ($page = $result->fetchRow()) {
+while ($row = $result->fetchRow()) {
 
 	$prefix = '';
 	$auto_priority = 80;
-	$n = substr_count($page['hierarchy'],'.');
+	$n = substr_count($row['hierarchy'],'.');
 	for($i = 0; $i < $n; $i++) {
 		$prefix .= '&raquo; ';
 		$auto_priority  = $auto_priority / 2;
 	}
-	if ($page['default_content'] == 1) {
+	if ($row['default_content'] == 1) {
 		$auto_priority = 100;
 	}
 
-	$onerow = new stdClass;
-	$onerow->rowclass = 'row'.($j % 2 + 1);
-	$onerow->name = $prefix.' '.$page['content_name'];
+	$oneset = new stdClass;
+	$oneset->rowclass = 'row'.($j % 2 + 1);
+	$oneset->name = $prefix.' '.$row['content_name'];
 
-	if (strpos($page['type'],'content') === 0) { //any content type
+	if (strpos($row['type'],'content') === 0) { //any content type
 		$query = 'SELECT content FROM '.$pre.'content_props WHERE content_id = ? AND prop_name = ?';
-		$parms = array($page['content_id']);
+		$parms = array($row['content_id']);
 		$parms[] = str_replace(' ','_',$this->GetPreference('description_block',''));
 		$description = $db->GetOne($query,$parms);
 		$description_auto = FALSE;
 		$funcs = new SEO_keyword();
-		$kw = $funcs->getKeywordSuggestions($this,$page['content_id']);
+		$kw = $funcs->getKeywords($this,$row['content_id']);
 		if ($kw && $description == FALSE && $this->GetPreference('description_auto_generate',FALSE)) {
 			if (count($kw) > 1) {
 				$last_keyword = array_pop($kw);
@@ -526,38 +531,38 @@ while ($page = $result->fetchRow()) {
 				$keywords = reset($kw);
 			}
 			$description = $this->Lang('auto_generated').": ".str_replace('{keywords}',$keywords,$this->GetPreference('description_auto',''));
-			$description = str_replace('{title}',$page['content_name'],$description);
+			$description = str_replace('{title}',$row['content_name'],$description);
 			$description_auto = TRUE;
 		}
 
 		$updown = '';
 		if ($auto_priority > 10) {
-			$updown .= $this->CreateTooltipLink(null, 'defaultadmin', '', $icondown, $this->Lang('decrease_priority'), array('what'=>'set_priority','priority'=>$auto_priority-10,'content_id'=>$page['content_id']));
+			$updown .= $this->CreateTooltipLink(null, 'defaultadmin', '', $icondown, $this->Lang('decrease_priority'), array('what'=>'set_priority','priority'=>$auto_priority-10,'content_id'=>$row['content_id']));
 		}
 		if ($auto_priority <= 90) {
-			$updown .= $this->CreateTooltipLink(null, 'defaultadmin', '', $iconup, $this->Lang('increase_priority'), array('what'=>'set_priority','priority'=>$auto_priority+10,'content_id'=>$page['content_id']));
+			$updown .= $this->CreateTooltipLink(null, 'defaultadmin', '', $iconup, $this->Lang('increase_priority'), array('what'=>'set_priority','priority'=>$auto_priority+10,'content_id'=>$row['content_id']));
 		}
 		$priority = '('.$this->Lang('auto').') '.$auto_priority.'%';
-		$ogtype = '('.$this->Lang('default').') '.$default_ogtype.' '.$this->CreateTooltipLink(null, 'defaultadmin', '', $iconedit, $this->Lang('edit_value'), array('what'=>'edit_ogtype','content_id'=>$page['content_id']));
-		$keywords = '('.$this->Lang('auto').') '.count($kw).' '.$this->CreateTooltipLink(null, 'defaultadmin', '', $iconedit, implode(', ',$kw).'; '.$this->Lang('edit_value'), array('what'=>'edit_keywords','content_id'=>$page['content_id']));
+		$ogtype = '('.$this->Lang('default').') '.$default_ogtype.' '.$this->CreateTooltipLink(null, 'defaultadmin', '', $iconedit, $this->Lang('edit_value'), array('what'=>'edit_ogtype','content_id'=>$row['content_id']));
+		$keywords = '('.$this->Lang('auto').') '.count($kw).' '.$this->CreateTooltipLink(null, 'defaultadmin', '', $iconedit, implode(', ',$kw).'; '.$this->Lang('edit_value'), array('what'=>'edit_keywords','content_id'=>$row['content_id']));
 		$iname = 'true';
 
 		$query = 'SELECT * FROM '.$pre.'module_seotools WHERE content_id = ?';
-		$info = $db->GetRow($query,array($page['content_id']));
+		$info = $db->GetRow($query,array($row['content_id']));
 		if ($info && $info['content_id'] != '') {
 			if ($info['priority'] != 0) {
-			  $priority = '<strong>'.$info['priority'] . '% '.$this->CreateTooltipLink(null, 'defaultadmin', '', $iconreset, $this->Lang('reset_to_default'), array('what'=>'reset_priority','content_id'=>$page['content_id'])) . '</strong>';
+			  $priority = '<strong>'.$info['priority'] . '% '.$this->CreateTooltipLink(null, 'defaultadmin', '', $iconreset, $this->Lang('reset_to_default'), array('what'=>'reset_priority','content_id'=>$row['content_id'])) . '</strong>';
 			  $auto_priority = $info['priority'];
 			}
 			if ($info['ogtype'] != '') {
 			  $ogtype = '<strong>'.$info['ogtype'] . ' '
-			  . $this->CreateTooltipLink(null, 'defaultadmin', '', $iconreset, $this->Lang('reset_to_default'), array('what'=>'reset_ogtype','content_id'=>$page['content_id']))
-			  . $this->CreateTooltipLink(null, 'defaultadmin', '', $iconedit, $this->Lang('edit_value'), array('what'=>'edit_ogtype','content_id'=>$page['content_id'])).'</strong>';
+			  . $this->CreateTooltipLink(null, 'defaultadmin', '', $iconreset, $this->Lang('reset_to_default'), array('what'=>'reset_ogtype','content_id'=>$row['content_id']))
+			  . $this->CreateTooltipLink(null, 'defaultadmin', '', $iconedit, $this->Lang('edit_value'), array('what'=>'edit_ogtype','content_id'=>$row['content_id'])).'</strong>';
 			}
 			if ($info['keywords'] != '') {
 				$keywords = '<strong>'.count(explode(' ',$info['keywords']))
-				. $this->CreateTooltipLink(null, 'defaultadmin', '', $iconreset, $this->Lang('reset_to_default'), array('what'=>'reset_keywords','content_id'=>$page['content_id']))
-				. $this->CreateTooltipLink(null, 'defaultadmin', '', $iconedit, $this->Lang('edit_value'), array('what'=>'edit_keywords','content_id'=>$page['content_id'])).'</strong>';
+				. $this->CreateTooltipLink(null, 'defaultadmin', '', $iconreset, $this->Lang('reset_to_default'), array('what'=>'reset_keywords','content_id'=>$row['content_id']))
+				. $this->CreateTooltipLink(null, 'defaultadmin', '', $iconedit, $this->Lang('edit_value'), array('what'=>'edit_keywords','content_id'=>$row['content_id'])).'</strong>';
 			}
 			if (!$info['indexable']) {
 			  $iname = 'false';
@@ -565,35 +570,35 @@ while ($page = $result->fetchRow()) {
 		}
 		unset($info);
 
-		$onerow->priority = $updown.' '.$priority;
-		$onerow->ogtype = $ogtype;
-		$onerow->keywords = $keywords;
+		$oneset->priority = $updown.' '.$priority;
+		$oneset->ogtype = $ogtype;
+		$oneset->keywords = $keywords;
 		if ($description != '') {
 			$inm2 = ($description_auto) ? 'warning' : 'true';
-			$onerow->desc ='<img src="'.$theme_url.'/system/'.$inm2.'.gif" title="'.
+			$oneset->desc ='<img src="'.$theme_url.'/system/'.$inm2.'.gif" title="'.
 			strip_tags($description).'" class="systemicon" />';
 		}
 		else {
-			$onerow->desc = '<a href="editcontent.php?'.$this->pathstr.'='.$_GET[$this->pathstr].
-			'&content_id='.$page['content_id'].'"><img src="'.$theme_url.'/system/false.gif" title="'.
+			$oneset->desc = '<a href="editcontent.php?'.$this->pathstr.'='.$_GET[$this->pathstr].
+			'&content_id='.$row['content_id'].'"><img src="'.$theme_url.'/system/false.gif" title="'.
 			$this->Lang('click_to_add_description').'" class="systemicon" /></a>';
 		}
-		$onerow->index = $this->CreateTooltipLink(null, 'defaultadmin', '',
+		$oneset->index = $this->CreateTooltipLink(null, 'defaultadmin', '',
 			'<img src="'.$theme_url.'/system/'.$iname.'.gif" class="systemicon" />',
-			$this->Lang('toggle'), array('what'=>'toggle_index','content_id'=>$page['content_id']));
-		$onerow->checkval = $page['content_id'];
-		$onerow->sel = ''; //TODO
+			$this->Lang('toggle'), array('what'=>'toggle_index','content_id'=>$row['content_id']));
+		$oneset->checkval = $row['content_id'];
+		$oneset->sel = ''; //TODO
 	}
 	else {
-		$onerow->priority = '---';
-		$onerow->ogtype = '';
-		$onerow->keywords = '';
-		$onerow->desc = '';
-		$onerow->index = '';
-		$onerow->checkval = '';
-		$onerow->sel = '';
+		$oneset->priority = '---';
+		$oneset->ogtype = '';
+		$oneset->keywords = '';
+		$oneset->desc = '';
+		$oneset->index = '';
+		$oneset->checkval = '';
+		$oneset->sel = '';
 	}
-	$items[] = $onerow;
+	$items[] = $oneset;
 	$j++;
 }
 $smarty->assign('items',$items);
