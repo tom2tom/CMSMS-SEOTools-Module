@@ -10,17 +10,17 @@ class SEO_keyword
 		if (!$source) {
 			return array();
 		}
-		//TODO not utf8_decode() >> iconv()?
-		$source = preg_replace('/\{[^\}]+\}/isU', '', utf8_decode($source));
-		$source = str_replace(PHP_EOL,' ',strip_tags($source));
-		foreach (array('-','.',',','!','?',':',';') as $ch) {
+
+		$source = preg_replace('/\{[^\}]+\}/sU', '', $source); //smarty tags gone
+		$source = str_replace(PHP_EOL, ' ', strip_tags($source)); //html tags gone, newlines susbstituted
+		foreach (array('-', '.', ',', '!', '?', ':', ';') as $ch) { //some non-word chars susbstituted
 			if($ch != $sep)
-				$source = str_replace($ch,' ',$source);
+				$source = str_replace($ch, ' ', $source);
 		}
-		$keywords = explode($sep,$source);
+		$keywords = explode($sep, $source);
 		foreach ($keywords as &$value) {
 			$value = trim($value);
-			if (strlen($value) < $minlength) {
+			if (strlen($value) < $minlength) { //TODO mb_strlen($value,$encoding)
 				$value = '';
 			}
 			else {
@@ -135,10 +135,9 @@ class SEO_keyword
 			$db->Execute($query,array($merged,$content_id));
 		}
 
-		//TODO not utf8_decode() >> iconv()?
-		$exclude_list = utf8_decode($mod->GetPreference('keyword_exclude',''));
+		$exclude_list = $mod->GetPreference('keyword_exclude','');
 		foreach ($got_keywords as $key=>&$value) {
-			if ($value < $minwt || ($exclude_list && strpos($key,$exclude_list) !== FALSE)) {
+			if ($value < $minwt || ($exclude_list && strpos($key,$exclude_list) !== FALSE)) { //TODO caseless mb scan
 				$value = '';
 			}
 		}
