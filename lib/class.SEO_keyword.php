@@ -12,7 +12,7 @@ class SEO_keyword
 		}
 		//TODO not utf8_decode() >> iconv()?
 		$source = preg_replace('/\{[^\}]+\}/isU', '', utf8_decode($source));
-		$source = str_replace("\n",' ',strip_tags($source));
+		$source = str_replace(PHP_EOL,' ',strip_tags($source));
 		foreach (array('-','.',',','!','?',':',';') as $ch) {
 			if($ch != $sep)
 				$source = str_replace($ch,' ',$source);

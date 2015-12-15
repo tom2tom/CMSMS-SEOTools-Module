@@ -221,8 +221,8 @@ if ($page_image) {
 }
 
 if ($out) {
-	echo implode("\n",$out);
-	echo "\n";
+	echo implode(PHP_EOL,$out);
+	echo PHP_EOL;
 }
 
 ?>

@@ -51,8 +51,8 @@ class SEO_file
 			$outs[] = $xtra;
 		}
 
-		@fwrite($fp,implode("\n",$outs));
-		@fwrite($fp,"\n");
+		@fwrite($fp,implode(PHP_EOL,$outs));
+		@fwrite($fp,PHP_EOL);
 		@fclose($fp);
 		return TRUE;
 	}
@@ -129,7 +129,7 @@ EOS
 				}
 			}
 		}
-		@fwrite($fp, "</urlset>\n");
+		@fwrite($fp, '</urlset>'.PHP_EOL);
 		@fclose($fp);
 
 		if ($mod->GetPreference('push_sitemap',0)) {
