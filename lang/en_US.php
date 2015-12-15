@@ -244,7 +244,11 @@ problems. Currently, the following features are supported:</p>
 <p>First, open each template/page where you want to apply SEO Tools. For each of them:</p>
 <ol>
 <li>Remove the whole &lt;title&gt;&lt;/title&gt; line, and the {metadata} tag (even if it says to never remove it) and replace them with the tag
-<code>{SEOTools}</code></li>
+<code>{SEOTools}</code><br />
+Alternatively, if you add and populate the content blocks as described below, you can minimally roll-your-own with something like:<br />
+<code> {if empty(\$meta_description)}{capture assign='meta_description'}{title|strip_tags} - {description}{/capture}{/if}<br />
+ &lt;meta name="description" content="{\$meta_description}" /&gt;<br />
+ {if !empty(\$meta_keywords)}&lt;meta name="keywords" content="{\$meta_keywords}" /&gt;{/if}</code></li>
 <li>Insert at the bottom (after the closing &lt;/body&gt; element), a tag to create a block
 for entering a page description, like the following:<br />
 <code>{content assign='meta_description' block='metadescription' label='Your block label' wysiwyg=false}</code><br />
