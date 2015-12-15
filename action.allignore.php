@@ -9,9 +9,9 @@
 if (isset($_POST['cancel']))
 	$this->Redirect($id, 'defaultadmin');
 elseif (isset($_POST['ignore_selected']))
-	$intable = TRUE;
+	$intable = true;
 elseif (isset($_POST['unignore_selected']))
-	$intable = FALSE;
+	$intable = false;
 else
 	$this->Redirect($id, 'defaultadmin'); //should never happen
 
@@ -35,7 +35,7 @@ foreach ($work as $value) {
 	foreach ($pages as $sig) {
 		list ($id,$ignored) = explode ('-', $sig);
 		$id = (int)$id;
-		$query = "SELECT content_id,ignored FROM ".$pre."module_seotools WHERE content_id=?";
+		$query = 'SELECT content_id,ignored FROM '.$pre.'module_seotools WHERE content_id=?';
 		$res = $db->GetRow($query,array($id));
 		if ($res) {
 			if ($res['ignored']) {
@@ -50,15 +50,15 @@ foreach ($work as $value) {
 					}
 				}
 				if ($codes) {
-					$query = "UPDATE ".$pre."module_seotools SET ignored=? WHERE content_id=?";
+					$query = 'UPDATE '.$pre.'module_seotools SET ignored=? WHERE content_id=?';
 					$parms[] = implode(',',$codes);
 				}
 				else {
-					$query = "UPDATE ".$pre."module_seotools SET ignored=NULL WHERE content_id=?";
+					$query = 'UPDATE '.$pre.'module_seotools SET ignored=NULL WHERE content_id=?';
 				}
 			}
 			elseif ($intable) {
-				$query = "UPDATE ".$pre."module_seotools SET ignored=? WHERE content_id=?";
+				$query = 'UPDATE '.$pre.'module_seotools SET ignored=? WHERE content_id=?';
 				$parms[] = $ignored;
 			}
 			$parms[] = $id;
@@ -66,7 +66,7 @@ foreach ($work as $value) {
 			unset ($parms);
 		}
 		else if ($intable) {
-			$query = "INSERT INTO ".$pre."module_seotools (content_id,ignored) VALUES (?,?)";
+			$query = 'INSERT INTO '.$pre.'module_seotools (content_id,ignored) VALUES (?,?)';
 			$db->Execute($query, array($id,$ignored));
 		}
 	}

@@ -6,9 +6,9 @@
 
 class SEO_populator
 {
-	private $adminurl = NULL;
-	private $theme = NULL;
-	/*
+	private $adminurl = null;
+	private $theme = null;
+/*
 	public function GetNotificationOutput(&$mod, $priority = 2)
 	{
 		$alerts = getUrgentAlerts($mod,TRUE,TRUE);
@@ -20,13 +20,13 @@ class SEO_populator
 
 			return $obj;
 		}
-		return FALSE;
+		return false;
 	}
-	*/
+*/
 	private function getSeeLink(&$mod, $priority, $title = '')
 	{
 		$gCms = cmsms(); //CMSMS 1.8+
-		if ($this->adminurl == NULL) {
+		if ($this->adminurl == null) {
 			$config = $gCms->GetConfig();
 			if (isset($config['admin_url'])) {
 				$this->adminurl = $config['admin_url'];
@@ -36,7 +36,7 @@ class SEO_populator
 				$this->adminurl = $rooturl.'/'.$config['admin_dir'];
 			}
 		}
-		if ($this->theme == NULL) {
+		if ($this->theme == null) {
 			$this->theme = ($mod->before20) ?
 				$gCms->get_variable('admintheme'):
 				cms_utils::get_theme_object();
@@ -50,12 +50,12 @@ class SEO_populator
 		return $lnk;
 	}
 
-	public function getUrgentAlerts(&$mod, $omit_inactive = FALSE, $omit_ignored = FALSE)
+	public function getUrgentAlerts(&$mod, $omit_inactive = false, $omit_ignored = false)
 	{
 		$gCms = cmsms(); //CMSMS 1.8+
 		$alerts = array();
 		// No Meta tags are inserted
-		if (!($mod->GetPreference('meta_standard',FALSE) || $mod->GetPreference('meta_dublincore',FALSE)))
+		if (!($mod->GetPreference('meta_standard',0) || $mod->GetPreference('meta_dublincore',0)))
 		{
 			$alert = array();
 			$alert['group'] = 'settings';
@@ -65,7 +65,7 @@ class SEO_populator
 		}
 		$db = $gCms->GetDb();
 		$pre = cms_db_prefix();
-		if (!$mod->GetPreference('description_auto_generate',FALSE))
+		if (!$mod->GetPreference('description_auto_generate',0))
 		{
 			$pref = $mod->GetPreference('description_block','');
 			if ($pref) {
@@ -88,7 +88,7 @@ class SEO_populator
 					while ($problem = $rst->fetchRow()) {
 						$ig = $problem['ignored'];
 						if (($ig == null && $keep)
-						  ||($ig != null && strpos($ig,$code) !== FALSE)) {
+						  ||($ig != null && strpos($ig,$code) !== false)) {
 							$alert = array();
 							$alert['group'] = 'pages';
 							$alert['active'] = $problem['active'];
@@ -110,7 +110,7 @@ class SEO_populator
 				$alerts[] = $alert;
 			}
 		}
-		elseif (strpos($mod->GetPreference('description_auto',''),'{keywords}') === FALSE) {
+		elseif (strpos($mod->GetPreference('description_auto',''),'{keywords}') === false) {
 			$alert = array();
 			$alert['group'] = 'settings';
 			$alert['message'] = $mod->Lang('set_up_auto_description');
@@ -143,7 +143,7 @@ class SEO_populator
 			}
 		}
 
-		if ($mod->GetPreference('meta_opengraph',FALSE)) {
+		if ($mod->GetPreference('meta_opengraph',0)) {
 			// No OpenGraph admin set
 			if (($mod->GetPreference('meta_opengraph_admins','') == '') && ($mod->GetPreference('meta_opengraph_application','') == '')) {
 				$alert = array();
@@ -180,11 +180,11 @@ class SEO_populator
 		return $alerts;
 	}
 
-	public function getImportantAlerts(&$mod, $omit_inactive = FALSE, $omit_ignored = FALSE)
+	public function getImportantAlerts(&$mod, $omit_inactive = false, $omit_ignored = false)
 	{
 		$gCms = cmsms(); //CMSMS 1.8+
 		$config = $gCms->GetConfig();
-		if ($this->adminurl == NULL) {
+		if ($this->adminurl == null) {
 			if (isset($config['admin_url'])) {
 				$this->adminurl = $config['admin_url'];
 			}
@@ -198,7 +198,7 @@ class SEO_populator
 		$alerts = array();
 		// Pretty URLs not working
 		if (($config['assume_mod_rewrite'] != 1) && ($config['internal_pretty_urls'] != 1)) {
-			if($this->theme == NULL) {
+			if($this->theme == null) {
 				$this->theme = ($mod->before20) ?
 					$gCms->get_variable('admintheme'):
 					cms_utils::get_theme_object();
@@ -232,7 +232,7 @@ class SEO_populator
 			while ($problem = $rst->fetchRow()) {
 				$ig = $problem['ignored'];
 				if (($ig == null && $keep)
-				  ||($ig != null && strpos($ig,$code) !== FALSE)) {
+				  ||($ig != null && strpos($ig,$code) !== false)) {
 					$alert = array();
 					$alert['group'] = 'descriptions';
 					$alert['active'] = $problem['active'];
@@ -263,7 +263,7 @@ c2.content_alias AS c2name, c2.content_id AS c2id, c2.active as c2a, S.ignored F
 			while ($problem = $rst->fetchRow()) {
 				$ig = $problem['ignored'];
 				if (($ig == null && $keep)
-				  ||($ig != null && strpos($ig,$code) !== FALSE)) {
+				  ||($ig != null && strpos($ig,$code) !== false)) {
 					$alert = array();
 					$alert['group'] = 'titles';
 					$alert['active'] = $problem['c1a'].','.$problem['c2a'];
@@ -278,12 +278,12 @@ c2.content_alias AS c2name, c2.content_id AS c2id, c2.active as c2a, S.ignored F
 			$rst->Close();
 		}
 
-		// Any pages with duplicate description
+		// Pages with duplicate description
 		$query = 'SELECT p1.content_id AS p1id, p2.content_id AS p2id, S.ignored FROM '
 		.$pre.'content_props p1 INNER JOIN '
 		.$pre.'content_props p2 ON p1.prop_name = p2.prop_name LEFT JOIN '
 		.$pre.'module_seotools S ON p1.content_id = S.content_id
-WHERE(p1.prop_name = ? AND p1.content_id < p2.content_id  AND p1.content <> ? AND p2.content = p1.content)';
+WHERE(p1.prop_name = ? AND p1.content_id < p2.content_id  AND p1.content != ? AND p2.content = p1.content)';
 		$parms = array();
 		$parms[] = str_replace(' ','_',$mod->GetPreference('description_block',''));
 		$parms[] = '';
@@ -299,20 +299,24 @@ WHERE(p1.prop_name = ? AND p1.content_id < p2.content_id  AND p1.content <> ? AN
 			while ($problem = $rst->fetchRow()) {
 				$ig = $problem['ignored'];
 				if (($ig == null && $keep)
-				  ||($ig != null && strpos($ig,$code) !== FALSE)) {
-					$rst1 = $db->Execute($query,array($problem['p1id'],$problem['p2id']));
-					$first = $rst1->fetchRow();
-					$second = $rst1->fetchRow();
-					$rst1->Close();
-					$alert = array();
-					$alert['group'] = 'descriptions';
-					$alert['active'] = $first['active'].','.$second['active'];
-					$alert['pages'] = array($first['content_name'],$second['content_name']);
-					$alert['message'] = $mod->Lang('duplicate_descriptions');
-					$alert['ignored'] = $problem['ignored']; //CHECKME both?
-					$alert['links_data'][$first['content_id']] = array($first['content_name'],$code);
-					$alert['links_data'][$second['content_id']] = array($second['content_name'],$code);
-					$alerts[] = $alert;
+				  ||($ig != null && strpos($ig,$code) !== false)) {
+					$rst2 = $db->Execute($query, array($problem['p1id'], $problem['p2id']));
+					if ($rst2) {
+						$first = $rst2->fetchRow();
+						$second = $rst2->fetchRow();
+						$rst2->Close();
+						if ($first && $second) {
+							$alert = array();
+							$alert['group'] = 'descriptions';
+							$alert['active'] = $first['active'].','.$second['active'];
+							$alert['pages'] = array($first['content_name'], $second['content_name']);
+							$alert['message'] = $mod->Lang('duplicate_descriptions');
+							$alert['ignored'] = $problem['ignored']; //CHECKME both?
+							$alert['links_data'][$first['content_id']] = array($first['content_name'], $code);
+							$alert['links_data'][$second['content_id']] = array($second['content_name'], $code);
+							$alerts[] = $alert;
+						}
+					}
 				}
 			}
 			$rst->Close();
@@ -337,13 +341,13 @@ WHERE(p1.prop_name = ? AND p1.content_id < p2.content_id  AND p1.content <> ? AN
 	{
 		$alerts = array();
 		// No standard meta
-		if (!$mod->GetPreference('meta_standard',FALSE)) {
+		if (!$mod->GetPreference('meta_standard',0)) {
 			$alert = array();
 			$alert['message'] = $mod->Lang('use_standard_meta');
 			$alert['links'][] = self::getTabLink(4,$mod->Lang('visit_settings'));
 			$alerts[] = $alert;
 		}
-		// Submit a sitemap
+		// Create a sitemap
 		if (!$mod->GetPreference('create_sitemap',0)) {
 			$alert = array();
 			$alert['message'] = $mod->Lang('create_a_sitemap');
@@ -372,7 +376,7 @@ WHERE(p1.prop_name = ? AND p1.content_id < p2.content_id  AND p1.content <> ? AN
 	public function getFixLink(&$mod, $sp, $id, $pagename = '')
 	{
 		$gCms = cmsms(); //CMSMS 1.8+
-		if ($this->adminurl == NULL) {
+		if ($this->adminurl == null) {
 			$config = $gCms->GetConfig();
 			if (isset($config['admin_url'])) {
 				$this->adminurl = $config['admin_url'];
@@ -382,7 +386,7 @@ WHERE(p1.prop_name = ? AND p1.content_id < p2.content_id  AND p1.content <> ? AN
 				$this->adminurl = $rooturl.'/'.$config['admin_dir'];
 			}
 		}
-		if ($this->theme == NULL) {
+		if ($this->theme == null) {
 			$this->theme = ($mod->before20) ?
 				$gCms->get_variable('admintheme'):
 				cms_utils::get_theme_object();

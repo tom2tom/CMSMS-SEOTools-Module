@@ -80,7 +80,7 @@ class SEOTools extends CMSModule
 	//CMSMS 1.11+
 	function AllowSmartyCaching()
 	{
-		return FALSE; //need freshly-assigned meta (keywords etc) & exported vars
+		return false; //need freshly-assigned meta (keywords etc) & exported vars
 	}
 
 	function HasAdmin()
@@ -158,15 +158,15 @@ EOS;
 	//CMSMS 1.10+
 	function InitializeAdmin()
 	{
-		$this->AddEventHandler('Core','ContentEditPost',FALSE);
-		$this->AddEventHandler('Core','ContentDeletePost',FALSE);
+		$this->AddEventHandler('Core','ContentEditPost',false);
+		$this->AddEventHandler('Core','ContentDeletePost',false);
 		$this->CreateParameter('showbase','true',$this->Lang('help_showbase'));
 	}
 
 	//CMSMS 1.10+
 	function LazyLoadAdmin()
 	{
-		return FALSE; //capture events ASAP
+		return false; //capture events ASAP
 	}
 
 	//CMSMS 1.10+
@@ -179,7 +179,7 @@ EOS;
 	//CMSMS 1.10+
 	function LazyLoadFrontend()
 	{
-		return FALSE;
+		return false;
 	}
 
 	function DoEvent($origin,$name,&$params)

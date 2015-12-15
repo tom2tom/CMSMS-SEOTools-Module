@@ -39,7 +39,7 @@ $query = 'SELECT * FROM '.cms_db_prefix().'module_seotools WHERE content_id=?';
 $page_row = $db->GetRow($query,array($page_id));
 
 $funcs = new SEO_keyword();
-$kw = (!empty($page_row['keywords'])) ? $page_row['keywords'] : ''; //NOT FALSE
+$kw = (!empty($page_row['keywords'])) ? $page_row['keywords'] : ''; //NOT false
 $other_keywords = $funcs->getKeywords($this, $page_id, $content, $kw);
 $smarty->assign('page_keywords', implode($sep, $other_keywords));
 
@@ -54,13 +54,11 @@ $smarty->assign('title_keywords', $title_keywords); //never a comma-separator
 // Page description
 
 $description = $smarty->get_template_vars('page_description'); //dynamic content
-if ($description == FALSE)
-{
+if (!$description) {
 	$description_id = str_replace(' ','_',$this->GetPreference('description_block',''));
 	$description = strip_tags($content->GetPropertyValue($description_id));
 }
-if ($description == FALSE && $this->GetPreference('description_auto_generate',FALSE))
-{
+if (!$description && $this->GetPreference('description_auto_generate',false)) {
 	$description = str_replace('{title}',$page_name,$description);
 	if (count($other_keywords) > 1) {
 		$kw = $other_keywords;
@@ -110,17 +108,16 @@ $meta_title = str_replace('{seo_keywords}',$title_keywords,$meta_title);
 $meta_title = $this->ProcessTemplateFromData($meta_title);
 
 $lat = $this->GetPreference('meta_latitude','');
-if($lat && strpos($lat,',') !== FALSE) {
+if($lat && strpos($lat,',') !== false) {
 	$lat = str_replace(',','.',$lat);
 }
 $long = $this->GetPreference('meta_longitude','');
-if($long && strpos($long,',') !== FALSE) {
+if($long && strpos($long,',') !== false) {
 	$long = str_replace(',','.',$long);
 }
 
 // Standard META tags
-if ($this->GetPreference('meta_standard',FALSE))
-{
+if ($this->GetPreference('meta_standard',0)) {
 	if ($meta_title) $out[] = '<meta name="title" content="'.$meta_title.'" />';
 	if ($description) $out[] = '<meta name="description" content="'.$description.'" />';
 	if ($merged) $out[] = '<meta name="keywords" content="'.implode($sep, $merged).'" />';
@@ -140,8 +137,7 @@ if ($this->GetPreference('meta_standard',FALSE))
 }
 
 // DublinCore META tags
-if ($this->GetPreference('meta_dublincore',FALSE))
-{
+if ($this->GetPreference('meta_dublincore',0)) {
 	$out[] = '<link rel="schema.DC" href="http://purl.org/dc/elements/1.1/" />';
 	$out[] = '<link rel="schema.DCTERMS" href="http://purl.org/dc/terms/" />';
 	$out[] = '<meta name="DC.type" content="Text" scheme="DCTERMS.DCMIType" />';
@@ -163,8 +159,7 @@ if ($this->GetPreference('meta_dublincore',FALSE))
 }
 
 // OpenGraph META tags
-if ($this->GetPreference('meta_opengraph',FALSE))
-{
+if ($this->GetPreference('meta_opengraph',0)) {
 	$pref = $this->GetPreference('meta_opengraph_title','{title}');
 	$opengraph_title = str_replace('{title}',$page_name,$pref);
 	$opengraph_title = $this->ProcessTemplateFromData($opengraph_title);

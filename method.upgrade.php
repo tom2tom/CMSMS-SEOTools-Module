@@ -11,36 +11,35 @@ switch($oldversion)
 	case "1.2":
 		$dict = NewDataDictionary($db);
 		//non-unique index
-		$tbl = cms_db_prefix()."module_seotools";
+		$tbl = cms_db_prefix().'module_seotools';
 		//standard field sizes (e.g. for postgresql)
-		$sql = $dict->AlterColumnSQL($tbl,
-			"indexable L NOTNULL DEFAULT 1, priority I(4)");
+		$sql = $dict->AlterColumnSQL($tbl, 'indexable L NOTNULL DEFAULT 1, priority I(4)');
 		$dict->ExecuteSQLArray($sql);
 		//support ignored problems
-		$sql = $dict->AddColumnSQL($tbl, "ignored X");
+		$sql = $dict->AddColumnSQL($tbl, 'ignored X');
 		$dict->ExecuteSQLArray($sql);
 		//conform to fixed preference name
-		$str = $this->GetPreference('title_meta','{title} | {$sitename}');
-		$this->SetPreference('meta_title',$str);
+		$str = $this->GetPreference('title_meta', '{title} | {$sitename}');
+		$this->SetPreference('meta_title', $str);
 		$this->DropPreference('title_meta');
 		//convert bool preference formats
-		$val = ($this->GetPreference('create_robots','false') == 'false') ? 0:1;
+		$val = ($this->GetPreference('create_robots', 'false') == 'false') ? 0:1;
 		$this->SetPreference('create_robots', $val);
-		$val = ($this->GetPreference('create_sitemap','false') == 'false') ? 0:1;
+		$val = ($this->GetPreference('create_sitemap', 'false') == 'false') ? 0:1;
 		$this->SetPreference('create_sitemap', $val);
-		$val = ($this->GetPreference('push_sitemap','false') == 'false') ? 0:1;
+		$val = ($this->GetPreference('push_sitemap', 'false') == 'false') ? 0:1;
 		$this->SetPreference('push_sitemap', $val);
 		$val = ($this->GetPreference('description_auto_generate','false') == 'false') ? 0:1;
 		$this->SetPreference('description_auto_generate', $val);
-		$val = ($this->GetPreference('meta_dublincore','false') == 'false') ? 0:1;
+		$val = ($this->GetPreference('meta_dublincore', 'false') == 'false') ? 0:1;
 		$this->SetPreference('meta_dublincore', $val);
-		$val = ($this->GetPreference('meta_opengraph','false') == 'false') ? 0:1;
+		$val = ($this->GetPreference('meta_opengraph', 'false') == 'false') ? 0:1;
 		$this->SetPreference('meta_opengraph', $val);
-		$val = ($this->GetPreference('meta_standard','false') == 'false') ? 0:1;
+		$val = ($this->GetPreference('meta_standard', 'false') == 'false') ? 0:1;
 		$this->SetPreference('meta_standard', $val);
 		//extra preferences
-		$this->SetPreference('content_type','html');
-		$this->SetPreference('keyword_separator',' ');
+		$this->SetPreference('content_type', 'html');
+		$this->SetPreference('keyword_separator' ,' ');
 	case "1.5":
 		//redundant files
 		$fp = cms_join_path(dirname(__FILE__),'changelog.inc');
@@ -54,8 +53,8 @@ switch($oldversion)
 			unlink($fp);
 		//extra preferences
 		$this->SetPreference('keyword_block','metakeywords');
-		$this->SetPreference('r_before','');
-		$this->SetPreference('r_after','');
+		$this->SetPreference('robot_start','');
+		$this->SetPreference('robot_end','');
 		//modify preference
 		$words = <<< EOS
 i,me,my,myself,we,our,ours,ourselves,you,your,yours,yourself,yourselves,

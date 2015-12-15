@@ -9,39 +9,23 @@
 if (isset($_POST['cancel']))
 	$this->Redirect($id, 'defaultadmin');
 elseif (isset($_POST['index_selected']))
-	$indx = TRUE;
+	$indx = 1;
 elseif (isset($_POST['unindex_selected']))
-	$indx = FALSE;
+	$indx = 0;
 else
-	$this->Redirect($id, 'defaultadmin'); //should never happen
+	$this->Redirect($id, 'defaultadmin', '', array('tab'=>'pagedescriptions')); //should never happen
 
 $pre = cms_db_prefix();
+$query = 'UPDATE '.$pre.'module_seotools SET indexable='.$indx.' WHERE content_id=?';
+$query2 = 'INSERT INTO '.$pre.
+'module_seotools (content_id, indexable) SELECT ?,'.$indx.' FROM (SELECT 1 AS dmy) Z WHERE NOT EXISTS (SELECT 1 FROM '.
+$pre.'module_seotools T WHERE T.content_id=?)';
+
 $work = $_POST['indxsel'];
-foreach ($work as $value)
-{
-	$parms = array();
-	$query = "SELECT indexable FROM ".$pre."module_seotools WHERE content_id=?";
-	if ($db->GetOne($query,array($value)) === FALSE)
-	{
-		if ($indx)
-		{
-			unset ($parms);
-			continue;
-		}
-		else
-			$query = "INSERT INTO ".$pre."module_seotools SET content_id=?, indexable=0";
-	}
-	else
-	{
-		$query = "UPDATE ".$pre."module_seotools SET indexable=? WHERE content_id=?";
-		if ($indx)
-			$parms[] = 1;
-		else
-			$parms[] = 0;
-	}
-	$parms[] = $value;
-	$db->Execute($query,$parms);
-	unset ($parms);
+foreach ($work as $cid) {
+	//upsert, sort-of
+	$db->Execute($query, array($cid));
+	$db->Execute($query2, array($cid, $cid));
 }
 
 $this->Redirect($id, 'defaultadmin', '', array('tab'=>'pagedescriptions'));

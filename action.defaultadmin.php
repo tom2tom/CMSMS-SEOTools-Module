@@ -10,141 +10,127 @@ if (!$this->CheckAccess()) {
 	return $this->DisplayErrorPage($this->Lang('accessdenied'));
 }
 
-if (isset($_GET['what'])) {
-	$what = $_GET['what'];
+if (isset($_GET['tab'])) {
+	$params['tab'] = $_GET['tab'];
+//	unset($_GET['tab']);
 }
-else {
-	$what = FALSE;
-}
+
 $pre = cms_db_prefix();
 
 // Do the action, if any
-switch($what)
-{
-case 'toggle_index':
-	$query = 'SELECT indexable FROM '.$pre.'module_seotools WHERE content_id=?';
-	$info = $db->GetOne($query,array($_GET['content_id']));
-	$parms = array();
-	if ($info == FALSE) {
-		$query = 'INSERT INTO '.$pre.'module_seotools SET content_id=?, indexable=0';
-	}
-	else {
-		$query = 'UPDATE '.$pre.'module_seotools SET indexable=? WHERE content_id=?';
-		if ($info == '1') {
-			$parms[] = 0;
-		}
-		else {
-			$parms[] = 1;
-		}
-	}
-	$parms[] = $_GET['content_id'];
-	$db->Execute($query,$parms);
+if (isset($_GET['what'])) {
+	$params['tab'] = 'pagedescriptions';
+	$cid = (int)$_GET['content_id'];
+	switch($_GET['what']) {
+	case 'toggle_index':
+		//upsert, sort-of
+		$query = 'UPDATE '.$pre.'module_seotools SET indexable=!indexable WHERE content_id=?';
+		$query2 = 'INSERT INTO '.$pre.
+'module_seotools (content_id, indexable) SELECT ?,? FROM (SELECT 1 AS dmy) Z WHERE NOT EXISTS (SELECT 1 FROM '.
+		$pre.'module_seotools T WHERE T.content_id=?)';
+		$db->Execute($query, array($cid));
+		$db->Execute($query2, array($cid, 1, $cid));
 /* only manual updates
-	$funcs = new SEO_file();
-	if ($this->GetPreference('create_robots',0)) {
-		$funcs->createRobotsTXT($this);
-	}
-	if ($this->GetPreference('create_sitemap',0)) {
-		$funcs->createSitemap($this);
-	}
+		$funcs = new SEO_file();
+		if ($this->GetPreference('create_robots',0)) {
+			$funcs->createRobotsTXT($this);
+		}
+		if ($this->GetPreference('create_sitemap',0)) {
+			$funcs->createSitemap($this);
+		}
 */
-	$_GET['tab'] = 'pagedescriptions';
-	break;
-case 'toggle_ignore':
-	$pages = explode('@',$_GET['content_data']);
-	unset($pages[0]);
-	foreach($pages as $sig) {
-		list($id,$ignored) = explode('-', $sig);
-		$id = (int)$id;
-		$query = 'SELECT content_id,ignored FROM '.$pre.'module_seotools WHERE content_id=?';
-		$res = $db->GetRow($query,array($id));
-		$parms = array();
-		if ($res) {
-			if ($res['ignored']) {
-				$codes = explode(',',$res['ignored']);
-				if (in_array($ignored, $codes)) {
-					foreach($codes as $i => $name) {
-					  if ($name == $ignored) unset($codes[$i]);
+		break;
+	case 'toggle_ignore':
+		$pages = explode('@',$_GET['content_data']);
+		unset($pages[0]);
+		foreach($pages as $sig) {
+			list($id,$ignored) = explode('-', $sig);
+			$id = (int)$id;
+			$query = 'SELECT content_id,ignored FROM '.$pre.'module_seotools WHERE content_id=?';
+			$res = $db->GetRow($query,array($id));
+			$parms = array();
+			if ($res) {
+				if ($res['ignored']) {
+					$codes = explode(',',$res['ignored']);
+					if (in_array($ignored, $codes)) {
+						foreach($codes as $i => $name) {
+						  if ($name == $ignored) unset($codes[$i]);
+						}
+					}
+					else {
+						$codes[] = $ignored;
+					}
+					if ($codes) {
+						$query = 'UPDATE '.$pre.'module_seotools SET ignored=? WHERE content_id=?';
+						$parms[] = implode(',',$codes);
+					}
+					else {
+						$query = 'UPDATE '.$pre.'module_seotools SET ignored=NULL WHERE content_id=?';
 					}
 				}
 				else {
-					$codes[] = $ignored;
-				}
-				if ($codes) {
 					$query = 'UPDATE '.$pre.'module_seotools SET ignored=? WHERE content_id=?';
-					$parms[] = implode(',',$codes);
-				}
-				else {
-					$query = 'UPDATE '.$pre.'module_seotools SET ignored=NULL WHERE content_id=?';
+					$parms[] = $ignored;
 				}
 			}
 			else {
-				$query = 'UPDATE '.$pre.'module_seotools SET ignored=? WHERE content_id=?';
+				$query = 'INSERT INTO '.$pre.'module_seotools(ignored,content_id) VALUES(?,?)';
 				$parms[] = $ignored;
 			}
+			$parms[] = $id;
+			$db->Execute($query,$parms);
+			unset($parms);
 		}
-		else {
-			$query = 'INSERT INTO '.$pre.'module_seotools(ignored,content_id) VALUES(?,?)';
-			$parms[] = $ignored;
+		break;
+	case 'set_priority':
+		//upsert, sort-of
+		$query = 'UPDATE '.$pre.'module_seotools SET priority=? WHERE content_id=?';
+		$query2 = 'INSERT INTO '.$pre.
+'module_seotools (content_id, priority) SELECT ?,? FROM (SELECT 1 AS dmy) Z WHERE NOT EXISTS (SELECT 1 FROM '.
+		$pre.'module_seotools T WHERE T.content_id=?)';
+		$db->Execute($query, array($_GET['priority'], $cid));
+		$db->Execute($query2, array($cid, $_GET['priority'], $cid));
+/* only manual updates
+		if ($this->GetPreference('create_sitemap',0)) {
+			$funcs = new SEO_file();
+			$funcs->createSitemap($this);
 		}
-		$parms[] = $id;
-		$db->Execute($query,$parms);
-		unset($parms);
-	}
-	break;
-case 'set_priority':
-	//upsert, sort-of
-	$query = 'UPDATE '.$pre.'module_seotools SET priority=? WHERE content_id=?';
-	$parms = array($_GET['priority'],(int)$_GET['content_id']);
-	$query2 = 'INSERT INTO '.$pre.
-'module_seotools(content_id, priority) SELECT ?,? FROM(SELECT 1 AS dmy) Z WHERE NOT EXISTS(SELECT 1 FROM '.
-	$pre.'module_seotools T WHERE T.content_id=?)';
-	$parms2 = array((int)$_GET['content_id'],$_GET['priority'],(int)$_GET['content_id']);
-	$db->execute($query,$parms);
-	$db->execute($query2,$parms2);
-/* only manual updates
-	if ($this->GetPreference('create_sitemap',0)) {
-		$funcs = new SEO_file();
-		$funcs->createSitemap($this);
-	}
 */
-	$_GET['tab'] = 'pagedescriptions';
-	break;
-case 'reset_priority':
-	$query = 'UPDATE '.$pre.'module_seotools SET priority=NULL WHERE content_id=?';
-	$db->Execute($query,array($_GET['content_id']));
+		break;
+	case 'reset_priority':
+		$query = 'UPDATE '.$pre.'module_seotools SET priority=NULL WHERE content_id=?';
+		$db->Execute($query,array($cid));
 /* only manual updates
-	if ($this->GetPreference('create_sitemap',0)) {
-		$funcs = new SEO_file();
-		$funcs->createSitemap($this);
-	}
+		if ($this->GetPreference('create_sitemap',0)) {
+			$funcs = new SEO_file();
+			$funcs->createSitemap($this);
+		}
 */
-	$_GET['tab'] = 'pagedescriptions';
-	break;
-case 'reset_ogtype':
-	$query = 'UPDATE '.$pre.'module_seotools SET ogtype=NULL WHERE content_id=?';
-	$db->Execute($query,array($_GET['content_id']));
-	$_GET['tab'] = 'pagedescriptions';
-	break;
-case 'reset_keywords':
-	$query = 'UPDATE '.$pre.'module_seotools SET keywords=NULL WHERE content_id=?';
-	$db->Execute($query,array($_GET['content_id']));
-	$_GET['tab'] = 'pagedescriptions';
-	break;
-case 'edit_ogtype':
-	$this->Redirect($id, 'edit_ogtype', $returnid, array('content_id'=>$_GET['content_id']));
-	break;
-case 'edit_keywords':
-	$this->Redirect($id, 'edit_keywords', $returnid, array('content_id'=>$_GET['content_id']));
-	break;
+		break;
+	case 'reset_ogtype':
+		$query = 'UPDATE '.$pre.'module_seotools SET ogtype=NULL WHERE content_id=?';
+		$db->Execute($query,array($cid));
+		break;
+	case 'reset_keywords':
+		$query = 'UPDATE '.$pre.'module_seotools SET keywords=NULL WHERE content_id=?';
+		$db->Execute($query,array($cid));
+		break;
+	case 'edit_ogtype':
+		$this->Redirect($id, 'edit_ogtype', '', array('content_id'=>$cid));
+		break;
+	case 'edit_keywords':
+		$this->Redirect($id, 'edit_keywords', '', array('content_id'=>$cid));
+		break;
+	}
+//	unset($_GET['what']);
 }
 
-if (isset($_GET['message'])) {
-	if (isset($_GET['warning'])) {
-		$smarty->assign('message',$this->ShowErrors($this->Lang($_GET['message'])));
+if (isset($params['message'])) {
+	if (isset($params['warning'])) {
+		$smarty->assign('message',$this->ShowErrors($this->Lang($params['message'])));
 	}
 	else {
-		$smarty->assign('message',$this->ShowMessage($this->Lang($_GET['message'])));
+		$smarty->assign('message',$this->ShowMessage($this->Lang($params['message'])));
 	}
 }
 
@@ -295,9 +281,9 @@ if ($urgent_alerts) {
 				$oneset->sel = '';
 			}
 			if (array_key_exists('active', $alert)) {
-				if (strpos($alert['active'],',') === FALSE) {
+				if (strpos($alert['active'],',') === false) {
 					$act1 = $alert['active'];
-					$act2 = FALSE;
+					$act2 = false;
 				}
 				else {
 					list($act1, $act2) = explode(',',$alert['active']);
@@ -307,7 +293,7 @@ if ($urgent_alerts) {
 				$cb = '<input type="checkbox" disabled="disabled"';
 				if ($act1) $cb .= ' checked="checked"';
 				$cb .= ' />';
-				if ($act2 !== FALSE) {
+				if ($act2 !== false) {
 					$cb .= '<br /><input type="checkbox" disabled="disabled"';
 					if ($act2) $cb .= ' checked="checked"';
 					$cb .= ' />';
@@ -406,9 +392,9 @@ if ($important_alerts) {
 				$oneset->checkval = '';
 			}
 			if (array_key_exists('active', $alert)) {
-				if (strpos($alert['active'],',') === FALSE) {
+				if (strpos($alert['active'],',') === false) {
 					$act1 = $alert['active'];
-					$act2 = FALSE;
+					$act2 = false;
 				}
 				else {
 					list($act1, $act2) = explode(',',$alert['active']);
@@ -418,7 +404,7 @@ if ($important_alerts) {
 				$cb = '<input type="checkbox" disabled="disabled"';
 				if ($act1) $cb .= ' checked="checked"';
 				$cb .= ' />';
-				if ($act2 !== FALSE) {
+				if ($act2 !== false) {
 					$cb .= '<br /><input type="checkbox" disabled="disabled"';
 					if ($act2) $cb .= ' checked="checked"';
 					$cb .= ' />';
@@ -530,10 +516,10 @@ if ($rst) {
 			$parms = array($row['content_id']);
 			$parms[] = str_replace(' ','_',$this->GetPreference('description_block',''));
 			$description = $db->GetOne($query,$parms);
-			$description_auto = FALSE;
+			$description_auto = false;
 			$funcs = new SEO_keyword();
 			$kw = $funcs->getKeywords($this,$row['content_id']);
-			if ($kw && $description == FALSE && $this->GetPreference('description_auto_generate',FALSE)) {
+			if ($kw && $description == false && $this->GetPreference('description_auto_generate',false)) {
 				if (count($kw) > 1) {
 					$last_keyword = array_pop($kw);
 					$keywords = $this->Lang('and',implode(',',$kw),$last_keyword);
@@ -626,21 +612,17 @@ $smarty->assign('unindex',$this->CreateInputSubmit(null, 'unindex_selected',
 // Get image files from /uploads/images
 $files_list = array('('.$this->Lang('none').')'=>'');
 $dp = opendir(cms_join_path($config['root_path'],'uploads','images'));
-while ($file = readdir($dp)) {
-	if (strpos(substr($file, -5),'.gif') !== FALSE) {
-		$files_list[$file] = $file;
+if ($dp) {
+	while ($file = readdir($dp)) {
+		foreach (array('.gif','.png','.jpg','.jpeg') as $type) {
+			if (strripos($file, $type, -5) !== false) {
+				$files_list[$file] = $file;
+				break;
+			}
+		}
 	}
-	if (strpos(substr($file, -5),'.png') !== FALSE) {
-		$files_list[$file] = $file;
-	}
-	if (strpos(substr($file, -5),'.jpg') !== FALSE) {
-		$files_list[$file] = $file;
-	}
-	if (strpos(substr($file, -5),'.jpeg') !== FALSE) {
-		$files_list[$file] = $file;
-	}
+	closedir($dp);
 }
-closedir($dp);
 
 $smarty->assign('cancel',$this->CreateInputSubmit(null, 'cancel', $this->Lang('cancel')));
 
@@ -720,7 +702,7 @@ $smarty->assign('in_ogapp',$this->CreateInputText(null, 'meta_opengraph_applicat
 $smarty->assign('start_extra_set',$this->CreateFieldsetStart(null, 'additional_meta', $this->Lang('title_additional_meta_tags')));
 $smarty->assign('pr_extra',$this->Lang('additional_meta_tags_title'));
 $smarty->assign('in_extra',
-	$this->CreateTextArea(FALSE, null, $this->GetPreference('additional_meta_tags',''), 'additional_meta_tags', '', '', '', '', '60', '1','','','style="height:10em;"')
+	$this->CreateTextArea(false, null, $this->GetPreference('additional_meta_tags',''), 'additional_meta_tags', '', '', '', '', '60', '1','','','style="height:10em;"')
 	.'<br />'.$this->Lang('additional_meta_tags_help'));
 
 $smarty->assign('submit1',$this->CreateInputSubmit(null, 'save_meta_settings', $this->Lang('save')));
@@ -743,11 +725,11 @@ $smarty->assign('help_verify',$this->Lang('verification_help'));
 $smarty->assign('pr_create_bots',$this->Lang('create_robots_title').' *');
 $smarty->assign('in_create_bots',$this->CreateInputCheckbox(null, 'create_robots', 1, $this->GetPreference('create_robots',0)));
 $smarty->assign('pr_early_bots',$this->Lang('custom_before_title'));
-$smarty->assign('in_early_bots',$this->CreateTextArea(false, null, $this->GetPreference('r_before',''),
- 'r_before', '', '', '', '', 50, 5, '', '', 'style="height:5em;width:50em;"')); //needs inline styling
+$smarty->assign('in_early_bots',$this->CreateTextArea(false, null, $this->GetPreference('robot_start',''),
+ 'robot_start', '', '', '', '', 50, 5, '', '', 'style="height:5em;width:50em;"')); //needs inline styling
 $smarty->assign('pr_late_bots',$this->Lang('custom_after_title'));
-$smarty->assign('in_late_bots',$this->CreateTextArea(false, null, $this->GetPreference('r_after',''),
- 'r_after', '', '', '', '', 50, 5, '', '', 'style="height:5em;width:50em;"'));
+$smarty->assign('in_late_bots',$this->CreateTextArea(false, null, $this->GetPreference('robot_end',''),
+ 'robot_end', '', '', '', '', 50, 5, '', '', 'style="height:5em;width:50em;"'));
 $smarty->assign('submit2',$this->CreateInputSubmit(null, 'save_sitemap_settings', $this->Lang('save')));
 
 if ($this->GetPreference('create_sitemap',0))
@@ -800,11 +782,11 @@ $smarty->assign('start_kexclude_set',$this->CreateFieldsetStart(null, 'keyword_e
 
 $smarty->assign('pr_incl_words',$this->Lang('default_keywords_title'));
 $smarty->assign('in_incl_words',
-	$this->CreateTextArea(FALSE, null, $this->GetPreference('default_keywords',''), 'default_keywords', '', '', '', '', '60', '1','','','style="height:5em;"')
+	$this->CreateTextArea(false, null, $this->GetPreference('default_keywords',''), 'default_keywords', '', '', '', '', '60', '1','','','style="height:5em;"')
 	.'<br />'.$this->Lang('default_keywords_help'));
 $smarty->assign('pr_excl_words',$this->Lang('keyword_exclude_title'));
 $smarty->assign('in_excl_words',
-	$this->CreateTextArea(FALSE, null, $this->GetPreference('keyword_exclude',''), 'keyword_exclude', '', '', '', '', '60', '1','','','style="height:5em;"')
+	$this->CreateTextArea(false, null, $this->GetPreference('keyword_exclude',''), 'keyword_exclude', '', '', '', '', '60', '1','','','style="height:5em;"')
 	.'<br />'.$this->Lang('keyword_exclude_help'));
 $smarty->assign('submit3',$this->CreateInputSubmit(null, 'save_keyword_settings', $this->Lang('save')));
 $smarty->assign('keyword_help',$this->Lang('help_keyword_generator'));

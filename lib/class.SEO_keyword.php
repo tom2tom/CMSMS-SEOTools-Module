@@ -32,21 +32,21 @@ class SEO_keyword
 		return array_filter($keywords,'strlen');
 	}
 
-	public function getKeywords($mod, $content_id = FALSE, $content = NULL, $savedwords = FALSE) {
+	public function getKeywords($mod, $content_id = false, $content = null, $savedwords = false) {
 		$gCms = cmsms(); //CMSMS 1.8+
-		if ($content == NULL) {
+		if ($content == null) {
 			$content = $gCms->GetContentOperations()->LoadContentFromId ($content_id);
 			if (!$content) {
 				return array();
 			}
 		}
-		elseif ($content_id == FALSE) {
+		elseif ($content_id == false) {
 			$content_id = (int)$content->Id();
 		}
 
 		$db = $gCms->GetDb();
 		$pre = cms_db_prefix();
-		if ($savedwords === FALSE) {
+		if ($savedwords === false) {
 			$savedwords = $db->GetOne(
 			 'SELECT keywords FROM '.$pre.'module_seotools WHERE content_id=?',
 			 array($content_id));
@@ -137,7 +137,7 @@ class SEO_keyword
 
 		$exclude_list = $mod->GetPreference('keyword_exclude','');
 		foreach ($got_keywords as $key=>&$value) {
-			if ($value < $minwt || ($exclude_list && strpos($key,$exclude_list) !== FALSE)) { //TODO caseless mb scan
+			if ($value < $minwt || ($exclude_list && strpos($key,$exclude_list) !== false)) { //TODO caseless mb scan
 				$value = '';
 			}
 		}

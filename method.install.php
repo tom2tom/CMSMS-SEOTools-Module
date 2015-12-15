@@ -19,7 +19,7 @@ ogtype C(32),
 ignored X
 ";
 $sqlarray = $dict->CreateTableSQL(cms_db_prefix().'module_seotools',$flds,$taboptarray);
-$result = ($sqlarray) ? ($dict->ExecuteSQLArray($sqlarray,FALSE) == 2) : FALSE;
+$result = ($sqlarray) ? ($dict->ExecuteSQLArray($sqlarray,false) == 2) : false;
 if (!$result)
 	return $this->Lang('install_database_error');
 
@@ -74,8 +74,8 @@ $this->SetPreference('meta_publisher','');
 $this->SetPreference('meta_region','');
 $this->SetPreference('meta_standard',1);
 $this->SetPreference('meta_title','{title} | {$sitename}');
-$this->SetPreference('r_before','');
-$this->SetPreference('r_after','');
+$this->SetPreference('robot_start','');
+$this->SetPreference('robot_end','');
 $this->SetPreference('title','{title} | {$sitename} - {$title_keywords}');
 $this->SetPreference('verification','');
 

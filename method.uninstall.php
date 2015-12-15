@@ -6,7 +6,7 @@
 
 // remove the database table
 $dict = NewDataDictionary($db);
-$sqlarray = $dict->DropTableSQL(cms_db_prefix()."module_seotools");
+$sqlarray = $dict->DropTableSQL(cms_db_prefix().'module_seotools');
 $dict->ExecuteSQLArray($sqlarray);
 
 // remove the permissions
