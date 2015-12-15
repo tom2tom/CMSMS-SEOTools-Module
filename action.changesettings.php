@@ -12,38 +12,33 @@ if (isset($_POST['cancel']))
 if (!$this->CheckAccess('Edit SEO Settings'))
 	return $this->DisplayErrorPage($this->Lang('accessdenied'));
 
-if (isset($_POST['do_regenerate']))
-{
+if (isset($_POST['do_regenerate'])) {
 	$funcs = new SEO_file();
 	$botok = ($this->GetPreference('create_robots',0)) ? $funcs->createRobotsTXT($this) : FALSE;
 	$mapok = ($this->GetPreference('create_sitemap',0)) ? $funcs->createSitemap($this) : FALSE;
 
-	if ($botok || $mapok)
-	{
-		if ($botok && $mapok)
-		{
+	if ($botok || $mapok) {
+		if ($botok && $mapok) {
 			$audit = 'Manually regenerated sitemap.xml and robots.txt';
 			$msgkey = 'both_regenerated';
 		}
-		elseif ($botok)
-		{
+		elseif ($botok) {
 			$audit = 'Manually regenerated robots.txt';
 			$msgkey = 'robot_regenerated';
 		}
-		else
-		{
+		else {
 			$audit = 'Manually regenerated sitemap.xml';
 			$msgkey = 'sitemap_regenerated';
 		}
 		$this->Audit(0, $this->Lang('friendlyname'), $audit);
 		$this->Redirect($id, 'defaultadmin', '', array('message'=>$msgkey,'tab'=>'sitemapsettings'));
 	}
-	else
+	else {
 		$this->Redirect($id, 'defaultadmin', '', array('warning'=>1,'message'=>'none_regenerated','tab'=>'sitemapsettings'));
+	}
 }
 
-if (isset($_POST['save_meta_settings']))
-{
+if (isset($_POST['save_meta_settings'])) {
 	$this->SetPreference('meta_standard',$_POST['meta_standard']);
 	$this->SetPreference('meta_dublincore',$_POST['meta_dublincore']);
 	$this->SetPreference('meta_opengraph',$_POST['meta_opengraph']);
@@ -76,8 +71,7 @@ if (isset($_POST['save_meta_settings']))
 	$this->Redirect($id, 'defaultadmin', '', array('message'=>'settings_updated','tab'=>'metasettings'));
 }
 
-if (isset($_POST['save_sitemap_settings']))
-{
+if (isset($_POST['save_sitemap_settings'])) {
 	$val = (isset($_POST['create_sitemap'])) ? 1 : 0;
 	$this->SetPreference('create_sitemap', $val);
 	$val = (isset($_POST['push_sitemap'])) ? 1 : 0;
@@ -94,9 +88,23 @@ if (isset($_POST['save_sitemap_settings']))
 	$this->Redirect($id, 'defaultadmin', '', array('message'=>'settings_updated','tab'=>'sitemapsettings'));
 }
 
-if (isset($_POST['save_keyword_settings']))
-{
-	$this->SetPreference('keyword_block',$_POST['keyword_block']);
+if (isset($_POST['save_keyword_settings'])) {
+	$val = $this->GetPreference('keyword_block','');
+	$new = $_POST['keyword_block'];
+	if ($new && $new != $val) {
+		$pre = cms_db_prefix();
+		$old = str_replace(' ','_',$val);
+		$new = str_replace(' ','_',$new);
+		// conform tabled properties
+		$db->Execute('UPDATE '.$pre.'content_props SET prop_name=? WHERE prop_name=?',
+			array($new,$old));
+		//CHECKME conform block-name in all templates and pages?
+		$this->SetPreference('keyword_block',$_POST['keyword_block']);
+		$old = $new; //maybe needed for content-updates
+	}
+	else {
+		$old = str_replace(' ','_',$val);
+	}
 	$this->SetPreference('keyword_minlength',$_POST['keyword_minlength']);
 	$this->SetPreference('keyword_title_weight',$_POST['keyword_title_weight']);
 	$this->SetPreference('keyword_description_weight',$_POST['keyword_description_weight']);
@@ -104,17 +112,41 @@ if (isset($_POST['save_keyword_settings']))
 	$this->SetPreference('keyword_content_weight',$_POST['keyword_content_weight']);
 	$this->SetPreference('keyword_minimum_weight',$_POST['keyword_minimum_weight']);
 
-	$sep = $this->GetPreference('keyword_separator',' ');
-	if ($sep != $_POST['keyword_separator'])
-	{
-		$words = explode($sep,$_POST['default_keywords']);
-		$this->SetPreference('default_keywords',implode($_POST['keyword_separator'],$words));
-		$words = explode($sep,$_POST['keyword_exclude']);
-		$this->SetPreference('keyword_exclude',implode($_POST['keyword_separator'],$words));
+	$val = $this->GetPreference('keyword_separator',' ');
+	$new = $_POST['keyword_separator'];
+	if ($new && $new != $val) {
+		$words = explode($val,$_POST['default_keywords']);
+		$this->SetPreference('default_keywords',implode($new,$words));
+		$words = explode($val,$_POST['keyword_exclude']);
+		$this->SetPreference('keyword_exclude',implode($new,$words));
+		// Replace sep in all tabled keyword fields
+		$pre = cms_db_prefix();
+		$rst = $db->Execute('SELECT content_id,keywords FROM '.$pre.
+			'module_seotools WHERE keywords IS NOT NULL AND keywords!=""');
+		if ($rst) {
+			$query = 'UPDATE '.$pre.'module_seotools SET keywords=? WHERE content_id=?';
+			while (!$rst->EOF) {
+				$merge = str_replace($val, $new, $rst->fields[1]);
+				$db->Execute($query, array($merge, $rst->fields[0])); //CHECKME OK in this recordset-loop?
+				$rst->MoveNext();
+			}
+			$rst->Close();
+		}
+		$rst = $db->Execute('SELECT content_id,content FROM '.$pre.
+			'content_props WHERE prop_name=? AND content IS NOT NULL AND content!=""',
+			array($old));
+		if ($rst) {
+			$query = 'UPDATE '.$pre.'content_props SET content=? WHERE content_id=?';
+			while (!$rst->EOF) {
+				$merge = str_replace($val, $new, $rst->fields[1]);
+				$db->Execute($query, array($merge, $rst->fields[0])); //CHECKME OK in this recordset-loop?
+				$rst->MoveNext();
+			}
+			$rst->Close();
+		}
 		$this->SetPreference('keyword_separator',$_POST['keyword_separator']);
 	}
-	else
-	{
+	else {
 		$this->SetPreference('default_keywords',$_POST['default_keywords']);
 		$this->SetPreference('keyword_exclude',$_POST['keyword_exclude']);
 	}
