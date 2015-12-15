@@ -72,8 +72,7 @@ class SEO_file
 <?xml version='1.0' encoding='UTF-8'?>
 <urlset xmlns='http://www.sitemaps.org/schemas/sitemap/0.9'>
 
-EOS
-		);
+EOS		);
 		$co = $gCms->GetContentOperations();
 		while ($page = $result->fetchRow())
 		{
@@ -112,8 +111,7 @@ EOS
 <priority>$priority</priority>
 </url>
 
-EOS
-						);
+EOS						);
 					}
 				}
 			}

@@ -714,7 +714,7 @@ $smarty->assign('submit1',$this->CreateInputSubmit(null, 'save_meta_settings', $
 /* SITEMAP Settings */
 
 $smarty->assign('start_map_set',$this->CreateFieldsetStart(null, 'sitemap_description', $this->Lang('title_sitemap_description')));
-$smarty->assign('pr_create_map',$this->Lang('create_sitemap_title'));
+$smarty->assign('pr_create_map',$this->Lang('create_sitemap_title').' *');
 $smarty->assign('in_create_map',$this->CreateInputCheckbox(null, 'create_sitemap', 1, $this->GetPreference('create_sitemap',0)));
 $smarty->assign('pr_push_map',$this->Lang('push_sitemap_title'));
 if (ini_get('allow_url_fopen')) {
@@ -726,7 +726,7 @@ else {
 $smarty->assign('pr_verify_code',$this->Lang('verification_title'));
 $smarty->assign('in_verify_code',$this->CreateInputText(null, 'verification', $this->GetPreference('verification',''), 40));
 $smarty->assign('help_verify',$this->Lang('verification_help'));
-$smarty->assign('pr_create_bots',$this->Lang('create_robots_title'));
+$smarty->assign('pr_create_bots',$this->Lang('create_robots_title').' *');
 $smarty->assign('in_create_bots',$this->CreateInputCheckbox(null, 'create_robots', 1, $this->GetPreference('create_robots',0)));
 $smarty->assign('submit2',$this->CreateInputSubmit(null, 'save_sitemap_settings', $this->Lang('save')));
 
