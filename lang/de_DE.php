@@ -74,6 +74,8 @@ $lang['title_sitemap_description'] = 'Sitemap und Crawler-Einstellungen';
 $lang['create_sitemap_title'] = 'Eine Search-Engine-Sitemap im XML-Format erzeugen';
 $lang['push_sitemap_title'] = 'Die Sitemap automatisch bei &auml;nderungen am Seiteninhalt zu search enging senden';
 $lang['create_robots_title'] = 'Eine robots.txt - Datei erzeugen';
+$lang['custom_before_title'] = 'Optional extra content to insert near the start of robots.txt';
+$lang['custom_after_title'] = 'Optional extra content to insert at the end of robots.txt';
 $lang['verification_title'] = 'Best&auml;tigungscode f&uuml;r die Seitenverifizierung';
 $lang['verification_help'] = 'Der Best&auml;tigungscode, den Sie von den Google Webmaster Tools erhalten. Nur den Hash, nicht das komplette Meta-Tag';
 
@@ -199,16 +201,23 @@ $lang['keyword_minimum_weight_help'] = 'Das Mindest-Gesamtgewicht eines Wortes, 
 $lang['help_keyword_generator'] = 'Die Einstellungen auf dieser Seite beeinflussen keine Keywords, die Sie manuell vorgeben. Experimentieren Sie mit verschiedenen Werten, um das Optimum f&uuml;r Ihre Seite zu erreichen.';
 
 $lang['title_keyword_exclude'] = 'Keyword-Ausschlu&szlig;liste';
+$lang['default_keywords_title'] = 'Always include these keywords';
+$lang['default_keywords_help'] = 'Word(s) (and/or group(s) of words, if the separator is not a space) to apply to every page';
 $lang['keyword_exclude_title'] = 'Worte, die nie als Keyword in Frage kommen';
 $lang['keyword_exclude_help'] = 'Geben Sie eine Leerzeichen-getrennte Liste von Worten an, die nie in den Keyword-Listen auftauchen sollten';
 
 $lang['increase_priority'] = 'Priorität um 10% erhöhen';
 $lang['decrease_priority'] = 'Priorität um 10% verringern';
 
-$lang['title_regenerate_sitemap'] = 'Sitemap und robots.txt neu erzeugen';
-$lang['button_regenerate_sitemap'] = 'Sitemap und robots.txt jetzt neu erzeugen';
+$lang['title_regenerate_both'] = 'Regenerate';
+$lang['button_regenerate_sitemap'] = 'Regenerate sitemap';
+$lang['button_regenerate_robot'] = 'Regenerate robots.txt';
+$lang['button_regenerate_both'] = 'Sitemap und robots.txt jetzt neu erzeugen';
 $lang['text_regenerate_sitemap'] = utf8_encode('Insbesondere nach größeren Änderungen der Seitenstruktur kann es sinnvoll sein, die Sitemap und die robots.txt Datei neu zu erzeugen.');
+$lang['robot_regenerated'] = 'The robots.txt file has been successfully regenerated.';
 $lang['sitemap_regenerated'] = 'Die Sitemap und die robots.txt - Datei wurden erfolgreich neu erstellt.';
+$lang['both_regenerated'] = 'The files sitemap.xml and robots.txt have been successfully regenerated.';
+$lang['none_regenerated'] = 'Nothing was regenerated. There seems to be a problem.';
 
 $lang['install_database_error'] = 'Bei der Installation ist ein Fehler aufgetreten: Die Datenbank-Tabelle konnte nicht angelegt werden.';
 $lang['no_url_fopen'] = 'Nicht m&ouml;glich, da allow_url_fopen in der PHP-Konfiguration nicht auf &quot;on&quot; gesetzt wurde.';
@@ -257,8 +266,8 @@ f&uuml;r OpenGraph-Seiten das Sie in den Einstellungen von SEO Tools festgelegt 
 <h3>Support</h3>
 <p>This software is provided as-is. Please read the text of the license (see below) for the full disclaimer.</p>
 <h3>Copyright and License</h3>
-<p>Copyright &copy; 2010-2011, Henning Schaefer &lt;henning.schaefer@gmail.com&gt;.<br />
-Copyright &copy; 2014-2015, Tom Phane &lt;tpgww@onepost.net&gt;.<br />
+<p>Portions copyright &copy; 2010-2011, Henning Schaefer &lt;henning.schaefer@gmail.com&gt;.<br />
+Portions copyright &copy; 2011-2015, Tom Phane &lt;tpgww@onepost.net&gt;.<br />
 All rights reserved.</p>
 <p>This module has been released under the <a href="http://www.gnu.org/licenses/licenses.html#AGPL">GNU Affero General Public License</a> version 3.
 You must comply with that license when distributing or using the module.</p>';
