@@ -149,8 +149,8 @@ if (isset($_GET['message'])) {
 }
 
 $indx = 0;
-if (isset($_GET['tab'])) {
-	switch($_GET['tab']) {
+if (isset($params['tab'])) {
+	switch($params['tab']) {
 	case 'urgentfixes':
 		$indx = 1;
 		break;
