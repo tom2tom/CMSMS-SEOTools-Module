@@ -25,12 +25,16 @@ class SEO_populator
 	*/
 	private function getSeeLink(&$mod, $priority, $title = '')
 	{
-		$gCms = cmsms();
+		$gCms = cmsms(); //CMSMS 1.8+
 		if ($this->adminurl == NULL) {
 			$config = $gCms->GetConfig();
-			$this->adminurl = (!empty($config['admin_url'])) ?
-				$config['admin_url']:
-				$config['root_url'].'/'.$config['admin_dir'];
+			if (isset($config['admin_url'])) {
+				$this->adminurl = $config['admin_url'];
+			}
+			else {
+				$rooturl = (empty($_SERVER['HTTPS'])) ? $config['root_url'] : $config['ssl_url'];
+				$this->adminurl = $rooturl.'/'.$config['admin_dir'];
+			}
 		}
 		if ($this->theme == NULL) {
 			$this->theme = ($mod->before20) ?
@@ -48,7 +52,7 @@ class SEO_populator
 
 	public function getUrgentAlerts(&$mod, $omit_inactive = FALSE, $omit_ignored = FALSE)
 	{
-		$gCms = cmsms();
+		$gCms = cmsms(); //CMSMS 1.8+
 		$alerts = array();
 		// No Meta tags are inserted
 		if (!($mod->GetPreference('meta_standard',FALSE) || $mod->GetPreference('meta_dublincore',FALSE)))
@@ -63,7 +67,7 @@ class SEO_populator
 		$pre = cms_db_prefix();
 		if (!$mod->GetPreference('description_auto_generate',FALSE))
 		{
-			$pref = $mod->GetPreference('description_block',''); 
+			$pref = $mod->GetPreference('description_block','');
 			if ($pref) {
 				// Content pages without description
 				$query = 'SELECT C.content_id, C.content_name, C.type, C.active, S.ignored FROM '
@@ -177,12 +181,16 @@ class SEO_populator
 
 	public function getImportantAlerts(&$mod, $omit_inactive = FALSE, $omit_ignored = FALSE)
 	{
-		$gCms = cmsms();
+		$gCms = cmsms(); //CMSMS 1.8+
 		$config = $gCms->GetConfig();
 		if ($this->adminurl == NULL) {
-			$this->adminurl = (isset($config['admin_url'])) ?
-				$config['admin_url']:
-				$config['root_url'].'/'.$config['admin_dir'];
+			if (isset($config['admin_url'])) {
+				$this->adminurl = $config['admin_url'];
+			}
+			else {
+				$rooturl = (empty($_SERVER['HTTPS'])) ? $config['root_url'] : $config['ssl_url'];
+				$this->adminurl = $rooturl.'/'.$config['admin_dir'];
+			}
 		}
 		$db = $gCms->GetDb();
 		$pre = cms_db_prefix();
@@ -358,12 +366,16 @@ WHERE(p1.prop_name = ? AND p1.content_id < p2.content_id  AND p1.content <> ? AN
 
 	public function getFixLink(&$mod, $sp, $id, $pagename = '')
 	{
-		$gCms = cmsms();
+		$gCms = cmsms(); //CMSMS 1.8+
 		if ($this->adminurl == NULL) {
 			$config = $gCms->GetConfig();
-			$this->adminurl = (isset($config['admin_url'])) ?
-				$config['admin_url']:
-				$config['root_url'].'/'.$config['admin_dir'];
+			if (isset($config['admin_url'])) {
+				$this->adminurl = $config['admin_url'];
+			}
+			else {
+				$rooturl = (empty($_SERVER['HTTPS'])) ? $config['root_url'] : $config['ssl_url'];
+				$this->adminurl = $rooturl.'/'.$config['admin_dir'];
+			}
 		}
 		if ($this->theme == NULL) {
 			$this->theme = ($mod->before20) ?
