@@ -51,7 +51,7 @@ if ($kw == FALSE) {
 	$funcs = new SEO_keyword();
 	$sep = $this->GetPreference('keyword_separator',' ');
 	//TODO don't assume ascii encoded >> iconv() ?
-	$kw = strtolower(implode($sep,$funcs->getKeywordSuggestions($this,$_GET['content_id'])));
+	$kw = strtolower(implode($sep,$funcs->getKeywords($this,$_GET['content_id'])));
 }
 
 $smarty->assign('startform',$this->CreateFormStart(null, 'edit_keywords'));
