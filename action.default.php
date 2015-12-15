@@ -37,8 +37,10 @@ $keywords = explode($sep,$pref);
 
 $query = 'SELECT * FROM '.cms_db_prefix().'module_seotools WHERE content_id=?';
 $page_row = $db->GetRow($query,array($page_id));
+
 $funcs = new SEO_keyword();
-$other_keywords = $funcs->getKeywords($this,$page_id,$content,$page_row['keywords']);
+$kw = (!empty($page_row['keywords'])) ? $page_row['keywords'] : ''; //NOT FALSE
+$other_keywords = $funcs->getKeywords($this, $page_id, $content, $kw);
 $smarty->assign('page_keywords', implode($sep, $other_keywords));
 
 $merged = array_unique(array_merge($keywords, $other_keywords));
@@ -167,7 +169,7 @@ if ($this->GetPreference('meta_opengraph',FALSE))
 	$opengraph_title = str_replace('{title}',$page_name,$pref);
 	$opengraph_title = $this->ProcessTemplateFromData($opengraph_title);
 	if ($opengraph_title) $out[] = '<meta property="og:title" content="'.$opengraph_title.'" />';
-	if ($page_row['ogtype']) {
+	if (!empty($page_row['ogtype'])) {
 		$out[] = '<meta property="og:type" content="'.$page_row['ogtype'].'" />';
 	}
 	else {
