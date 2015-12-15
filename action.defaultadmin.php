@@ -218,12 +218,18 @@ $urgent = array();
 $urgent_alerts = $funcs->getUrgentAlerts($this);
 if ($urgent_alerts) {
 		$count = 0;
+		$more = false;
 		$groups = array();
-		//sort ALL alerts into types, count some of them
+		//count non-ignored urgents
 		foreach($urgent_alerts as $alert) {
-			if ((!array_key_exists('active', $alert) || $alert['active'] == TRUE)
-			 && (empty($alert['ignored'])))
-				$count++;
+			if (!array_key_exists('active', $alert) || $alert['active'] == TRUE) {
+				if (empty($alert['ignored'])) {
+					$count++;
+				}
+				else {
+					$more = true;
+				}				
+			}
 			$groups[$alert['group']][] = $alert;
 		}
 		$icon = '<img src="'.$theme_url.'/Notifications/1.gif" class="systemicon" />';
@@ -234,7 +240,8 @@ if ($urgent_alerts) {
 		}
 		else {
 			$smarty->assign('urgent_icon',$icontrue);
-			$smarty->assign('urgent_text',$this->Lang('nothing_to_be_fixed'));
+			$key = ($more) ? 'nothing_but' : 'nothing_tofix';
+			$smarty->assign('urgent_text',$this->Lang($key));
 		}
 		$j = 0;
 		foreach($groups as $group => $galerts) {
@@ -318,7 +325,7 @@ if ($urgent_alerts) {
 }
 else {
 	$smarty->assign('urgent_icon',$icontrue);
-	$smarty->assign('urgent_text',$this->Lang('nothing_to_be_fixed'));
+	$smarty->assign('urgent_text',$this->Lang('nothing_tofix'));
 }
 $smarty->assign('urgents',$urgent);
 
@@ -326,11 +333,14 @@ $important = array();
 $important_alerts = $funcs->getImportantAlerts($this);
 if ($important_alerts) {
 	$count = 0;
+	$more = false;
 	$groups = array();
-	//sort ALL alerts into types, count some of them
+	//count non-ignored importants
 	foreach($important_alerts as $alert) {
 		if (empty($alert['ignored']))
 			$count++;
+		else
+			$more = true;
 		$groups[$alert['group']][] = $alert;
 	}
 	$icon = '<img src="'.$theme_url.'/Notifications/2.gif" class="systemicon" />';
@@ -341,7 +351,8 @@ if ($important_alerts) {
 	}
 	else {
 		$smarty->assign('important_icon',$icontrue);
-		$smarty->assign('important_text',$this->Lang('nothing_to_be_fixed'));
+		$key = ($more) ? 'nothing_but' : 'nothing_tofix';
+		$smarty->assign('important_text',$this->Lang($key));
 	}
 	$j = 0;
 	foreach($groups as $group => $galerts) {
@@ -426,7 +437,7 @@ if ($important_alerts) {
 }
 else {
 	$smarty->assign('important_icon',$icontrue);
-	$smarty->assign('important_text',$this->Lang('nothing_to_be_fixed'));
+	$smarty->assign('important_text',$this->Lang('nothing_tofix'));
 }
 $smarty->assign('importants',$important);
 
@@ -445,7 +456,7 @@ if ($notice_alerts) {
 else {
 	$oneset = new stdClass;
 	$oneset->icon = $icontrue;
-	$oneset->text = $this->Lang('nothing_to_be_fixed');
+	$oneset->text = $this->Lang('nothing_tofix');
 	$notice[] = $oneset;
 }
 $smarty->assign('notices',$notice);

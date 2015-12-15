@@ -82,7 +82,8 @@ $lang['verification_help'] = 'Der Best&auml;tigungscode, den Sie von den Google 
 $lang['title_alerts_urgent'] = 'Muss sofort behoben werden';
 $lang['title_alerts_important'] = utf8_encode('Sollte schnellstmöglich behoben werden');
 $lang['title_alerts_notices'] = utf8_encode('Kann unter Umständen behoben werden');
-$lang['nothing_to_be_fixed'] = utf8_encode('In dieser Kategorie müssen Sie keine Aktionen vornehmen');
+$lang['nothing_tofix'] = utf8_encode('In dieser Kategorie müssen Sie keine Aktionen vornehmen');
+$lang['nothing_but'] = 'Nothing (if you don\'t count those which are ignored)';
 $lang['title_resources'] = 'Useful external SEO resources';
 
 $lang['save'] = 'Einstellungen speichern';

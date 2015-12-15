@@ -82,7 +82,8 @@ $lang['verification_help'] = 'The code you obtain from Google Webmaster Tools, j
 $lang['title_alerts_urgent'] = 'To be fixed immediately';
 $lang['title_alerts_important'] = 'To be fixed as soon as possible';
 $lang['title_alerts_notices'] = 'Changes to be considered';
-$lang['nothing_to_be_fixed'] = 'Nothing';
+$lang['nothing_tofix'] = 'Nothing';
+$lang['nothing_but'] = 'Nothing (if you don\'t count those which are ignored)';
 $lang['title_resources'] = 'Useful external SEO resources';
 
 $lang['save'] = 'Save';
