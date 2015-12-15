@@ -75,7 +75,7 @@ $lang['create_sitemap_title'] = 'Create an XML sitemap for search engines';
 $lang['push_sitemap_title'] = 'Automatically push each newly-created sitemap to search engines';
 $lang['create_robots_title'] = 'Create a robots.txt file';
 $lang['custom_before_title'] = 'Optional extra content to insert near the start of robots.txt';
-$lang['custom_after_title'] = 'Optional extra content to insert near the end of robots.txt';
+$lang['custom_after_title'] = 'Optional extra content to insert at the end of robots.txt';
 $lang['verification_title'] = 'Google site-verification code';
 $lang['verification_help'] = 'The code you obtain from Google Webmaster Tools, just the hash, not the complete meta tag';
 
@@ -183,7 +183,7 @@ $lang['title_keyword_block'] = 'Name of keywords content-block';
 $lang['keyword_block_help'] = 'The name of each page\'s keywords content-block. Please read the module help for an explanation';
 $lang['title_keyword_weight'] = 'Keyword generator';
 $lang['keyword_separator_title'] = 'Separator';
-$lang['keyword_separator_help'] = 'Character separating words or groups of words (usually space or comma), same as the separator used in each page\'s "description content block"';
+$lang['keyword_separator_help'] = 'Character separating words or groups of words (usually space or comma), same as the separator used in each page\'s "keywords content block"';
 $lang['keyword_minlength_title'] = 'Minimum keyword length';
 $lang['keyword_minlength_help'] = 'The minimum length of a word to be considered as a keyword';
 $lang['keyword_title_weight_title'] = 'Weight of words in the page title';
@@ -201,10 +201,10 @@ $lang['keyword_minimum_weight_help'] = 'The minimum total weight of a word to be
 $lang['help_keyword_generator'] = 'The settings displayed on this page supplement any keywords you enter manually. Feel free to play with all values until you get the best results for your page.';
 
 $lang['title_keyword_exclude'] = 'Keyword lists';
-$lang['default_keywords_title'] = 'Keywords to always include';
-$lang['default_keywords_help'] = 'Word(s) (and/or group(s) of words, if the separator is not a space) you would like to include on every page';
-$lang['keyword_exclude_title'] = 'Words to never consider as keywords';
-$lang['keyword_exclude_help'] = 'Words (and/or group(s) of words, if the separator is not a space) that should never appear in keyword lists';
+$lang['default_keywords_title'] = 'Always include these keywords';
+$lang['default_keywords_help'] = 'Word(s) (and/or group(s) of words, if the separator is not a space) to apply to every page';
+$lang['keyword_exclude_title'] = 'Never include these keywords';
+$lang['keyword_exclude_help'] = 'Words (and/or group(s) of words, if the separator is not a space) to exclude from the keywords for every page';
 
 $lang['increase_priority'] = 'Increase priority by 10%';
 $lang['decrease_priority'] = 'Decrease priority by 10%';
