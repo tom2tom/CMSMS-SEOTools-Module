@@ -728,6 +728,12 @@ $smarty->assign('in_verify_code',$this->CreateInputText(null, 'verification', $t
 $smarty->assign('help_verify',$this->Lang('verification_help'));
 $smarty->assign('pr_create_bots',$this->Lang('create_robots_title').' *');
 $smarty->assign('in_create_bots',$this->CreateInputCheckbox(null, 'create_robots', 1, $this->GetPreference('create_robots',0)));
+$smarty->assign('pr_early_bots',$this->Lang('custom_before_title'));
+$smarty->assign('in_early_bots',$this->CreateTextArea(false, null, $this->GetPreference('r_before',''),
+ 'r_before', '', '', '', '', 50, 5, '', '', 'style="height:5em;width:50em;"')); //needs inline styling
+$smarty->assign('pr_late_bots',$this->Lang('custom_after_title'));
+$smarty->assign('in_late_bots',$this->CreateTextArea(false, null, $this->GetPreference('r_after',''),
+ 'r_after', '', '', '', '', 50, 5, '', '', 'style="height:5em;width:50em;"'));
 $smarty->assign('submit2',$this->CreateInputSubmit(null, 'save_sitemap_settings', $this->Lang('save')));
 
 if ($this->GetPreference('create_sitemap',0))
