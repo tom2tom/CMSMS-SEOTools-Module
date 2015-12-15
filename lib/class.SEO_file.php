@@ -6,53 +6,52 @@
 
 class SEO_file
 {
-
 	public function createRobotsTXT($mod)
 	{
-		$gCms = cmsms();
-		$db = $gCms->GetDb();
-		$query = "SELECT content_id FROM ".cms_db_prefix()."module_seotools WHERE indexable = 0";
-		$result = $db->Execute($query);
-		if ($result == FALSE)
-			return FALSE;
-
+		$gCms = cmsms(); //CMSMS 1.8+
 		$config = $gCms->GetConfig();
 		$fp = @fopen(cms_join_path($config['root_path'],'robots.txt'),'wb');
 		if ($fp == FALSE)
 			return FALSE;
 
+		$rooturl = (empty($_SERVER['HTTPS'])) ? $config['root_url'] : $config['ssl_url'];
+
+		$outs = array();
 		if ($mod->GetPreference('create_sitemap',0))
-			@fwrite($fp, "Sitemap: {$config['root_url']}/sitemap.xml\n");
+			$outs[] = 'Sitemap: '.$rooturl.'/sitemap.xml';
+		$outs[] = 'User-agent: *';
+		foreach (array('contrib','doc','lib','modules','plugins','scripts','tmp') as $dir) {
+			$outs[] = 'Disallow: '.$rooturl.'/'.$dir.'/';
+		}
 
-		@fwrite($fp, "User-agent: *\n");
-		@fwrite($fp, "Disallow: {$config['root_url']}/contrib/\n");
-		@fwrite($fp, "Disallow: {$config['root_url']}/doc/\n");
-		@fwrite($fp, "Disallow: {$config['root_url']}/lib/\n");
-		@fwrite($fp, "Disallow: {$config['root_url']}/modules/\n");
-		@fwrite($fp, "Disallow: {$config['root_url']}/plugins/\n");
-		@fwrite($fp, "Disallow: {$config['root_url']}/scripts/\n");
-		@fwrite($fp, "Disallow: {$config['root_url']}/tmp/\n");
-
-		$co = $gCms->GetContentOperations();
-		while ($page = $result->fetchRow()) {
-			$curcontent = $co->LoadContentFromId ($page['content_id']);
-			if ($curcontent) {
-				$url = $curcontent->GetURL();
-				if ($url) {
-				  @fwrite($fp, "Disallow: $url\n");
+		$db = $gCms->GetDb();
+		$query = 'SELECT content_id FROM '.cms_db_prefix().'module_seotools WHERE indexable=0 ORDER BY content_id';
+		$result = $db->GetCol($query);
+		if ($result) {
+			$co = $gCms->GetContentOperations();
+			foreach ($result as $cid) {
+				$content = $co->LoadContentFromId($cid);
+				if ($content) {
+					$url = $content->GetURL();
+					if ($url) {
+						$outs[] = 'Disallow: '.$url;
+					}
 				}
 			}
 		}
 
+		@fwrite($fp,implode("\n",$outs));
+		@fwrite($fp,"\n");
 		@fclose($fp);
 		return TRUE;
 	}
 
 	public function createSitemap($mod)
 	{
-		$gCms = cmsms();
+		$gCms = cmsms(); //CMSMS 1.8+
 		$db = $gCms->GetDb();
-		$query = "SELECT * FROM ".cms_db_prefix()."content WHERE active=1 ORDER BY hierarchy ASC";
+		$pre = cms_db_prefix();
+		$query = 'SELECT content_id,hierarchy,default_content,modified_date FROM '.$pre.'content WHERE active=1 ORDER BY hierarchy';
 		$result = $db->Execute($query);
 		if ($result == FALSE)
 			return FALSE;
@@ -62,28 +61,35 @@ class SEO_file
 		if ($fp == FALSE)
 			return FALSE;
 
-		$addslash = ($config['url_rewriting'] != 'none'
-		 && (!isset ($config['page_extension']) || $config['page_extension'] == ''));
+		$rooturl = (empty($_SERVER['HTTPS'])) ? $config['root_url'] : $config['ssl_url'];
+		$addslash = ($config['url_rewriting'] != 'none' && empty($config['page_extension']));
 		if ($addslash)//appending / to most urls, so google's walker won't ignore them
-			$root = $config['root_url'].'/'; //this page will already be slashed, so don't duplicate
-		$query = "SELECT * FROM ".cms_db_prefix()."module_seotools WHERE content_id=?";
+			$root = $rooturl.'/'; //this page will already be slashed, so don't duplicate
+		$query = 'SELECT indexable,priority FROM '.$pre.'module_seotools WHERE content_id=?';
 
-		//Create sitemap
-		fwrite($fp, "<?xml version='1.0' encoding='UTF-8'?>\n");
-		fwrite($fp, "<urlset xmlns='http://www.sitemaps.org/schemas/sitemap/0.9'>\n\n");
+		// Create sitemap
+		fwrite($fp,<<<EOS
+<?xml version='1.0' encoding='UTF-8'?>
+<urlset xmlns='http://www.sitemaps.org/schemas/sitemap/0.9'>
 
+EOS
+		);
 		$co = $gCms->GetContentOperations();
 		while ($page = $result->fetchRow())
 		{
-			$curcontent = $co->LoadContentFromId ($page['content_id']);
-			if ($curcontent) {
-				$url = $curcontent->GetURL();
-				if (strpos($url, $config['root_url']) !== FALSE)
+			$content = $co->LoadContentFromId ($page['content_id']);
+			if ($content) {
+				$url = $content->GetURL();
+				if (strpos($url, $rooturl) !== FALSE)
 				{
 					$info = $db->GetRow($query,array($page['content_id']));
-					if (!isset($info['indexable']) || ($info['indexable'] == "") || ($info['indexable'] == 1)) {
+					if (empty($info['indexable']) || $info['indexable'] == 1) {
+						if ($addslash && $url != $root) {
+							$url .= '/';
+						}
+						$mdate = date('Y-m-d', strtotime($page['modified_date']));
 
-						if (isset($info['priority']) && ($info['priority'])) {
+						if (!empty($info['priority'])) {
 							$priority = (int)$info['priority'];
 						}
 						elseif ($page['default_content'] == 1) {
@@ -91,34 +97,50 @@ class SEO_file
 						}
 						else {
 							$priority = 80;
-							for ($i = 0; $i < substr_count($page['hierarchy'],'.'); $i++) {
-								$priority  = $priority / 2;
+							$c = substr_count($page['hierarchy'],'.');
+							for ($i = 0; $i < $c; $i++) {
+								$priority /= 2;
 							}
 						}
+						$priority = number_format($priority / 100, 1);
 
-						if ($addslash && $url != $root) $url .= '/';
-						fwrite($fp, "<url>\n");
-						fwrite($fp, "<loc>$url</loc>\n");
-						fwrite($fp, "<lastmod>".date("Y-m-d", strtotime($page['modified_date']))."</lastmod>\n");
-						fwrite($fp, "<changefreq>always</changefreq>\n");
-						fwrite($fp, "<priority>".number_format($priority / 100, 1)."</priority>\n");
-						fwrite($fp, "</url>\n");
+						@fwrite($fp,<<<EOS
+<url>
+<loc>$url</loc>
+<lastmod>$mdate</lastmod>
+<changefreq>always</changefreq>
+<priority>$priority</priority>
+</url>
+
+EOS
+						);
 					}
-					unset ($info);
 				}
 			}
 		}
-		fwrite($fp, "\n</urlset>");
-		fclose($fp);
-		if ($mod->GetPreference('push_sitemap',0))
-		{
-			// Push sitemap to google
-			$fp = @fopen("http://www.google.com/webmasters/tools/ping?sitemap=".urlencode($config['root_url']."/sitemap.xml"),"rb");
-			if ($fp) fclose($fp);
-		}
-		return TRUE;
-	}
+		@fwrite($fp, '</urlset>');
+		@fclose($fp);
 
+		if ($mod->GetPreference('push_sitemap',0)) {
+			$url = urlencode($rooturl.'/sitemap.xml');
+			// Push to google
+			$fp = @fopen('http://www.google.com/webmasters/tools/ping?sitemap='.$url,'rb');
+			if ($fp) @fclose($fp);
+			$ret = ($fp !== FALSE);
+			// Push to bing/yahoo
+			$fp = @fopen('http://www.bing.com/webmaster/ping.aspx?siteMap='.$url,'rb');
+			if ($fp) @fclose($fp);
+			$ret = $ret && ($fp !== FALSE);
+			// Push to ask
+			$fp = @fopen('http://submissions.ask.com/ping?sitemap='.$url,'rb');
+			if ($fp) @fclose($fp);
+			$ret = $ret && ($fp !== FALSE);
+			return $ret;
+		}
+		else {
+			return TRUE;
+		}
+	}
 }
 
 ?>
