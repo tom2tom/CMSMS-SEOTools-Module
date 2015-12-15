@@ -77,10 +77,10 @@ class SEOTools extends CMSModule
 		return TRUE;
 	}
 
-	//for CMSMS >= 1.11
+	//CMSMS 1.11+
 	function AllowSmartyCaching()
 	{
-		return FALSE; //may need freshly-assigned smarty var(s): $default_keywords etc
+		return FALSE; //need freshly-assigned meta (keywords etc) & exported vars
 	}
 
 	function HasAdmin()
@@ -148,14 +148,14 @@ EOS;
 		return $incs;
 	}
 
-	//for CMSMS < 1.10
+	//CMSMS 1.9-
 	function SetParameters()
 	{
 		$this->InitializeAdmin();
 		$this->InitializeFrontend();
 	}
 
-	//for CMSMS >= 1.10
+	//CMSMS 1.10+
 	function InitializeAdmin()
 	{
 		$this->AddEventHandler('Core','ContentEditPost',FALSE);
@@ -163,20 +163,20 @@ EOS;
 		$this->CreateParameter('showbase','true',$this->Lang('help_showbase'));
 	}
 
-	//for CMSMS >= 1.10
+	//CMSMS 1.10+
 	function LazyLoadAdmin()
 	{
 		return FALSE; //capture events ASAP
 	}
 
-	//for CMSMS >= 1.10
+	//CMSMS 1.10+
 	function InitializeFrontend()
 	{
 		$this->RestrictUnknownParams();
 		$this->SetParameterType('showbase',CLEAN_STRING);
 	}
 
-	//for CMSMS >= 1.10
+	//CMSMS 1.10+
 	function LazyLoadFrontend()
 	{
 		return FALSE;
@@ -189,16 +189,29 @@ EOS;
 			$funcs = new SEO_file();
 			$funcs->createSitemap($this);
 		}
-		//take this opportunity to clean up
-		$db = cmsms()->GetDb();
-		$query = "DELETE FROM ".cms_db_prefix()."module_seotools
-WHERE (indexable=1 AND keywords IS NULL AND priority IS NULL AND ogtype IS NULL AND ignored IS NULL)";
+		// Clean up
+		$db = cmsms()->GetDb(); //CMSMS 1.8+
+		$pre = cms_db_prefix();
+		if ($name == 'ContentEditPost') {
+			// Remove cached keywords, so next page-display will regenerate them
+			$query = 'UPDATE '.$pre.'module_seotools SET keywords=NULL WHERE content_id=?';
+		}
+		else {
+			// ContentDeletePost
+			$query = 'DELETE FROM '.$pre.'module_seotools WHERE content_id=?';
+		}
+		$content = $params['content'];
+		$id = $content->Id();
+		$db->Execute($query,array($id));
+
+		$query = 'DELETE FROM '.$pre.
+'module_seotools WHERE (indexable=1 AND keywords IS NULL AND priority IS NULL AND ogtype IS NULL AND ignored IS NULL)';
 		$db->Execute($query);
 	}
 
 	function DisplayErrorPage($message)
 	{
-		$smarty = cmsms()->GetSmarty();
+		global $smarty;
 		$smarty->assign('title_error', $this->Lang('error'));
 		$smarty->assign('message', $message);
 		// Display the populated template
