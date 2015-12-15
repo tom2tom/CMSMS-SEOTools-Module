@@ -70,10 +70,10 @@ $lang['title_meta_help'] = 'Der Seitentitel, wie er in den Meta-Titel-Tags ersch
 $lang['title_description_block'] = 'Name des Seitenbeschreibungs-Contentblocks';
 $lang['description_block_help'] = 'Der Name Ihres Seitenbeschreibungs-Contentblocks. Unten finden Sie eine Erkl&auml;rung hierzu';
 
-$lang['title_sitemap_description'] = 'Google-Sitemap und Crawler-Einstellungen';
-$lang['create_sitemap_title'] = 'Eine Google-Sitemap im XML-Format erzeugen*';
-$lang['push_sitemap_title'] = 'Die Sitemap automatisch bei &auml;nderungen am Seiteninhalt zu Google senden';
-$lang['create_robots_title'] = 'Eine robots.txt - Datei erzeugen*';
+$lang['title_sitemap_description'] = 'Sitemap und Crawler-Einstellungen';
+$lang['create_sitemap_title'] = 'Eine Search-Engine-Sitemap im XML-Format erzeugen';
+$lang['push_sitemap_title'] = 'Die Sitemap automatisch bei &auml;nderungen am Seiteninhalt zu search enging senden';
+$lang['create_robots_title'] = 'Eine robots.txt - Datei erzeugen';
 $lang['verification_title'] = 'Best&auml;tigungscode f&uuml;r die Seitenverifizierung';
 $lang['verification_help'] = 'Der Best&auml;tigungscode, den Sie von den Google Webmaster Tools erhalten. Nur den Hash, nicht das komplette Meta-Tag';
 

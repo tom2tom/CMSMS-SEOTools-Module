@@ -70,10 +70,10 @@ $lang['title_meta_help'] = 'The page title to be used in the Meta title tags. Yo
 $lang['title_description_block'] = 'Name of page description content-block';
 $lang['description_block_help'] = 'The name of each page\'s description content-block. Please read the module help for an explanation';
 
-$lang['title_sitemap_description'] = 'Google sitemap and crawler settings';
-$lang['create_sitemap_title'] = 'Create an XML sitemap for Google*';
-$lang['push_sitemap_title'] = 'Automatically push each newly-created sitemap to Google';
-$lang['create_robots_title'] = 'Create a robots.txt file*';
+$lang['title_sitemap_description'] = 'Sitemap and crawler settings';
+$lang['create_sitemap_title'] = 'Create an XML sitemap for search engines';
+$lang['push_sitemap_title'] = 'Automatically push each newly-created sitemap to search engines';
+$lang['create_robots_title'] = 'Create a robots.txt file';
 $lang['verification_title'] = 'Google site-verification code';
 $lang['verification_help'] = 'The code you obtain from Google Webmaster Tools, just the hash, not the complete meta tag';
 
