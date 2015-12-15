@@ -74,6 +74,8 @@ $lang['title_sitemap_description'] = 'Sitemap and crawler settings';
 $lang['create_sitemap_title'] = 'Create an XML sitemap for search engines';
 $lang['push_sitemap_title'] = 'Automatically push each newly-created sitemap to search engines';
 $lang['create_robots_title'] = 'Create a robots.txt file';
+$lang['custom_before_title'] = 'Optional extra content to insert near the start of robots.txt';
+$lang['custom_after_title'] = 'Optional extra content to insert near the end of robots.txt';
 $lang['verification_title'] = 'Google site-verification code';
 $lang['verification_help'] = 'The code you obtain from Google Webmaster Tools, just the hash, not the complete meta tag';
 

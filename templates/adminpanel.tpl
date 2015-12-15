@@ -238,6 +238,10 @@
   <p class="pagetext">{$pr_verify_code}:</p>
   <p class="pageinput">{$in_verify_code}<br />{$help_verify}</p>
   <p class="pagetext">{$pr_create_bots}:&nbsp;{$in_create_bots}</p>
+  <p class="pagetext">{$pr_early_bots}:</p>
+  <p class="pageinput">{$in_early_bots}</p>
+  <p class="pagetext">{$pr_late_bots}:</p>
+  <p class="pageinput">{$in_late_bots}</p>
   <br />
   <p class="pageinput">{$submit2}&nbsp;{$cancel}</p>
  </div>

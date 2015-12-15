@@ -52,8 +52,10 @@ switch($oldversion)
 		$fp = cms_join_path(dirname(__FILE__),'include','module-admin.css');
 		if (is_file($fp))
 			unlink($fp);
-		//extra preference
+		//extra preferences
 		$this->SetPreference('keyword_block','metakeywords');
+		$this->SetPreference('r_before','');
+		$this->SetPreference('r_after','');
 		//modify preference
 		$words = <<< EOS
 i,me,my,myself,we,our,ours,ourselves,you,your,yours,yourself,yourselves,

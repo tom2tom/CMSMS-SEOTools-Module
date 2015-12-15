@@ -84,6 +84,10 @@ if (isset($_POST['save_sitemap_settings']))
 	$this->SetPreference('push_sitemap', $val);
 	$val = (isset($_POST['create_robots'])) ? 1 : 0;
 	$this->SetPreference('create_robots', $val);
+	$val = (isset($_POST['r_before'])) ? $_POST['r_before'] : '';
+	$this->SetPreference('r_before',$val);
+	$val = (isset($_POST['r_after'])) ? $_POST['r_after'] : '';
+	$this->SetPreference('r_after',$val);
 	$this->SetPreference('verification', $_POST['verification']);
 
 	$this->Audit(0, $this->Lang('friendlyname'), 'Edited sitemap settings');

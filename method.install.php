@@ -74,6 +74,8 @@ $this->SetPreference('meta_publisher','');
 $this->SetPreference('meta_region','');
 $this->SetPreference('meta_standard',1);
 $this->SetPreference('meta_title','{title} | {$sitename}');
+$this->SetPreference('r_before','');
+$this->SetPreference('r_after','');
 $this->SetPreference('title','{title} | {$sitename} - {$title_keywords}');
 $this->SetPreference('verification','');
 
