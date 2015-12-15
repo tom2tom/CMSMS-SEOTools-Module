@@ -19,6 +19,12 @@ class SEO_file
 		$outs = array();
 		if ($mod->GetPreference('create_sitemap',0))
 			$outs[] = 'Sitemap: '.$rooturl.'/sitemap.xml';
+
+		$xtra = $mod->GetPreference('r_before','');
+		if ($xtra) {
+			$outs[] = $xtra;
+		}
+
 		$outs[] = 'User-agent: *';
 		foreach (array('contrib','doc','lib','modules','plugins','scripts','tmp') as $dir) {
 			$outs[] = 'Disallow: '.$rooturl.'/'.$dir.'/';
@@ -40,6 +46,11 @@ class SEO_file
 			}
 		}
 
+		$xtra = $mod->GetPreference('r_after','');
+		if ($xtra) {
+			$outs[] = $xtra;
+		}
+
 		@fwrite($fp,implode("\n",$outs));
 		@fwrite($fp,"\n");
 		@fclose($fp);
@@ -51,7 +62,7 @@ class SEO_file
 		$gCms = cmsms(); //CMSMS 1.8+
 		$db = $gCms->GetDb();
 		$pre = cms_db_prefix();
-		$query = 'SELECT content_id,hierarchy,default_content,modified_date FROM '.$pre.'content WHERE active=1 ORDER BY hierarchy';
+		$query = 'SELECT content_id,hierarchy,default_content,modified_date FROM '.$pre.'content WHERE active=1 AND type!="errorpage" ORDER BY hierarchy';
 		$result = $db->Execute($query);
 		if ($result == FALSE)
 			return FALSE;
@@ -64,7 +75,7 @@ class SEO_file
 		$rooturl = (empty($_SERVER['HTTPS'])) ? $config['root_url'] : $config['ssl_url'];
 		$addslash = ($config['url_rewriting'] != 'none' && empty($config['page_extension']));
 		if ($addslash)//appending / to most urls, so google's walker won't ignore them
-			$root = $rooturl.'/'; //this page will already be slashed, so don't duplicate
+			$siteroot = $rooturl.'/'; //this page will already be slashed, so don't duplicate
 		$query = 'SELECT indexable,priority FROM '.$pre.'module_seotools WHERE content_id=?';
 
 		// Create sitemap
@@ -83,7 +94,7 @@ EOS		);
 				{
 					$info = $db->GetRow($query,array($page['content_id']));
 					if (empty($info['indexable']) || $info['indexable'] == 1) {
-						if ($addslash && $url != $root) {
+						if ($addslash && $url != $siteroot) {
 							$url .= '/';
 						}
 						$mdate = date('Y-m-d', strtotime($page['modified_date']));
@@ -116,7 +127,7 @@ EOS						);
 				}
 			}
 		}
-		@fwrite($fp, '</urlset>');
+		@fwrite($fp, "</urlset>\n");
 		@fclose($fp);
 
 		if ($mod->GetPreference('push_sitemap',0)) {
