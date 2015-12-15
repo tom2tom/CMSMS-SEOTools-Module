@@ -63,8 +63,8 @@ class SEO_file
 		$db = $gCms->GetDb();
 		$pre = cms_db_prefix();
 		$query = 'SELECT content_id,hierarchy,default_content,modified_date FROM '.$pre.'content WHERE active=1 AND type!="errorpage" ORDER BY hierarchy';
-		$result = $db->Execute($query);
-		if ($result == FALSE)
+		$rst = $db->Execute($query);
+		if ($rst == FALSE)
 			return FALSE;
 
 		$config = $gCms->GetConfig();
@@ -86,7 +86,7 @@ class SEO_file
 EOS
 		);
 		$co = $gCms->GetContentOperations();
-		while ($page = $result->fetchRow())
+		while ($page = $rst->fetchRow())
 		{
 			$content = $co->LoadContentFromId ($page['content_id']);
 			if ($content) {
@@ -129,6 +129,7 @@ EOS
 				}
 			}
 		}
+		$rst->Close();
 		@fwrite($fp, '</urlset>'.PHP_EOL);
 		@fclose($fp);
 

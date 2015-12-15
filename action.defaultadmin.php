@@ -228,7 +228,7 @@ if ($urgent_alerts) {
 				}
 				else {
 					$more = true;
-				}				
+				}
 			}
 			$groups[$alert['group']][] = $alert;
 		}
@@ -499,119 +499,122 @@ $iconedit = '<img src="'.$theme_url.'/system/edit.gif" class="systemicon" />';
 $icondown = '<img src="'.$theme_url.'/system/arrow-d.gif" class="systemicon" />';
 $iconup = '<img src="'.$theme_url.'/system/arrow-u.gif" class="systemicon" />';
 $default_ogtype = $this->GetPreference('meta_opengraph_type','');
+$sep = $this->GetPreference('keyword_separator',' ');
 
 $items = array();
 
 $pagesettings = '';
 
 $query = 'SELECT * FROM '.$pre.'content ORDER BY hierarchy ASC';
-$result = $db->Execute($query);
+$rst = $db->Execute($query);
+if ($rst) {
+	$j = 0;
+	while ($row = $rst->fetchRow()) {
+		$prefix = '';
+		$auto_priority = 80;
+		$n = substr_count($row['hierarchy'],'.');
+		for($i = 0; $i < $n; $i++) {
+			$prefix .= '&raquo; ';
+			$auto_priority  = $auto_priority / 2;
+		}
+		if ($row['default_content'] == 1) {
+			$auto_priority = 100;
+		}
 
-$j = 0;
-while ($row = $result->fetchRow()) {
+		$oneset = new stdClass;
+		$oneset->rowclass = 'row'.($j % 2 + 1);
+		$oneset->name = $prefix.' '.$row['content_name'];
 
-	$prefix = '';
-	$auto_priority = 80;
-	$n = substr_count($row['hierarchy'],'.');
-	for($i = 0; $i < $n; $i++) {
-		$prefix .= '&raquo; ';
-		$auto_priority  = $auto_priority / 2;
-	}
-	if ($row['default_content'] == 1) {
-		$auto_priority = 100;
-	}
+		if (strpos($row['type'],'content') === 0) { //any content type
+			$query = 'SELECT content FROM '.$pre.'content_props WHERE content_id = ? AND prop_name = ?';
+			$parms = array($row['content_id']);
+			$parms[] = str_replace(' ','_',$this->GetPreference('description_block',''));
+			$description = $db->GetOne($query,$parms);
+			$description_auto = FALSE;
+			$funcs = new SEO_keyword();
+			$kw = $funcs->getKeywords($this,$row['content_id']);
+			if ($kw && $description == FALSE && $this->GetPreference('description_auto_generate',FALSE)) {
+				if (count($kw) > 1) {
+					$last_keyword = array_pop($kw);
+					$keywords = $this->Lang('and',implode(',',$kw),$last_keyword);
+				}
+				else {
+					$keywords = reset($kw);
+				}
+				$description = $this->Lang('auto_generated').": ".str_replace('{keywords}',$keywords,$this->GetPreference('description_auto',''));
+				$description = str_replace('{title}',$row['content_name'],$description);
+				$description_auto = TRUE;
+			}
 
-	$oneset = new stdClass;
-	$oneset->rowclass = 'row'.($j % 2 + 1);
-	$oneset->name = $prefix.' '.$row['content_name'];
+			$updown = '';
+			if ($auto_priority > 10) {
+				$updown .= $this->CreateTooltipLink(null, 'defaultadmin', '', $icondown, $this->Lang('decrease_priority'), array('what'=>'set_priority','priority'=>$auto_priority-10,'content_id'=>$row['content_id']));
+			}
+			if ($auto_priority <= 90) {
+				$updown .= $this->CreateTooltipLink(null, 'defaultadmin', '', $iconup, $this->Lang('increase_priority'), array('what'=>'set_priority','priority'=>$auto_priority+10,'content_id'=>$row['content_id']));
+			}
+			$priority = '('.$this->Lang('auto').') '.$auto_priority.'%';
+			$ogtype = '('.$this->Lang('default').') '.$default_ogtype.' '.$this->CreateTooltipLink(null, 'defaultadmin', '', $iconedit, $this->Lang('edit_value'), array('what'=>'edit_ogtype','content_id'=>$row['content_id']));
+			$keywords = '('.$this->Lang('auto').') '.count($kw).' '.$this->CreateTooltipLink(null, 'defaultadmin', '', $iconedit, implode(', ',$kw).'; '.$this->Lang('edit_value'), array('what'=>'edit_keywords','content_id'=>$row['content_id']));
+			$iname = 'true';
 
-	if (strpos($row['type'],'content') === 0) { //any content type
-		$query = 'SELECT content FROM '.$pre.'content_props WHERE content_id = ? AND prop_name = ?';
-		$parms = array($row['content_id']);
-		$parms[] = str_replace(' ','_',$this->GetPreference('description_block',''));
-		$description = $db->GetOne($query,$parms);
-		$description_auto = FALSE;
-		$funcs = new SEO_keyword();
-		$kw = $funcs->getKeywords($this,$row['content_id']);
-		if ($kw && $description == FALSE && $this->GetPreference('description_auto_generate',FALSE)) {
-			if (count($kw) > 1) {
-				$last_keyword = array_pop($kw);
-				$keywords = $this->Lang('and',implode(',',$kw),$last_keyword);
+			$query = 'SELECT * FROM '.$pre.'module_seotools WHERE content_id = ?';
+			$info = $db->GetRow($query,array($row['content_id']));
+			if ($info && $info['content_id'] != '') {
+				if ($info['priority'] != 0) {
+				  $priority = '<strong>'.$info['priority'] . '% '.$this->CreateTooltipLink(null, 'defaultadmin', '', $iconreset, $this->Lang('reset_to_default'), array('what'=>'reset_priority','content_id'=>$row['content_id'])) . '</strong>';
+				  $auto_priority = $info['priority'];
+				}
+				if ($info['ogtype'] != '') {
+				  $ogtype = '<strong>'.$info['ogtype'] . ' '
+				  . $this->CreateTooltipLink(null, 'defaultadmin', '', $iconreset, $this->Lang('reset_to_default'), array('what'=>'reset_ogtype','content_id'=>$row['content_id']))
+				  . $this->CreateTooltipLink(null, 'defaultadmin', '', $iconedit, $this->Lang('edit_value'), array('what'=>'edit_ogtype','content_id'=>$row['content_id'])).'</strong>';
+				}
+				if ($info['keywords'] != '') {
+					$keywords = '<strong>'.count(explode($sep,$info['keywords']))
+					. $this->CreateTooltipLink(null, 'defaultadmin', '', $iconreset, $this->Lang('reset_to_default'), array('what'=>'reset_keywords','content_id'=>$row['content_id']))
+					. $this->CreateTooltipLink(null, 'defaultadmin', '', $iconedit, $this->Lang('edit_value'), array('what'=>'edit_keywords','content_id'=>$row['content_id'])).'</strong>';
+				}
+				if (!$info['indexable']) {
+				  $iname = 'false';
+				}
+			}
+			unset($info);
+
+			$oneset->priority = $updown.' '.$priority;
+			$oneset->ogtype = $ogtype;
+			$oneset->keywords = $keywords;
+			if ($description != '') {
+				$inm2 = ($description_auto) ? 'warning' : 'true';
+				$oneset->desc ='<img src="'.$theme_url.'/system/'.$inm2.'.gif" title="'.
+				strip_tags($description).'" class="systemicon" />';
 			}
 			else {
-				$keywords = reset($kw);
+				$oneset->desc = '<a href="editcontent.php?'.$this->pathstr.'='.$_GET[$this->pathstr].
+				'&content_id='.$row['content_id'].'"><img src="'.$theme_url.'/system/false.gif" title="'.
+				$this->Lang('click_to_add_description').'" class="systemicon" /></a>';
 			}
-			$description = $this->Lang('auto_generated').": ".str_replace('{keywords}',$keywords,$this->GetPreference('description_auto',''));
-			$description = str_replace('{title}',$row['content_name'],$description);
-			$description_auto = TRUE;
-		}
-
-		$updown = '';
-		if ($auto_priority > 10) {
-			$updown .= $this->CreateTooltipLink(null, 'defaultadmin', '', $icondown, $this->Lang('decrease_priority'), array('what'=>'set_priority','priority'=>$auto_priority-10,'content_id'=>$row['content_id']));
-		}
-		if ($auto_priority <= 90) {
-			$updown .= $this->CreateTooltipLink(null, 'defaultadmin', '', $iconup, $this->Lang('increase_priority'), array('what'=>'set_priority','priority'=>$auto_priority+10,'content_id'=>$row['content_id']));
-		}
-		$priority = '('.$this->Lang('auto').') '.$auto_priority.'%';
-		$ogtype = '('.$this->Lang('default').') '.$default_ogtype.' '.$this->CreateTooltipLink(null, 'defaultadmin', '', $iconedit, $this->Lang('edit_value'), array('what'=>'edit_ogtype','content_id'=>$row['content_id']));
-		$keywords = '('.$this->Lang('auto').') '.count($kw).' '.$this->CreateTooltipLink(null, 'defaultadmin', '', $iconedit, implode(', ',$kw).'; '.$this->Lang('edit_value'), array('what'=>'edit_keywords','content_id'=>$row['content_id']));
-		$iname = 'true';
-
-		$query = 'SELECT * FROM '.$pre.'module_seotools WHERE content_id = ?';
-		$info = $db->GetRow($query,array($row['content_id']));
-		if ($info && $info['content_id'] != '') {
-			if ($info['priority'] != 0) {
-			  $priority = '<strong>'.$info['priority'] . '% '.$this->CreateTooltipLink(null, 'defaultadmin', '', $iconreset, $this->Lang('reset_to_default'), array('what'=>'reset_priority','content_id'=>$row['content_id'])) . '</strong>';
-			  $auto_priority = $info['priority'];
-			}
-			if ($info['ogtype'] != '') {
-			  $ogtype = '<strong>'.$info['ogtype'] . ' '
-			  . $this->CreateTooltipLink(null, 'defaultadmin', '', $iconreset, $this->Lang('reset_to_default'), array('what'=>'reset_ogtype','content_id'=>$row['content_id']))
-			  . $this->CreateTooltipLink(null, 'defaultadmin', '', $iconedit, $this->Lang('edit_value'), array('what'=>'edit_ogtype','content_id'=>$row['content_id'])).'</strong>';
-			}
-			if ($info['keywords'] != '') {
-				$keywords = '<strong>'.count(explode(' ',$info['keywords']))
-				. $this->CreateTooltipLink(null, 'defaultadmin', '', $iconreset, $this->Lang('reset_to_default'), array('what'=>'reset_keywords','content_id'=>$row['content_id']))
-				. $this->CreateTooltipLink(null, 'defaultadmin', '', $iconedit, $this->Lang('edit_value'), array('what'=>'edit_keywords','content_id'=>$row['content_id'])).'</strong>';
-			}
-			if (!$info['indexable']) {
-			  $iname = 'false';
-			}
-		}
-		unset($info);
-
-		$oneset->priority = $updown.' '.$priority;
-		$oneset->ogtype = $ogtype;
-		$oneset->keywords = $keywords;
-		if ($description != '') {
-			$inm2 = ($description_auto) ? 'warning' : 'true';
-			$oneset->desc ='<img src="'.$theme_url.'/system/'.$inm2.'.gif" title="'.
-			strip_tags($description).'" class="systemicon" />';
+			$oneset->index = $this->CreateTooltipLink(null, 'defaultadmin', '',
+				'<img src="'.$theme_url.'/system/'.$iname.'.gif" class="systemicon" />',
+				$this->Lang('toggle'), array('what'=>'toggle_index','content_id'=>$row['content_id']));
+			$oneset->checkval = $row['content_id'];
+			$oneset->sel = ''; //TODO
 		}
 		else {
-			$oneset->desc = '<a href="editcontent.php?'.$this->pathstr.'='.$_GET[$this->pathstr].
-			'&content_id='.$row['content_id'].'"><img src="'.$theme_url.'/system/false.gif" title="'.
-			$this->Lang('click_to_add_description').'" class="systemicon" /></a>';
+			$oneset->priority = '---';
+			$oneset->ogtype = '';
+			$oneset->keywords = '';
+			$oneset->desc = '';
+			$oneset->index = '';
+			$oneset->checkval = '';
+			$oneset->sel = '';
 		}
-		$oneset->index = $this->CreateTooltipLink(null, 'defaultadmin', '',
-			'<img src="'.$theme_url.'/system/'.$iname.'.gif" class="systemicon" />',
-			$this->Lang('toggle'), array('what'=>'toggle_index','content_id'=>$row['content_id']));
-		$oneset->checkval = $row['content_id'];
-		$oneset->sel = ''; //TODO
+		$items[] = $oneset;
+		$j++;
 	}
-	else {
-		$oneset->priority = '---';
-		$oneset->ogtype = '';
-		$oneset->keywords = '';
-		$oneset->desc = '';
-		$oneset->index = '';
-		$oneset->checkval = '';
-		$oneset->sel = '';
-	}
-	$items[] = $oneset;
-	$j++;
+	$rst->Close();
 }
+
 $smarty->assign('items',$items);
 $smarty->assign('index',$this->CreateInputSubmit(null, 'index_selected',
 	$this->Lang('index'),'title="'.$this->Lang('help_index').'" onclick="return confirm_click(\'indx\');"'));
@@ -773,7 +776,7 @@ $smarty->assign('pr_wordsblock_name',$this->Lang('title_keyword_block'));
 $smarty->assign('in_wordsblock_name',$this->CreateInputText(null, 'keyword_block', $this->GetPreference('keyword_block',''), 60)
 	.'<br />'.$this->Lang('keyword_block_help'));
 $smarty->assign('pr_kw_sep',$this->Lang('keyword_separator_title'));
-$smarty->assign('in_kw_sep',$this->CreateInputText(null, 'keyword_separator', $this->GetPreference('keyword_separator',' '), 1)
+$smarty->assign('in_kw_sep',$this->CreateInputText(null, 'keyword_separator', $sep, 1)
 	.'<br />'.$this->Lang('keyword_separator_help'));
 $smarty->assign('pr_min_length',$this->Lang('keyword_minlength_title'));
 $smarty->assign('in_min_length',$this->CreateInputText(null, 'keyword_minlength', $this->GetPreference('keyword_minlength','6'), 2)

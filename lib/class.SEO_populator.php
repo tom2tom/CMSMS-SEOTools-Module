@@ -81,11 +81,11 @@ class SEO_populator
 				$parms = array('content%'); //can't be an injection risk here
 				$parms[] = str_replace(' ','_',$pref);
 				$parms[] = '';
-				$result = $db->Execute($query, $parms);
-				if ($result) {
+				$rst = $db->Execute($query, $parms);
+				if ($rst) {
 					$code = 'nometa';
 					$keep = !$omit_ignored;
-					while ($problem = $result->fetchRow()) {
+					while ($problem = $rst->fetchRow()) {
 						$ig = $problem['ignored'];
 						if (($ig == null && $keep)
 						  ||($ig != null && strpos($ig,$code) !== FALSE)) {
@@ -99,6 +99,7 @@ class SEO_populator
 							$alerts[] = $alert;
 						}
 					}
+					$rst->Close();
 				}
 			}
 			else {
@@ -224,11 +225,11 @@ class SEO_populator
 		$query .= 'C.type LIKE ? AND P.prop_name=? AND P.content!="" AND CHAR_LENGTH(P.content) < 75';
 		$parms = array('content%'); //can't be an injection risk here
 		$parms[] = str_replace(' ','_',$mod->GetPreference('description_block',''));
-		$result = $db->Execute($query, $parms);
-		if ($result) {
+		$rst = $db->Execute($query, $parms);
+		if ($rst) {
 			$code = 'shortmeta';
 			$keep = !$omit_ignored;
-			while ($problem = $result->fetchRow()) {
+			while ($problem = $rst->fetchRow()) {
 				$ig = $problem['ignored'];
 				if (($ig == null && $keep)
 				  ||($ig != null && strpos($ig,$code) !== FALSE)) {
@@ -242,6 +243,7 @@ class SEO_populator
 					$alerts[] = $alert;
 				}
 			}
+			$rst->Close();
 		}
 
 		// Any pages with duplicate title
@@ -254,11 +256,11 @@ c2.content_alias AS c2name, c2.content_id AS c2id, c2.active as c2a, S.ignored F
 			$query .= 'c1.active=1 AND c2.active=1 AND ';
 		}
 		$query .= 'c1.content_id<c2.content_id';
-		$result = $db->Execute($query);
-		if ($result) {
+		$rst = $db->Execute($query);
+		if ($rst) {
 			$code = 'sametitle';
 			$keep = !$omit_ignored;
-			while ($problem = $result->fetchRow()) {
+			while ($problem = $rst->fetchRow()) {
 				$ig = $problem['ignored'];
 				if (($ig == null && $keep)
 				  ||($ig != null && strpos($ig,$code) !== FALSE)) {
@@ -273,6 +275,7 @@ c2.content_alias AS c2name, c2.content_id AS c2id, c2.active as c2a, S.ignored F
 					$alerts[] = $alert;
 				}
 			}
+			$rst->Close();
 		}
 
 		// Any pages with duplicate description
@@ -284,8 +287,8 @@ WHERE(p1.prop_name = ? AND p1.content_id < p2.content_id  AND p1.content <> ? AN
 		$parms = array();
 		$parms[] = str_replace(' ','_',$mod->GetPreference('description_block',''));
 		$parms[] = '';
-		$result = $db->Execute($query, $parms);
-		if ($result) {
+		$rst = $db->Execute($query, $parms);
+		if ($rst) {
 			$query = 'SELECT content_id, content_name, active FROM '.$pre.'content WHERE ';
 			if ($omit_inactive) {
 				$query .= 'active=1 AND ';
@@ -293,13 +296,14 @@ WHERE(p1.prop_name = ? AND p1.content_id < p2.content_id  AND p1.content <> ? AN
 			$query .= '(content_id=? OR content_id=?)';
 			$code = 'samedesc';
 			$keep = !$omit_ignored;
-			while ($problem = $result->fetchRow()) {
+			while ($problem = $rst->fetchRow()) {
 				$ig = $problem['ignored'];
 				if (($ig == null && $keep)
 				  ||($ig != null && strpos($ig,$code) !== FALSE)) {
-					$result1 = $db->Execute($query,array($problem['p1id'],$problem['p2id']));
-					$first = $result1->fetchRow();
-					$second = $result1->fetchRow();
+					$rst1 = $db->Execute($query,array($problem['p1id'],$problem['p2id']));
+					$first = $rst1->fetchRow();
+					$second = $rst1->fetchRow();
+					$rst1->Close();
 					$alert = array();
 					$alert['group'] = 'descriptions';
 					$alert['active'] = $first['active'].','.$second['active'];
@@ -311,6 +315,7 @@ WHERE(p1.prop_name = ? AND p1.content_id < p2.content_id  AND p1.content <> ? AN
 					$alerts[] = $alert;
 				}
 			}
+			$rst->Close();
 		}
 		// No author provided
 		if ($mod->GetPreference('meta_publisher','') == '') {
