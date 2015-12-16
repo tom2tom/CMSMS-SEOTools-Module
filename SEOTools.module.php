@@ -6,7 +6,7 @@
 # Version: 1.6 Tom Phane
 #-------------------------------------------------------------------------
 # CMS Made Simple (C) 2005-2015 Ted Kulp (wishy@cmsmadesimple.org)
-# This project's homepage is: http://www.cmsmadesimple.org
+# CMS Made Simple homepage is: http://www.cmsmadesimple.org
 #-------------------------------------------------------------------------
 # This module is free software; you can redistribute it and/or modify it
 # under the terms of the GNU Affero General Public License as published by
@@ -20,19 +20,17 @@
 # Read it at http://www.gnu.org/licenses/licenses.html#AGPL
 #-------------------------------------------------------------------------
 
-//error_reporting(E_ALL);
-
 class SEOTools extends CMSModule
 {
 	public $before20;
-	public $pathstr;
+	public $secstr;
 
 	function __construct()
 	{
 		global $CMS_VERSION;
 		parent::__construct();
 		$this->before20 = (version_compare($CMS_VERSION,'2.0') < 0);
-		$this->pathstr = constant('CMS_SECURE_PARAM_NAME');
+		$this->secstr = constant('CMS_SECURE_PARAM_NAME');
 		$this->RegisterModulePlugin(TRUE);
 	}
 
