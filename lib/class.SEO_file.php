@@ -11,8 +11,8 @@ class SEO_file
 		$gCms = cmsms(); //CMSMS 1.8+
 		$config = $gCms->GetConfig();
 		$fp = @fopen(cms_join_path($config['root_path'],'robots.txt'),'wb');
-		if ($fp == FALSE)
-			return FALSE;
+		if ($fp == false)
+			return false;
 
 		$rooturl = (empty($_SERVER['HTTPS'])) ? $config['root_url'] : $config['ssl_url'];
 
@@ -20,7 +20,7 @@ class SEO_file
 		if ($mod->GetPreference('create_sitemap',0))
 			$outs[] = 'Sitemap: '.$rooturl.'/sitemap.xml';
 
-		$xtra = $mod->GetPreference('r_before','');
+		$xtra = $mod->GetPreference('robot_start','');
 		if ($xtra) {
 			$outs[] = $xtra;
 		}
@@ -46,7 +46,7 @@ class SEO_file
 			}
 		}
 
-		$xtra = $mod->GetPreference('r_after','');
+		$xtra = $mod->GetPreference('robot_end','');
 		if ($xtra) {
 			$outs[] = $xtra;
 		}
@@ -64,13 +64,13 @@ class SEO_file
 		$pre = cms_db_prefix();
 		$query = 'SELECT content_id,hierarchy,default_content,modified_date FROM '.$pre.'content WHERE active=1 AND type!="errorpage" ORDER BY hierarchy';
 		$rst = $db->Execute($query);
-		if ($rst == FALSE)
-			return FALSE;
+		if ($rst == false)
+			return false;
 
 		$config = $gCms->GetConfig();
 		$fp = @fopen(cms_join_path($config['root_path'],'sitemap.xml'),'wb');
-		if ($fp == FALSE)
-			return FALSE;
+		if ($fp == false)
+			return false;
 
 		$rooturl = (empty($_SERVER['HTTPS'])) ? $config['root_url'] : $config['ssl_url'];
 		$addslash = ($config['url_rewriting'] != 'none' && empty($config['page_extension']));
@@ -91,7 +91,7 @@ EOS
 			$content = $co->LoadContentFromId ($page['content_id']);
 			if ($content) {
 				$url = $content->GetURL();
-				if (strpos($url, $rooturl) !== FALSE)
+				if (strpos($url, $rooturl) !== false)
 				{
 					$info = $db->GetRow($query,array($page['content_id']));
 					if (empty($info['indexable']) || $info['indexable'] == 1) {
@@ -134,25 +134,65 @@ EOS
 		@fclose($fp);
 
 		if ($mod->GetPreference('push_sitemap',0)) {
-			$url = urlencode($rooturl.'/sitemap.xml');
-			// Push to google
-			$fp = @fopen('http://www.google.com/webmasters/tools/ping?sitemap='.$url,'rb');
-			if ($fp) @fclose($fp);
-			$ret = ($fp !== FALSE);
-			// Push to bing/yahoo
-			$fp = @fopen('http://www.bing.com/webmaster/ping.aspx?siteMap='.$url,'rb');
-			if ($fp) @fclose($fp);
-			$ret = $ret && ($fp !== FALSE);
-			// Push to ask
-			$fp = @fopen('http://submissions.ask.com/ping?sitemap='.$url,'rb');
-			if ($fp) @fclose($fp);
-			$ret = $ret && ($fp !== FALSE);
-			return $ret;
+			return self::pushSitemap($rooturl);
 		}
 		else {
 			return TRUE;
 		}
 	}
+
+	public function pushSitemap($rooturl = false) {
+		if (ini_get('allow_url_fopen')) {
+			$pusher = 1;
+		{
+		elseif (function_exists('curl_version')) {
+			$pusher = 2;
+		}
+		else {
+			return FALSE;
+		}
+
+		if(!$rooturl) {
+			$config = cmsms()->GetConfig();
+			$rooturl = (empty($_SERVER['HTTPS'])) ? $config['root_url'] : $config['ssl_url'];
+		}
+		$url = urlencode($rooturl).'/sitemap.xml';
+
+		$to = array(
+			'http://www.google.com/webmasters/tools/ping?sitemap='.$url, // Google
+			'http://www.bing.com/webmaster/ping.aspx?siteMap='.$url, // Bing/Yahoo
+			'http://submissions.ask.com/ping?sitemap='.$url	// ASK
+		);
+		$ret = true;
+		foreach ($to as $url) {
+			if ($pusher == 1) {
+				$ret = $ret && self::doOpen($url);
+			}
+			else {
+				$ret = $ret && self::doCurl($url);
+			}
+		}
+		return $ret;
+	}
+
+	private function doOpen($url) {
+		$fp = @fopen($url,'rb');
+		if ($fp) {
+			@fclose($fp);
+			return true;
+		}
+		return false;
+	}
+
+	private function doCurl($url) {
+		$ch = curl_init($url);
+		curl_setopt($ch, CURLOPT_HEADER, 0);
+		curl_exec($ch);
+		$httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+		curl_close($ch);
+		return ($httpCode == "200");
+	}
+
 }
 
 ?>
