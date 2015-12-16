@@ -118,11 +118,14 @@ class SEO_populator
 			$alerts[] = $alert;
 		}
 
-		$config = $gCms->GetConfig();
+		// Get root directory (whereever that actually is)
+		$offs = strpos(__FILE__,'modules'.DIRECTORY_SEPARATOR.$mod->GetName());
+		$base = substr(__FILE__, 0, $offs); //has trailing separator
+
 		// sitemap.xml not writeable
 		if ($mod->GetPreference('create_sitemap',0)) {
-			$path = cms_join_path($config['root_path'],'sitemap.xml');
-			if (file_exists($path) && !is_writeable($path)) {
+			$path = $base.'sitemap.xml';
+			if (file_exists($path) && !is_writable($path)) {
 				$alert = array();
 				$alert['group'] = 'system';
 				$alert['message'] = $mod->Lang('sitemap_not_writeable');
@@ -133,8 +136,8 @@ class SEO_populator
 
 		// robots.txt not writeable
 		if ($mod->GetPreference('create_robots',0)) {
-			$path = cms_join_path($config['root_path'],'robots.txt');
-			if (file_exists($path) && !is_writeable($path)) {
+			$path = $base.'robots.txt';
+			if (file_exists($path) && !is_writable($path)) {
 				$alert = array();
 				$alert['group'] = 'system';
 				$alert['message'] = $mod->Lang('robots_not_writeable');
@@ -391,7 +394,7 @@ WHERE(p1.prop_name = ? AND p1.content_id < p2.content_id  AND p1.content != ? AN
 				$gCms->get_variable('admintheme'):
 				cms_utils::get_theme_object();
 		}
-		$lnk = '<a href="'.$this->adminurl.'/editcontent.php?'.$mod->pathstr.'='.$sp.'&content_id='.$id
+		$lnk = '<a href="'.$this->adminurl.'/editcontent.php?'.$mod->secstr.'='.$sp.'&content_id='.$id
 		 .'"><img src="'.$this->adminurl.'/themes/'
 		 .$this->theme->themeName.'/images/icons/system/edit.gif" title = "';
 		if ($pagename) {

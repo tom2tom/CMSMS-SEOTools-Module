@@ -11,8 +11,9 @@ if (!$this->CheckAccess('Edit SEO Settings'))
 if (isset($_POST['cancel']))
 	$this->Redirect($id, 'defaultadmin', '', array('tab'=>'sitemapsettings'));
 
-$config = cmsms()->GetConfig();
-$fn = cms_join_path($config['root_path'],'robots.txt');
+// Get robots file in root directory (whereever that actually is)
+$offs = strpos(__FILE__, 'modules'.DIRECTORY_SEPARATOR.$this->GetName());
+$fn = substr(__FILE__, 0, $offs).'robots.txt';
 if (!is_readable($fn)) {
 	$this->Redirect ($id, 'defaultadmin', '',
 	array('warning'=>1,'message'=>'TODO','tab'=>'sitemapsettings'));

@@ -8,12 +8,15 @@ class SEO_file
 {
 	public function createRobotsTXT($mod)
 	{
-		$gCms = cmsms(); //CMSMS 1.8+
-		$config = $gCms->GetConfig();
-		$fp = @fopen(cms_join_path($config['root_path'],'robots.txt'),'wb');
+		// Get robots file in root directory (whereever that actually is)
+		$offs = strpos(__FILE__,'modules'.DIRECTORY_SEPARATOR.$mod->GetName());
+		$fn = substr(__FILE__, 0, $offs).'robots.txt';
+		$fp = @fopen($fn,'wb');
 		if ($fp == false)
 			return false;
 
+		$gCms = cmsms(); //CMSMS 1.8+
+		$config = $gCms->GetConfig();
 		$rooturl = (empty($_SERVER['HTTPS'])) ? $config['root_url'] : $config['ssl_url'];
 
 		$outs = array();
@@ -67,11 +70,14 @@ class SEO_file
 		if ($rst == false)
 			return false;
 
-		$config = $gCms->GetConfig();
-		$fp = @fopen(cms_join_path($config['root_path'],'sitemap.xml'),'wb');
+		// Get sitemap file in root directory (whereever that actually is)
+		$offs = strpos(__FILE__,'modules'.DIRECTORY_SEPARATOR.$mod->GetName());
+		$fn = substr(__FILE__, 0, $offs).'sitemap.xml';
+		$fp = @fopen($fn,'wb');
 		if ($fp == false)
 			return false;
 
+		$config = $gCms->GetConfig();
 		$rooturl = (empty($_SERVER['HTTPS'])) ? $config['root_url'] : $config['ssl_url'];
 		$addslash = ($config['url_rewriting'] != 'none' && empty($config['page_extension']));
 		if ($addslash)//appending / to most urls, so google's walker won't ignore them
