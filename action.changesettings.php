@@ -6,11 +6,11 @@
 
 # Regenerate sitemap.xml and/or robots.txt, according to preferences
 
-if (isset($_POST['cancel']))
-	$this->Redirect($id, 'defaultadmin');
-
 if (!$this->CheckAccess('Edit SEO Settings'))
 	return $this->DisplayErrorPage($this->Lang('accessdenied'));
+
+if (isset($_POST['cancel']))
+	$this->Redirect($id, 'defaultadmin');
 
 if (isset($_POST['do_regenerate'])) {
 	$funcs = new SEO_file();
