@@ -713,11 +713,11 @@ $smarty->assign('start_map_set',$this->CreateFieldsetStart(null, 'sitemap_descri
 $smarty->assign('pr_create_map',$this->Lang('create_sitemap_title').' *');
 $smarty->assign('in_create_map',$this->CreateInputCheckbox(null, 'create_sitemap', 1, $this->GetPreference('create_sitemap',0)));
 $smarty->assign('pr_push_map',$this->Lang('push_sitemap_title'));
-if (ini_get('allow_url_fopen')) {
+if (ini_get('allow_url_fopen') || function_exists('curl_version')) {
 	$smarty->assign('in_push_map',$this->CreateInputCheckbox(null, 'push_sitemap', 1, $this->GetPreference('push_sitemap',0)));
 }
 else {
-	$smarty->assign('input_push_map',$this->Lang('no_url_fopen'));
+	$smarty->assign('input_push_map',$this->Lang('no_pusher'));
 }
 $smarty->assign('pr_verify_code',$this->Lang('verification_title'));
 $smarty->assign('in_verify_code',$this->CreateInputText(null, 'verification', $this->GetPreference('verification',''), 40));
