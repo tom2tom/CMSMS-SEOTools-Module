@@ -146,6 +146,7 @@ $lang['provide_an_author'] = 'Sie sollten den Namen des Seitenherausgebers eintr
 $lang['push_sitemap_title'] = 'Die Sitemap automatisch bei &auml;nderungen am Seiteninhalt zu search enging senden';
 
 $lang['really_uninstall'] = 'M&ouml;chten Sie SEO Tools wirklich deinstallieren?';
+$lang['regenerate'] = 'Regenerate';
 $lang['reset'] = 'zur&uuml;cksetzen';
 $lang['reset_to_default'] = 'Diesen Wert auf den Standard zur&uuml;cksetzen';
 $lang['robot_regenerated'] = 'The robots.txt file has been successfully regenerated.';
@@ -184,7 +185,6 @@ $lang['title_meta_type'] = 'Meta-Tag-Generator';
 $lang['title_metasettings'] = 'Seitentitel und Meta-Informationen';
 $lang['title_pages'] = 'Page(s)';
 $lang['title_problem'] = 'Problem';
-$lang['title_regenerate_both'] = 'Regenerate';
 $lang['title_resources'] = 'Useful external SEO resources';
 $lang['title_sitemap_description'] = 'Sitemap und Crawler-Einstellungen';
 $lang['title_sitemapsettings'] = 'Sitemap & Crawler-Einstellungen';
