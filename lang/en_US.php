@@ -8,7 +8,7 @@ $lang['admindescription'] = 'Helps with SEO in general, automatically generating
 $lang['and'] = '%s and %s';
 $lang['auto'] = 'auto';
 $lang['auto_generated'] = 'Automatically generated';
-$lang['automatically_upload_sitemap'] = 'Have the XML sitemap automatically uploaded to Google';
+$lang['automatically_upload_sitemap'] = 'Automatically upload the XML sitemap to search engines (Google etc)';
 
 $lang['both_regenerated'] = 'The files sitemap.xml and robots.txt have been successfully regenerated.';
 $lang['button_regenerate_both'] = 'Regenerate sitemap and robots.txt';
