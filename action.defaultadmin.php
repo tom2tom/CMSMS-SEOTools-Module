@@ -614,10 +614,12 @@ $files_list = array('('.$this->Lang('none').')'=>'');
 $dp = opendir(cms_join_path($config['root_path'],'uploads','images'));
 if ($dp) {
 	while ($file = readdir($dp)) {
-		foreach (array('.gif','.png','.jpg','.jpeg') as $type) {
-			if (strripos($file, $type, -5) !== false) {
-				$files_list[$file] = $file;
-				break;
+		if (strlen($file) >= 5) {
+			foreach (array('.gif','.png','.jpg','.jpeg') as $type) {
+				if (strripos($file, $type, -5) !== false) {
+					$files_list[$file] = $file;
+					break;
+				}
 			}
 		}
 	}
