@@ -208,6 +208,7 @@ $lang['verification_help'] = 'The code you obtain from Google Webmaster Tools, j
 $lang['verification_title'] = 'Google site-verification code';
 $lang['view_all'] = 'View all';
 $lang['visit_settings'] = 'Change settings';
+
 //$lang['duplicate_descriptions'] = 'The pages <i>%s</i> and <i>%s</i> have the same Meta description';
 //$lang['duplicate_titles'] = 'The pages <i>%s</i> and <i>%s</i> have the same title';
 //$lang['grouptitle_descriptions'] = '%d page-description problem(s) detected';
