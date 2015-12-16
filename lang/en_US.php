@@ -158,7 +158,7 @@ $lang['robots_not_writeable'] = 'The site\'s robots.txt file is not writeable by
 $lang['robots_title'] = 'Current robots.txt';
 
 $lang['save'] = 'Save';
-$lang['set_up_auto_description'] = 'Set up the description auto-generator and ensure the text contains the tag {keywords}';
+$lang['set_up_auto_description'] = 'Set up the description auto-generator and ensure the text contains the tag <code>{keywords}</code>';
 $lang['set_up_description_block'] = 'No content block has been defined for Meta descriptions';
 $lang['settings_updated'] = 'The SEO settings were successfully updated.';
 $lang['sitemap_not_writeable'] = 'The site\'s /sitemap.xml file is not writeable by the web server';
@@ -184,7 +184,7 @@ $lang['title_keyword_exclude'] = 'Keyword lists';
 $lang['title_keyword_weight'] = 'Keyword generator';
 $lang['title_keywordsettings'] = 'Keyword settings';
 $lang['title_meta_defaults'] = 'META Tag Values';
-$lang['title_meta_help'] = 'The page title to be used in the Meta title tags. Tags {title}, {seo_keywords} and/or any smarty tag(s) and UDT(s) can be used here';
+$lang['title_meta_help'] = 'The page title to be used in the Meta title tags. Tags <code>{title}</code>, <code>{seo_keywords}</code> and/or any smarty tag(s) and UDT(s) can be used here';
 $lang['title_meta_title'] = 'Page Meta title';
 $lang['title_meta_type'] = 'Meta Tag Generator';
 $lang['title_metasettings'] = 'Page title & Meta information';
@@ -196,7 +196,7 @@ $lang['title_sitemap_description'] = 'Sitemap and crawler settings';
 $lang['title_sitemapsettings'] = 'Sitemap & Crawler settings';
 $lang['title_title'] = 'Page title';
 $lang['title_title_description'] = 'Page Title and Description';
-$lang['title_title_help'] = 'The page title to be displayed in the browser\'s title bar. You can use the tags {title}, {seo_keywords} and/or any smarty tag(s) and UDT(s) here';
+$lang['title_title_help'] = 'The page title to be displayed in the browser\'s title bar. Tags <code>{title}</code>, <code>{seo_keywords}</code> and/or any smarty tag(s) and UDT(s) may be used here';
 $lang['title_type'] = 'Pages content type';
 $lang['title_urgent'] = 'Urgent fixes';
 $lang['toggle'] = 'toggle';
@@ -213,16 +213,16 @@ $lang['verification_title'] = 'Google site-verification code';
 $lang['view_all'] = 'View all';
 $lang['visit_settings'] = 'Change settings';
 
-//$lang['duplicate_descriptions'] = 'The pages <i>%s</i> and <i>%s</i> have the same Meta description';
-//$lang['duplicate_titles'] = 'The pages <i>%s</i> and <i>%s</i> have the same title';
+//$lang['duplicate_descriptions'] = 'The pages <em>%s</em> and <em>%s</em> have the same Meta description';
+//$lang['duplicate_titles'] = 'The pages <em>%s</em> and <em>%s</em> have the same title';
 //$lang['grouptitle_descriptions'] = '%d page-description problem(s) detected';
 //$lang['grouptitle_opengraph'] = '%d OpenGraph-related problem(s) detected';
 //$lang['grouptitle_pages'] = '%d content-page problem(s) detected';
 //$lang['grouptitle_settings'] = '%d SEO-settings problem(s) detected';
 //$lang['grouptitle_system'] = '%d system-configuration problem(s) detected';
 //$lang['grouptitle_titles'] = '%d page-title problem(s) detected';
-//$lang['meta_description_missing'] = 'The page <i>%s</i> is lacking a Meta description';
-//$lang['meta_description_short'] = 'The Meta description of <i>%s</i> is rather short (< 75 chars)';
+//$lang['meta_description_missing'] = 'The page <em>%s</em> is lacking a Meta description';
+//$lang['meta_description_short'] = 'The Meta description of <em>%s</em> is rather short (< 75 chars)';
 
 $lang['help'] = <<<EOS
 <h3>What Does This Do?</h3>
@@ -242,7 +242,7 @@ problems. Currently, the following features are supported:</p>
 <h3>How Do I Use It</h3>
 <p>First, open each template/page where you want to apply SEO Tools. For each of them:</p>
 <ol>
-<li>Remove the whole &lt;title&gt;&lt;/title&gt; line, and the {metadata} tag (even if it says to never remove it) and replace them with the tag
+<li>Remove the whole &lt;title&gt;&lt;/title&gt; line, and the <code>{metadata}</code> tag (even if the official advice is to never remove it) and replace them with the tag
 <code>{SEOTools}</code><br />
 Alternatively, if you add and populate the content blocks as described below, you can minimally roll-your-own with something like:<br />
 <code> {if empty(\$meta_description)}{capture assign='meta_description'}{title|strip_tags} - {description}{/capture}{/if}<br />
