@@ -1,232 +1,223 @@
 <?php
-$lang['friendlyname'] = 'SEO Tools';
-$lang['postinstall'] = 'SEO Tools module has have been installed. Be sure to read the module help to learn how to use them.';
-$lang['postuninstall'] = 'SEO Tools module has been uninstalled. Please be aware that you have lost all meta information for the site\'s pages!';
-$lang['really_uninstall'] = 'Do you really want to uninstall SEO Tools?';
-$lang['uninstalled'] = 'Module Uninstalled.';
-$lang['installed'] = 'Module version %s installed.';
-$lang['upgraded'] = 'Module upgraded to version %s.';
-$lang['moddescription'] = 'Several tools to help with Search Engine Optimization and check for suboptimal SEO-related things.';
-$lang['perm_editsettings'] = 'Edit SEO Settings';
-$lang['perm_editdescription'] = 'Edit Page Descriptions';
-
-$lang['error'] = 'Error!';
 $land['admin_title'] = 'SEO Tools Admin Panel';
-$lang['admindescription'] = 'Helps with SEO in general, automatically generating XML sitemaps and comprehensive meta descriptions';
 $lang['accessdenied'] = 'Access Denied. Please check your permissions.';
+$lang['activate_pretty_urls'] = 'Pretty-URLs are not enabled';
+$lang['additional_meta_tags_help'] = 'Specify additional Meta tags here to be inserted into the page header. Smarty variables and UDTs can be used here.';
+$lang['additional_meta_tags_title'] = 'Additional Meta tags to be inserted';
+$lang['admindescription'] = 'Helps with SEO in general, automatically generating XML sitemaps and comprehensive meta descriptions';
+$lang['and'] = '%s and %s';
+$lang['auto'] = 'auto';
+$lang['auto_generated'] = 'Automatically generated';
+$lang['automatically_upload_sitemap'] = 'Have the XML sitemap automatically uploaded to Google';
 
-$lang['title_alerts'] = 'Alerts';
-$lang['title_descriptions'] = 'Page settings';
-$lang['title_urgent'] = 'Urgent fixes';
-$lang['title_important'] = 'Important fixes';
-$lang['title_pages'] = 'Page(s)  ';
-$lang['title_active'] = 'Active';
-$lang['title_problem'] = 'Problem';
-$lang['title_ignored'] = 'Ignored';
-$lang['title_action'] = 'Action';
+$lang['both_regenerated'] = 'The files sitemap.xml and robots.txt have been successfully regenerated.';
+$lang['button_regenerate_both'] = 'Regenerate sitemap and robots.txt';
+$lang['button_regenerate_robot'] = 'Regenerate robots.txt';
+$lang['button_regenerate_sitemap'] = 'Regenerate sitemap';
 
-$lang['title_meta_type'] = 'Meta Tag Generator';
-$lang['meta_create_standard'] = 'Generate standard Meta Tags';
-$lang['meta_create_dublincore'] = 'Generate Dublin Core Meta Tags';
-$lang['meta_create_opengraph'] = 'Generate OpenGraph Meta Tags (e.g. for Facebook Like Button)';
+$lang['cancel'] = 'Cancel';
+$lang['chmod_robots'] = 'Change permissions';
+$lang['chmod_sitemap'] = 'Change permissions';
+$lang['click_to_add_description'] = 'Click here to add a page description';
+$lang['create_a_sitemap'] = 'Automatically create a XML sitemap for Google and other search engines';
+$lang['create_robots'] = 'Automatically create a robots.txt file';
+$lang['create_robots_title'] = 'Create a robots.txt file';
+$lang['create_sitemap_title'] = 'Create an XML sitemap for search engines';
+$lang['custom_after_title'] = 'Optional extra content to insert at the end of robots.txt';
+$lang['custom_before_title'] = 'Optional extra content to insert near the start of robots.txt';
 
-$lang['title_meta_defaults'] = 'META Tag Values';
-$lang['meta_publisher'] = 'Site publisher';
-$lang['meta_publisher_help'] = 'This is usually the organization whose website this is';
+$lang['decrease_priority'] = 'Decrease priority by 10%';
+$lang['default'] = 'default';
+$lang['default_keywords_help'] = 'Word(s) (and/or group(s) of words, if the separator is not a space) to apply to every page';
+$lang['default_keywords_title'] = 'Always include these keywords';
+$lang['description'] = 'Description';
+$lang['description_auto_generate'] = 'Automatically generate a page description where none is provided';
+$lang['description_auto_help'] = 'The <code>{keywords}</code> tag <strong>must</strong> be included here';
+$lang['description_auto_title'] = 'Text for auto-generated descriptions';
+$lang['description_block_help'] = 'The name of each page\'s description content-block. Please read the module help for an explanation';
+$lang['duplicate_descriptions'] = 'Pages have the same Meta description';
+$lang['duplicate_titles'] = 'Pages have the same title';
+
+$lang['edit_page'] = 'Edit \'%s\'';
+$lang['edit_page2'] = 'Edit this page';
+$lang['edit_value'] = 'Edit this value';
+$lang['enter_new_keywords'] = 'Keywords for page \'%s\'';
+$lang['enter_new_ogtype'] = 'OpenGraph type for page \'%s\'';
+$lang['error'] = 'Error!';
+
+$lang['friendlyname'] = 'SEO Tools';
+
+$lang['get_help'] = 'Get help';
+
+$lang['help_content_type'] = 'A recognised format like: html, html5, xhtml. Applied to all frontend pages';
+$lang['help_ignore'] = 'Ignore selected items';
+$lang['help_index'] = 'Make selected items indexable';
+$lang['help_keyword_generator'] = 'The settings displayed on this page supplement any keywords you enter manually. Feel free to play with all values until you get the best results for your page.';
+$lang['help_new_keywords'] = 'Series of word(s) and/or group(s) of words. Use the defined separator. Leave blank to revert to auto generated keywords';
+$lang['help_new_ogtype'] = 'Leave blank to revert to the default setting';
+$lang['help_opengraph'] = 'Look <a href="http://developers.facebook.com/docs/opengraph#types" onclick="window.open(this.href,\'_blank\');return false;">here</a> for a list of allowed values';
+$lang['help_showbase'] = 'Set this parameter to <code>false</code> to suppress the output of the base href tag.';
+$lang['help_sitemap_robots'] = '*) To generate a sitemap- and/or robots-file, the root directory of this CMSMS installation must be writeable by the web server. If you are refreshing an existing sitemap.xml and/or robots.txt file, those file(s) must be writeable by the web server.';
+$lang['help_unignore'] = 'Do not ignore selected items';
+$lang['help_unindex'] = 'Exclude selected items from indexing';
+
+$lang['ignore'] = 'Ignore';
+$lang['increase_priority'] = 'Increase priority by 10%';
+$lang['index'] = 'Index';
+$lang['install_database_error'] = 'An error has occured during installation: The database table could not be created.';
+$lang['installed'] = 'Module version %s installed.';
+
+$lang['keyword_block_help'] = 'The name of each page\'s keywords content-block. Please read the module help for an explanation';
+$lang['keyword_content_weight_help'] = 'The weight of words inside the plain content. The higher a word\'s weight, the more likely it is to become a keyword';
+$lang['keyword_content_weight_title'] = 'Weight of words in plain content';
+$lang['keyword_description_weight_help'] = 'The weight of words in the page description. The higher a word\'s weight, the more likely it is to become a keyword';
+$lang['keyword_description_weight_title'] = 'Weight of words in the page description';
+$lang['keyword_exclude_help'] = 'Words (and/or group(s) of words, if the separator is not a space) to exclude from the keywords for every page';
+$lang['keyword_exclude_title'] = 'Never include these keywords';
+$lang['keyword_headline_weight_help'] = 'The weight of words between &lt;h1&gt; to &lt;h6&gt; tags. The higher a word\'s weight, the more likely it is to become a keyword';
+$lang['keyword_headline_weight_title'] = 'Weight of words in content headlines';
+$lang['keyword_minimum_weight_help'] = 'The minimum total weight of a word to become a keyword. Should be greater than the highest weight from above. The smaller the number, the more keywords you get';
+$lang['keyword_minimum_weight_title'] = 'Minimum total weight of a keyword';
+$lang['keyword_minlength_help'] = 'The minimum length of a word to be considered as a keyword';
+$lang['keyword_minlength_title'] = 'Minimum keyword length';
+$lang['keyword_separator_help'] = 'Character separating words or groups of words (usually space or comma), same as the separator used in each page\'s "keywords content block"';
+$lang['keyword_separator_title'] = 'Separator';
+$lang['keyword_title_weight_help'] = 'The weight of words in the page title. The higher a word\'s weight, the more likely it is to become a keyword';
+$lang['keyword_title_weight_title'] = 'Weight of words in the page title';
+$lang['keywords'] = 'Keywords #';
+
 $lang['meta_contributor'] = 'Site contributor';
 $lang['meta_contributor_help'] = 'Usually, this would be you or any other content author';
 $lang['meta_copyright'] = 'Site copyright';
 $lang['meta_copyright_help'] = 'Something like "(C) This Company. All rights reserved."';
-$lang['meta_location_description'] = 'If this website is for an entity that can be located on a map, optionally fill in the following values';
-$lang['meta_location'] = 'Location of site entity';
-$lang['meta_location_help'] = 'Usually, this would be a town or city or suburb';
-$lang['meta_region'] = 'Region of site entity';
-$lang['meta_region_help'] = 'Enter something like "US-IL" for an entity located in Illinois, US';
+$lang['meta_create_dublincore'] = 'Generate Dublin Core Meta Tags';
+$lang['meta_create_opengraph'] = 'Generate OpenGraph Meta Tags (e.g. for Facebook Like Button)';
+$lang['meta_create_standard'] = 'Generate standard Meta Tags';
+$lang['meta_description_missing'] = 'Missing Meta description';
+$lang['meta_description_short'] = 'Short (< 75 chars) Meta description';
 $lang['meta_latitude'] = 'Latitude of site entity';
 $lang['meta_latitude_help'] = 'Enter the decimal latitude geo coodinate of the entity';
+$lang['meta_location'] = 'Location of site entity';
+$lang['meta_location_description'] = 'If this website is for an entity that can be located on a map, optionally fill in the following values';
+$lang['meta_location_help'] = 'Usually, this would be a town or city or suburb';
 $lang['meta_longitude'] = 'Longitude of site entity';
 $lang['meta_longitude_help'] = 'Enter the decimal longitude geo coodinate of the entity';
-$lang['meta_opengraph_description'] = 'If you are creating OpenGraph META tags, please fill in the following values';
-$lang['meta_opengraph_title'] = 'OpenGraph page title';
-$lang['meta_opengraph_title_help'] = 'You can use the tag {title} and/or any smarty tag(s) here, e.g. to replace with the actual page title';
-$lang['meta_opengraph_type'] = 'OpenGraph default page type';
-$lang['meta_opengraph_type_help'] = 'The default page type for OpenGraph, can be overridden for each page. Look <a href="http://developers.facebook.com/docs/opengraph#types" onclick="window.open(this.href,\'_blank\');return false;">here</a> for a list of allowed values';
-$lang['meta_opengraph_sitename'] = 'OpenGraph site name';
-$lang['meta_opengraph_sitename_help'] = 'A short version of this site\'s name, e.g. "Your Company", max. 25 chars';
-$lang['meta_opengraph_image'] = 'OpenGraph default image';
-$lang['meta_opengraph_image_help'] = 'Select an image from the site\'s /uploads/images directory to be used as the default for OpenGraph pages';
 $lang['meta_opengraph_admins'] = 'Facebook site administrators';
 $lang['meta_opengraph_admins_help'] = 'A comma-separated list of facebook account IDs who are able to administer the streams of your pages';
 $lang['meta_opengraph_application'] = 'Facebook application';
 $lang['meta_opengraph_application_help'] = 'The ID of a facebook application able to administer the streams of your pages';
+$lang['meta_opengraph_description'] = 'If you are creating OpenGraph META tags, please fill in the following values';
+$lang['meta_opengraph_image'] = 'OpenGraph default image';
+$lang['meta_opengraph_image_help'] = 'Select an image from the site\'s /uploads/images directory to be used as the default for OpenGraph pages';
+$lang['meta_opengraph_sitename'] = 'OpenGraph site name';
+$lang['meta_opengraph_sitename_help'] = 'A short version of this site\'s name, e.g. "Your Company", max. 25 chars';
+$lang['meta_opengraph_title'] = 'OpenGraph page title';
+$lang['meta_opengraph_title_help'] = 'The tag <code>{title}</code> and/or any smarty tag(s) may be used here, e.g. to replace with the actual page title';
+$lang['meta_opengraph_type'] = 'OpenGraph default page type';
+$lang['meta_opengraph_type_help'] = 'The default page type for OpenGraph, can be overridden for each page. Look <a href="http://developers.facebook.com/docs/opengraph#types" onclick="window.open(this.href,\'_blank\');return false;">here</a> for a list of allowed values';
+$lang['meta_publisher'] = 'Site publisher';
+$lang['meta_publisher_help'] = 'This is usually the organization whose website this is';
+$lang['meta_region'] = 'Region of site entity';
+$lang['meta_region_help'] = 'Enter something like "US-IL" for an entity located in Illinois, US';
+$lang['moddescription'] = 'Several tools to help with Search Engine Optimization and check for suboptimal SEO-related things.';
 
-$lang['title_type'] = 'Pages content type';
-$lang['help_content_type'] = 'A recognised format like: html, html5, xhtml. Applied to all frontend pages';
-$lang['title_title_description'] = 'Page Title and Description';
-$lang['title_title'] = 'Page title';
-$lang['title_title_help'] = 'The page title to be displayed in the browser\'s title bar. You can use the tags {title}, {seo_keywords} and/or any smarty tag(s) and UDT(s) here';
-$lang['title_meta_title'] = 'Page Meta title';
-$lang['title_meta_help'] = 'The page title to be used in the Meta title tags. You can use the tags {title}, {seo_keywords} and/or any smarty tag(s) and UDT(s) here';
-$lang['title_description_block'] = 'Name of page description content-block';
-$lang['description_block_help'] = 'The name of each page\'s description content-block. Please read the module help for an explanation';
-
-$lang['title_sitemap_description'] = 'Sitemap and crawler settings';
-$lang['create_sitemap_title'] = 'Create an XML sitemap for search engines';
-$lang['push_sitemap_title'] = 'Automatically push each newly-created sitemap to search engines';
-$lang['create_robots_title'] = 'Create a robots.txt file';
-$lang['custom_before_title'] = 'Optional extra content to insert near the start of robots.txt';
-$lang['custom_after_title'] = 'Optional extra content to insert at the end of robots.txt';
-$lang['verification_title'] = 'Google site-verification code';
-$lang['verification_help'] = 'The code you obtain from Google Webmaster Tools, just the hash, not the complete meta tag';
-
-$lang['title_alerts_urgent'] = 'To be fixed immediately';
-$lang['title_alerts_important'] = 'To be fixed as soon as possible';
-$lang['title_alerts_notices'] = 'Changes to be considered';
-$lang['nothing_tofix'] = 'Nothing';
-$lang['nothing_but'] = 'Nothing (if you don\'t count those which are ignored)';
-$lang['title_resources'] = 'Useful external SEO resources';
-
-$lang['save'] = 'Save';
-$lang['cancel'] = 'Cancel';
+$lang['no_opengraph_admins'] = 'No OpenGraph sdmin is set admin application resp. admin list';
+$lang['no_opengraph_image'] = 'OpenGraph default image is not set';
+$lang['no_opengraph_sitename'] = 'OpenGraph site name is not set';
+$lang['no_opengraph_type'] = 'OpenGraph default page type is not set';
+$lang['no_pusher'] = 'Not possible, unless &quot;allow_url_fopen&quot; is set to &quot;on&quot; in the site\'s php configuration, or the php module &quot;curl&quot; is installed.';
 $lang['none'] = 'none';
+$lang['none_regenerated'] = 'Nothing was regenerated. There seems to be a problem.';
+$lang['nothing_but'] = 'Nothing (if you don\'t count those which are ignored)';
+$lang['nothing_tofix'] = 'Nothing';
 
-$lang['ignore'] = 'Ignore';
-$lang['help_ignore'] = 'Ignore selected items';
-$lang['unignore'] = 'UnIgnore';
-$lang['help_unignore'] = 'Do not ignore selected items';
-
-$lang['settings_updated'] = 'The SEO settings were successfully updated.';
-$lang['problem_alert'] = 'has detected severe problems with this site\'s SEO. %s';
-$lang['problem_link_title'] = 'Click here to fix them';
-
-$lang['help_sitemap_robots'] = '*) To generate a sitemap- and/or robots-file, the root directory of this CMSMS installation must be writeable by the web server. If you are refreshing an existing sitemap.xml and/or robots.txt file, those file(s) must be writeable by the web server.';
-
-$lang['use_standard_or_dublincore_meta'] = 'Use at least one of the standard or Dublin Core Meta Tag generators';
-$lang['use_standard_meta'] = 'You should always enable the standard Meta generator';
-//$lang['meta_description_missing'] = 'The page <i>%s</i> is lacking a Meta description';
-//$lang['meta_description_short'] = 'The Meta description of <i>%s</i> is rather short (< 75 chars)';
-//$lang['duplicate_titles'] = 'The pages <i>%s</i> and <i>%s</i> have the same title';
-//$lang['duplicate_descriptions'] = 'The pages <i>%s</i> and <i>%s</i> have the same Meta description';
-$lang['meta_description_missing'] = 'Missing Meta description';
-$lang['meta_description_short'] = 'Short (< 75 chars) Meta description';
-$lang['duplicate_titles'] = 'Pages have the same title';
-$lang['duplicate_descriptions'] = 'Pages have the same Meta description';
-$lang['provide_an_author'] = 'The name of the page publisher is not defined';
-$lang['set_up_description_block'] = 'No content block has been defined for Meta descriptions';
-$lang['activate_pretty_urls'] = 'Pretty-URLs are not enabled';
-$lang['get_help'] = 'Get help';
-$lang['create_a_sitemap'] = 'Have a Google XML Sitemap automatically created for you';
-$lang['automatically_upload_sitemap'] = 'Have the XML sitemap automatically uploaded to Google';
-$lang['create_robots'] = 'Have a robots.txt file automatically created for you';
-$lang['sitemap_not_writeable'] = 'The site\'s /sitemap.xml file is not writeable by the web server';
-$lang['chmod_sitemap'] = 'Change permissions';
-$lang['robots_not_writeable'] = 'The site\'s robots.txt file is not writeable by the web server';
-$lang['chmod_robots'] = 'Change permissions';
-$lang['no_opengraph_admins'] = 'You have not set an OpenGraph admin application resp. admin list';
-$lang['no_opengraph_type'] = 'You have not set the default OpenGraph page type';
-$lang['no_opengraph_sitename'] = 'You have not set the OpenGraph site name';
-$lang['no_opengraph_image'] = 'You have not set an OpenGraph default image';
-$lang['edit_page'] = 'Edit \'%s\'';
-$lang['edit_page2'] = 'Edit this page';
-$lang['visit_settings'] = 'Change settings';
+$lang['og_type'] = 'OpenGraph type';
 
 $lang['page_id'] = 'ID';
 $lang['page_name'] = 'Page name';
+$lang['perm_editdescription'] = 'Edit Page Descriptions';
+$lang['perm_editsettings'] = 'Edit SEO Settings';
+$lang['postinstall'] = 'SEO Tools module has have been installed. Be sure to read the module help to learn how to use them.';
+$lang['postuninstall'] = 'SEO Tools module has been uninstalled. Please be aware that you have lost all meta information for the site\'s pages!';
 $lang['priority'] = 'Sitemap Priority';
-$lang['og_type'] = 'OpenGraph type';
-$lang['keywords'] = 'Keywords #';
-$lang['description'] = 'Description';
-$lang['title_index'] = 'Indexable';
-$lang['default'] = 'default';
-$lang['auto'] = 'auto';
-$lang['index'] = 'Index';
-$lang['unindex'] = 'UnIndex';
-$lang['help_index'] = 'Make selected items indexable';
-$lang['help_unindex'] = 'Exclude selected items from indexing';
+$lang['problem_alert'] = 'has detected severe problems with this site\'s SEO. %s';
+$lang['problem_link_title'] = 'Click here to fix them';
+$lang['provide_an_author'] = 'The name of the page publisher is not defined';
+$lang['push_sitemap_title'] = 'Automatically push each newly-created sitemap to search engines';
 
-$lang['click_to_add_description'] = 'Click here to add a page description';
-$lang['toggle'] = 'toggle';
+$lang['really_uninstall'] = 'Do you really want to uninstall SEO Tools?';
+$lang['refresh'] = 'Refresh';
 $lang['reset'] = 'reset';
 $lang['reset_to_default'] = 'Reset this to the default value';
-$lang['edit_value'] = 'Edit this value';
+$lang['robot_regenerated'] = 'The robots.txt file has been successfully regenerated.';
+$lang['robots_not_writeable'] = 'The site\'s robots.txt file is not writeable by the web server';
+$lang['robots_title'] = 'Current robots.txt file';
 
-$lang['help_opengraph'] = 'Look <a href="http://developers.facebook.com/docs/opengraph#types" onclick="window.open(this.href,\'_blank\');return false;">here</a> for a list of allowed values';
-$lang['enter_new_ogtype'] = 'OpenGraph type for page \'%s\'';
-$lang['help_new_ogtype'] = 'Leave blank to revert to the default setting';
-
-$lang['enter_new_keywords'] = 'Keywords for page \'%s\'';
-$lang['help_new_keywords'] = 'Series of word(s) and/or group(s) of words. Use the defined separator. Leave blank to revert to auto generated keywords';
-
-$lang['summary_urgent'] = '%d urgent problem(s) detected';
+$lang['save'] = 'Save';
+$lang['set_up_auto_description'] = 'Set up the description auto-generator and ensure the text contains the tag {keywords}';
+$lang['set_up_description_block'] = 'No content block has been defined for Meta descriptions';
+$lang['settings_updated'] = 'The SEO settings were successfully updated.';
+$lang['sitemap_not_writeable'] = 'The site\'s /sitemap.xml file is not writeable by the web server';
+$lang['sitemap_regenerated'] = 'The sitemap has been successfully regenerated.';
 $lang['summary_important'] = '%d important problem(s) detected';
+$lang['summary_urgent'] = '%d urgent problem(s) detected';
+
+$lang['text_regenerate_sitemap'] = 'It\'s best to regenerate sitemap.xml and robots.txt files after extensive changes to the page structure';
+$lang['title_action'] = 'Action';
+$lang['title_active'] = 'Active';
+$lang['title_additional_meta_tags'] = 'Additional Meta Tags';
+$lang['title_alerts'] = 'Alerts';
+$lang['title_alerts_important'] = 'To be fixed as soon as possible';
+$lang['title_alerts_notices'] = 'Changes to be considered';
+$lang['title_alerts_urgent'] = 'To be fixed immediately';
+$lang['title_description_block'] = 'Name of page description content-block';
+$lang['title_descriptions'] = 'Page settings';
+$lang['title_ignored'] = 'Ignored';
+$lang['title_important'] = 'Important fixes';
+$lang['title_index'] = 'Indexable';
+$lang['title_keyword_block'] = 'Name of keywords content-block';
+$lang['title_keyword_exclude'] = 'Keyword lists';
+$lang['title_keyword_weight'] = 'Keyword generator';
+$lang['title_keywordsettings'] = 'Keyword settings';
+$lang['title_meta_defaults'] = 'META Tag Values';
+$lang['title_meta_help'] = 'The page title to be used in the Meta title tags. Tags {title}, {seo_keywords} and/or any smarty tag(s) and UDT(s) can be used here';
+$lang['title_meta_title'] = 'Page Meta title';
+$lang['title_meta_type'] = 'Meta Tag Generator';
+$lang['title_metasettings'] = 'Page title & Meta information';
+$lang['title_pages'] = 'Page(s)  ';
+$lang['title_problem'] = 'Problem';
+$lang['title_regenerate_both'] = 'Regenerate';
+$lang['title_resources'] = 'Useful external SEO resources';
+$lang['title_sitemap_description'] = 'Sitemap and crawler settings';
+$lang['title_sitemapsettings'] = 'Sitemap & Crawler settings';
+$lang['title_title'] = 'Page title';
+$lang['title_title_description'] = 'Page Title and Description';
+$lang['title_title_help'] = 'The page title to be displayed in the browser\'s title bar. You can use the tags {title}, {seo_keywords} and/or any smarty tag(s) and UDT(s) here';
+$lang['title_type'] = 'Pages content type';
+$lang['title_urgent'] = 'Urgent fixes';
+$lang['toggle'] = 'toggle';
+
+$lang['unignore'] = 'UnIgnore';
+$lang['unindex'] = 'UnIndex';
+$lang['uninstalled'] = 'Module Uninstalled.';
+$lang['upgraded'] = 'Module upgraded to version %s.';
+$lang['use_standard_meta'] = 'You should always enable the standard Meta generator';
+$lang['use_standard_or_dublincore_meta'] = 'Use at least one of the standard or Dublin Core Meta Tag generators';
+
+$lang['verification_help'] = 'The code you obtain from Google Webmaster Tools, just the hash, not the complete meta tag';
+$lang['verification_title'] = 'Google site-verification code';
+$lang['view_all'] = 'View all';
+$lang['visit_settings'] = 'Change settings';
+//$lang['duplicate_descriptions'] = 'The pages <i>%s</i> and <i>%s</i> have the same Meta description';
+//$lang['duplicate_titles'] = 'The pages <i>%s</i> and <i>%s</i> have the same title';
+//$lang['grouptitle_descriptions'] = '%d page-description problem(s) detected';
 //$lang['grouptitle_opengraph'] = '%d OpenGraph-related problem(s) detected';
-//$lang['grouptitle_system'] = '%d system-configuration problem(s) detected';
 //$lang['grouptitle_pages'] = '%d content-page problem(s) detected';
 //$lang['grouptitle_settings'] = '%d SEO-settings problem(s) detected';
-//$lang['grouptitle_descriptions'] = '%d page-description problem(s) detected';
+//$lang['grouptitle_system'] = '%d system-configuration problem(s) detected';
 //$lang['grouptitle_titles'] = '%d page-title problem(s) detected';
-
-$lang['view_all'] = 'View all';
-
-$lang['title_metasettings'] = 'Page title & Meta information';
-$lang['title_sitemapsettings'] = 'Sitemap & Crawler settings';
-$lang['title_keywordsettings'] = 'Keyword settings';
-
-$lang['description_auto_generate'] = 'Automatically generate a page description where none is provided';
-$lang['description_auto_title'] = 'Text for auto-generated descriptions';
-$lang['description_auto_help'] = 'You <b>must</b> include the tag {keywords} here';
-
-$lang['set_up_auto_description'] = 'Set up the description auto-generator and ensure the text contains the tag {keywords}';
-$lang['auto_generated'] = 'Automatically generated';
-$lang['and'] = '%s and %s';
-
-$lang['title_keyword_block'] = 'Name of keywords content-block';
-$lang['keyword_block_help'] = 'The name of each page\'s keywords content-block. Please read the module help for an explanation';
-$lang['title_keyword_weight'] = 'Keyword generator';
-$lang['keyword_separator_title'] = 'Separator';
-$lang['keyword_separator_help'] = 'Character separating words or groups of words (usually space or comma), same as the separator used in each page\'s "keywords content block"';
-$lang['keyword_minlength_title'] = 'Minimum keyword length';
-$lang['keyword_minlength_help'] = 'The minimum length of a word to be considered as a keyword';
-$lang['keyword_title_weight_title'] = 'Weight of words in the page title';
-$lang['keyword_title_weight_help'] = 'The weight of words in the page title. The higher a word\'s weight, the more likely it is to become a keyword';
-$lang['keyword_description_weight_title'] = 'Weight of words in the page description';
-$lang['keyword_description_weight_help'] = 'The weight of words in the page description. The higher a word\'s weight, the more likely it is to become a keyword';
-$lang['keyword_headline_weight_title'] = 'Weight of words in content headlines';
-$lang['keyword_headline_weight_help'] = 'The weight of words between &lt;h1&gt; to &lt;h6&gt; tags. The higher a word\'s weight, the more likely it is to become a keyword';
-$lang['keyword_content_weight_title'] = 'Weight of words in plain content';
-$lang['keyword_content_weight_help'] = 'The weight of words inside the plain content. The higher a word\'s weight, the more likely it is to become a keyword';
-
-$lang['keyword_minimum_weight_title'] = 'Minimum total weight of a keyword';
-$lang['keyword_minimum_weight_help'] = 'The minimum total weight of a word to become a keyword. Should be greater than the highest weight from above. The smaller the number, the more keywords you get';
-
-$lang['help_keyword_generator'] = 'The settings displayed on this page supplement any keywords you enter manually. Feel free to play with all values until you get the best results for your page.';
-
-$lang['title_keyword_exclude'] = 'Keyword lists';
-$lang['default_keywords_title'] = 'Always include these keywords';
-$lang['default_keywords_help'] = 'Word(s) (and/or group(s) of words, if the separator is not a space) to apply to every page';
-$lang['keyword_exclude_title'] = 'Never include these keywords';
-$lang['keyword_exclude_help'] = 'Words (and/or group(s) of words, if the separator is not a space) to exclude from the keywords for every page';
-
-$lang['increase_priority'] = 'Increase priority by 10%';
-$lang['decrease_priority'] = 'Decrease priority by 10%';
-
-$lang['title_regenerate_both'] = 'Regenerate';
-$lang['button_regenerate_sitemap'] = 'Regenerate sitemap';
-$lang['button_regenerate_robot'] = 'Regenerate robots.txt';
-$lang['button_regenerate_both'] = 'Regenerate sitemap and robots.txt';
-$lang['text_regenerate_sitemap'] = 'It\'s best to regenerate sitemap.xml and robots.txt files after extensive changes to the page structure';
-$lang['robot_regenerated'] = 'The robots.txt file has been successfully regenerated.';
-$lang['sitemap_regenerated'] = 'The sitemap has been successfully regenerated.';
-$lang['both_regenerated'] = 'The files sitemap.xml and robots.txt have been successfully regenerated.';
-$lang['none_regenerated'] = 'Nothing was regenerated. There seems to be a problem.';
-
-$lang['install_database_error'] = 'An error has occured during installation: The database table could not be created.';
-$lang['no_pusher'] = 'Not possible, unless &quot;allow_url_fopen&quot; is set to &quot;on&quot; in the site\'s php configuration, or the php module &quot;curl&quot; is installed.';
-$lang['title_additional_meta_tags'] = 'Additional Meta Tags';
-$lang['additional_meta_tags_title'] = 'Additional Meta tags to be inserted';
-$lang['additional_meta_tags_help'] = 'Specify additional Meta tags here to be inserted into the page header. You can use all smarty variables and UDTs here.';
-
-$lang['help_showbase'] = 'Set this parameter to <code>false</code> to suppress the output of the base href tag.';
+//$lang['meta_description_missing'] = 'The page <i>%s</i> is lacking a Meta description';
+//$lang['meta_description_short'] = 'The Meta description of <i>%s</i> is rather short (< 75 chars)';
 
 $lang['help'] = <<<EOS
 <h3>What Does This Do?</h3>
