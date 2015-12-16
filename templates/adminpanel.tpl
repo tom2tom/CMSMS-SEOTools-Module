@@ -243,7 +243,7 @@
   <p class="pagetext">{$pr_late_bots}:</p>
   <p class="pageinput">{$in_late_bots}</p>
   <br />
-  <p class="pageinput">{$submit2}&nbsp;{$cancel}</p>
+  <p class="pageinput">{$submit2}&nbsp;{$cancel}&nbsp;{$display}</p>
  </div>
 {$end_set}
 {if isset($regenerate)}
