@@ -733,6 +733,8 @@ $smarty->assign('pr_late_bots',$this->Lang('custom_after_title'));
 $smarty->assign('in_late_bots',$this->CreateTextArea(false, null, $this->GetPreference('robot_end',''),
  'robot_end', '', '', '', '', 50, 5, '', '', 'style="height:5em;width:50em;"'));
 $smarty->assign('submit2',$this->CreateInputSubmit(null, 'save_sitemap_settings', $this->Lang('save')));
+$smarty->assign('display',$this->CreateInputSubmit(null, 'display_robots_file', $this->Lang('display'),
+ 'title="'.$this->Lang('robots_display').'"'));
 
 if ($this->GetPreference('create_sitemap',0))
 {
