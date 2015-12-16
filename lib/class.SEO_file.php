@@ -144,7 +144,7 @@ EOS
 	public function pushSitemap($rooturl = false) {
 		if (ini_get('allow_url_fopen')) {
 			$pusher = 1;
-		{
+		}
 		elseif (function_exists('curl_version')) {
 			$pusher = 2;
 		}
