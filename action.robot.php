@@ -38,10 +38,10 @@ $fp = @fopen($fn, 'rb');
 $contents = @fread($fp, filesize($fn));
 @fclose($fp);
 $smarty->assign('content', nl2br($contents));
-$smarty->assign('submitbtn', $this->CreateInputSubmit(null, 'newrobotfile', $this->lang('refresh'),
-	'onclick=return confirm"'.$this->Lang('robots_sure_delete').'"');
-$smarty->assign('cancelbtn', $this->CreateInputSubmit(null, 'cancel', $this->lang('cancel'));
+$smarty->assign('submitbtn',$this->CreateInputSubmit(null, 'newrobotfile', $this->lang('regenerate'),
+	'onclick="return confirm(\''.$this->Lang('robots_confirm').'\');"'));
+$smarty->assign('cancelbtn', $this->CreateInputSubmit(null, 'cancel', $this->lang('close')));
 
-echo robot.tpl;
+echo $this->ProcessTemplate('robot.tpl');
 
 ?>
