@@ -14,8 +14,8 @@ if (!$this->CheckAccess('Edit SEO Settings'))
 
 if (isset($_POST['do_regenerate'])) {
 	$funcs = new SEO_file();
-	$botok = ($this->GetPreference('create_robots',0)) ? $funcs->createRobotsTXT($this) : FALSE;
-	$mapok = ($this->GetPreference('create_sitemap',0)) ? $funcs->createSitemap($this) : FALSE;
+	$botok = ($this->GetPreference('create_robots',0)) ? $funcs->createRobotsTXT($this) : false;
+	$mapok = ($this->GetPreference('create_sitemap',0)) ? $funcs->createSitemap($this) : false;
 
 	if ($botok || $mapok) {
 		if ($botok && $mapok) {
@@ -37,6 +37,8 @@ if (isset($_POST['do_regenerate'])) {
 		$this->Redirect($id, 'defaultadmin', '', array('warning'=>1,'message'=>'none_regenerated','tab'=>'sitemapsettings'));
 	}
 }
+
+$pre = cms_db_prefix();
 
 if (isset($_POST['save_meta_settings'])) {
 	$this->SetPreference('meta_standard',$_POST['meta_standard']);
@@ -63,11 +65,31 @@ if (isset($_POST['save_meta_settings'])) {
 	$this->SetPreference('content_type',$_POST['content_type']);
 	$this->SetPreference('title',$_POST['title']);
 	$this->SetPreference('meta_title',$_POST['meta_title']);
-	$this->SetPreference('description_block',$_POST['description_block']);
+
+	$val = $this->GetPreference('description_block','');
+	$new = $_POST['description_block'];
+	if ($new && $new != $val) {
+		$new = str_replace(' ','_',$new);
+		$rst = $db->Execute('SELECT content_id FROM '.$pre.'content_props WHERE prop_name=?',
+			array($new));
+		if ($rst && !$rst->EOF) {
+			//TODO warn user about no change
+		}
+		else {
+			$old = str_replace(' ','_',$val);
+			// conform tabled properties
+			$db->Execute('UPDATE '.$pre.'content_props SET prop_name=? WHERE prop_name=?',
+				array($new,$old));
+			$this->SetPreference('description_block',$_POST['description_block']);
+			//TODO warn user about conforming block-name in all templates and pages
+		}
+		if ($rst) $rst->Close(); 
+	}
 	$this->SetPreference('description_auto_generate',$_POST['description_auto_generate']);
 	$this->SetPreference('description_auto',$_POST['description_auto']);
 
 	$this->Audit(0, $this->Lang('friendlyname'), 'Edited META settings');
+	//TODO see comments above about warning(s)
 	$this->Redirect($id, 'defaultadmin', '', array('message'=>'settings_updated','tab'=>'metasettings'));
 }
 
@@ -78,10 +100,10 @@ if (isset($_POST['save_sitemap_settings'])) {
 	$this->SetPreference('push_sitemap', $val);
 	$val = (isset($_POST['create_robots'])) ? 1 : 0;
 	$this->SetPreference('create_robots', $val);
-	$val = (isset($_POST['r_before'])) ? $_POST['r_before'] : '';
-	$this->SetPreference('r_before',$val);
-	$val = (isset($_POST['r_after'])) ? $_POST['r_after'] : '';
-	$this->SetPreference('r_after',$val);
+	$val = (isset($_POST['robot_start'])) ? $_POST['robot_start'] : '';
+	$this->SetPreference('robot_start',$val);
+	$val = (isset($_POST['robot_end'])) ? $_POST['robot_end'] : '';
+	$this->SetPreference('robot_end',$val);
 	$this->SetPreference('verification', $_POST['verification']);
 
 	$this->Audit(0, $this->Lang('friendlyname'), 'Edited sitemap settings');
@@ -92,15 +114,22 @@ if (isset($_POST['save_keyword_settings'])) {
 	$val = $this->GetPreference('keyword_block','');
 	$new = $_POST['keyword_block'];
 	if ($new && $new != $val) {
-		$pre = cms_db_prefix();
-		$old = str_replace(' ','_',$val);
 		$new = str_replace(' ','_',$new);
-		// conform tabled properties
-		$db->Execute('UPDATE '.$pre.'content_props SET prop_name=? WHERE prop_name=?',
-			array($new,$old));
-		//CHECKME conform block-name in all templates and pages?
-		$this->SetPreference('keyword_block',$_POST['keyword_block']);
-		$old = $new; //maybe needed for content-updates
+		$rst = $db->Execute('SELECT content_id FROM '.$pre.'content_props WHERE prop_name=?',
+			array($new));
+		if ($rst && !$rst->EOF) {
+			//TODO warn user about duplication, no change
+		}
+		else {
+			$old = str_replace(' ','_',$val);
+			// conform tabled properties
+			$db->Execute('UPDATE '.$pre.'content_props SET prop_name=? WHERE prop_name=?',
+				array($new,$old));
+			$this->SetPreference('keyword_block',$_POST['keyword_block']);
+			//TODO warn user about conforming block-name in all templates and pages
+			$old = $new; //maybe needed for separator-updates
+		}
+		if ($rst) $rst->Close(); 
 	}
 	else {
 		$old = str_replace(' ','_',$val);
@@ -120,29 +149,28 @@ if (isset($_POST['save_keyword_settings'])) {
 		$words = explode($val,$_POST['keyword_exclude']);
 		$this->SetPreference('keyword_exclude',implode($new,$words));
 		// Replace sep in all tabled keyword fields
-		$pre = cms_db_prefix();
 		$rst = $db->Execute('SELECT content_id,keywords FROM '.$pre.
-			'module_seotools WHERE keywords IS NOT NULL AND keywords!=""');
-		if ($rst) {
-			$query = 'UPDATE '.$pre.'module_seotools SET keywords=? WHERE content_id=?';
-			while (!$rst->EOF) {
-				$merge = str_replace($val, $new, $rst->fields[1]);
-				$db->Execute($query, array($merge, $rst->fields[0])); //CHECKME OK in this recordset-loop?
-				$rst->MoveNext();
-			}
+			'module_seotools WHERE keywords IS NOT null AND keywords!=""');
+		if ($rst && !$rst->EOF) {
+			$rows = $rst->GetArray();
 			$rst->Close();
+			$query = 'UPDATE '.$pre.'module_seotools SET keywords=? WHERE content_id=?';
+			foreach ($rows as $one) {
+				$merge = str_replace($val, $new, $one[1]);
+				$db->Execute($query, array($merge, $one[0]));
+			}
 		}
 		$rst = $db->Execute('SELECT content_id,content FROM '.$pre.
-			'content_props WHERE prop_name=? AND content IS NOT NULL AND content!=""',
+			'content_props WHERE prop_name=? AND content IS NOT null AND content!=""',
 			array($old));
-		if ($rst) {
-			$query = 'UPDATE '.$pre.'content_props SET content=? WHERE content_id=?';
-			while (!$rst->EOF) {
-				$merge = str_replace($val, $new, $rst->fields[1]);
-				$db->Execute($query, array($merge, $rst->fields[0])); //CHECKME OK in this recordset-loop?
-				$rst->MoveNext();
-			}
+		if ($rst && !$rst->EOF) {
+			$rows = $rst->GetArray();
 			$rst->Close();
+			$query = 'UPDATE '.$pre.'content_props SET content=? WHERE content_id=?';
+			foreach ($rows as $one) {
+				$merge = str_replace($val, $new, $one[1]);
+				$db->Execute($query, array($merge, $one[0]));
+			}
 		}
 		$this->SetPreference('keyword_separator',$_POST['keyword_separator']);
 	}
@@ -152,6 +180,7 @@ if (isset($_POST['save_keyword_settings'])) {
 	}
 
 	$this->Audit(0, $this->Lang('friendlyname'), 'Edited keyword settings');
+	//TODO see comments above about warning(s)
 	$this->Redirect($id, 'defaultadmin', '', array('message'=>'settings_updated','tab'=>'keywordsettings'));
 }
 
