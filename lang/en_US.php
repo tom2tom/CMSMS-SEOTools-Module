@@ -221,7 +221,7 @@ $lang['both_regenerated'] = 'The files sitemap.xml and robots.txt have been succ
 $lang['none_regenerated'] = 'Nothing was regenerated. There seems to be a problem.';
 
 $lang['install_database_error'] = 'An error has occured during installation: The database table could not be created.';
-$lang['no_url_fopen'] = 'Not possible as allow_url_fopen has not been set to &quot;on&quot; in your php configuration.';
+$lang['no_pusher'] = 'Not possible, unless &quot;allow_url_fopen&quot; is set to &quot;on&quot; in the site\'s php configuration, or the php module &quot;curl&quot; is installed.';
 $lang['title_additional_meta_tags'] = 'Additional Meta Tags';
 $lang['additional_meta_tags_title'] = 'Additional Meta tags to be inserted';
 $lang['additional_meta_tags_help'] = 'Specify additional Meta tags here to be inserted into the page header. You can use all smarty variables and UDTs here.';
