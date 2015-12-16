@@ -190,6 +190,7 @@ $lang['title_meta_type'] = 'Meta Tag Generator';
 $lang['title_metasettings'] = 'Page title & Meta information';
 $lang['title_pages'] = 'Page(s)  ';
 $lang['title_problem'] = 'Problem';
+$lang['title_regenerate_both'] = 'Regenerate';
 $lang['title_resources'] = 'Useful external SEO resources';
 $lang['title_sitemap_description'] = 'Sitemap and crawler settings';
 $lang['title_sitemapsettings'] = 'Sitemap & Crawler settings';
