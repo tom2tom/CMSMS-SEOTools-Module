@@ -12,6 +12,9 @@ if (!$this->CheckAccess('Edit SEO Settings'))
 if (isset($_POST['cancel']))
 	$this->Redirect($id, 'defaultadmin');
 
+if (isset($_POST['display_robots_file']))
+	$this->Redirect($id, 'robot');
+
 if (isset($_POST['do_regenerate'])) {
 	$funcs = new SEO_file();
 	$botok = ($this->GetPreference('create_robots',0)) ? $funcs->createRobotsTXT($this) : false;
