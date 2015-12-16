@@ -243,7 +243,7 @@ if ($urgent_alerts) {
 				$links = $alert['links_data'];
 				if (count($links) == 1) {
 					foreach($links as $id => $data) {
-						$oneset->action = $funcs->getFixLink($this, $_GET[$this->pathstr], $id);
+						$oneset->action = $funcs->getFixLink($this, $_GET[$this->secstr], $id);
 						$sig = '@'.$id.'-'.$data[1];
 					}
 				}
@@ -251,7 +251,7 @@ if ($urgent_alerts) {
 					$s = array();
 					$sig = '';
 					foreach($links as $id => $data) {
-						$s[] = $funcs->getFixLink($this, $_GET[$this->pathstr], $id, $data[0]);
+						$s[] = $funcs->getFixLink($this, $_GET[$this->secstr], $id, $data[0]);
 						$sig .= '@'.$id.'-'.$data[1];
 					}
 					$oneset->action = implode('<br />', $s);
@@ -354,7 +354,7 @@ if ($important_alerts) {
 				$links = $alert['links_data'];
 				if (count($links) == 1) {
 					foreach($links as $id => $data) {
-						$oneset->action = $funcs->getFixLink($this, $_GET[$this->pathstr], $id);
+						$oneset->action = $funcs->getFixLink($this, $_GET[$this->secstr], $id);
 						$sig = '@'.$id.'-'.$data[1];
 					}
 				}
@@ -362,7 +362,7 @@ if ($important_alerts) {
 					$s = array();
 					$sig = '';
 					foreach($links as $id => $data) {
-						$s[] = $funcs->getFixLink($this, $_GET[$this->pathstr], $id, $data[0]);
+						$s[] = $funcs->getFixLink($this, $_GET[$this->secstr], $id, $data[0]);
 						$sig .= '@'.$id.'-'.$data[1];
 					}
 					$oneset->action = implode('<br />', $s);
@@ -576,7 +576,7 @@ if ($rst) {
 				strip_tags($description).'" class="systemicon" />';
 			}
 			else {
-				$oneset->desc = '<a href="editcontent.php?'.$this->pathstr.'='.$_GET[$this->pathstr].
+				$oneset->desc = '<a href="editcontent.php?'.$this->secstr.'='.$_GET[$this->secstr].
 				'&content_id='.$row['content_id'].'"><img src="'.$theme_url.'/system/false.gif" title="'.
 				$this->Lang('click_to_add_description').'" class="systemicon" /></a>';
 			}
@@ -609,13 +609,22 @@ $smarty->assign('unindex',$this->CreateInputSubmit(null, 'unindex_selected',
 
 /* SEO Settings Tab */
 
-// Get image files from /uploads/images
 $files_list = array('('.$this->Lang('none').')'=>'');
-$dp = opendir(cms_join_path($config['root_path'],'uploads','images'));
+// Get image-files in uploads dir (wherever that actually is)
+if(isset($config['image_uploads_path'])) {
+	$offs = strlen($config['root_path']);
+	$rest = substr($config['image_uploads_path'],$offs+1); //no leading separator
+}
+else {
+	$rest = 'uploads'.DIRECTORY_SEPARATOR.'images';
+}
+$offs = strpos(__FILE__,'modules'.DIRECTORY_SEPARATOR.$this->GetName());
+$img_dir = substr(__FILE__, 0, $offs).$rest;
+$dp = opendir($img_dir);
 if ($dp) {
 	while ($file = readdir($dp)) {
 		if (strlen($file) >= 5) {
-			foreach (array('.gif','.png','.jpg','.jpeg') as $type) {
+			foreach (array('.gif','.png','.jpg','.jpeg','.webp','.svg') as $type) {
 				if (strripos($file, $type, -5) !== false) {
 					$files_list[$file] = $file;
 					break;
