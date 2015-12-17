@@ -4,68 +4,23 @@
 # Copyright (C) 2014-2015 Tom Phane <tpgww@onepost.net>
 # Refer to licence and other details at the top of file SEOTools.module.php
 
-class SEO_file
+class SEO_sitemap
 {
-	public function createRobotsTXT($mod)
-	{
-		// Get robots file in root directory (whereever that actually is)
-		$offs = strpos(__FILE__,'modules'.DIRECTORY_SEPARATOR.$mod->GetName());
-		$fn = substr(__FILE__, 0, $offs).'robots.txt';
-		$fp = @fopen($fn,'wb');
-		if ($fp == false)
-			return false;
-
-		$gCms = cmsms(); //CMSMS 1.8+
-		$config = $gCms->GetConfig();
-		$rooturl = (empty($_SERVER['HTTPS'])) ? $config['root_url'] : $config['ssl_url'];
-
-		$outs = array();
-		if ($mod->GetPreference('create_sitemap',0))
-			$outs[] = 'Sitemap: '.$rooturl.'/sitemap.xml';
-
-		$xtra = $mod->GetPreference('robot_start','');
-		if ($xtra) {
-			$outs[] = $xtra;
-		}
-
-		$outs[] = 'User-agent: *';
-		foreach (array('contrib','doc','lib','modules','plugins','scripts','tmp') as $dir) {
-			$outs[] = 'Disallow: '.$rooturl.'/'.$dir.'/';
-		}
-
-		$db = $gCms->GetDb();
-		$query = 'SELECT content_id FROM '.cms_db_prefix().'module_seotools WHERE indexable=0 ORDER BY content_id';
-		$result = $db->GetCol($query);
-		if ($result) {
-			$co = $gCms->GetContentOperations();
-			foreach ($result as $cid) {
-				$content = $co->LoadContentFromId($cid);
-				if ($content) {
-					$url = $content->GetURL();
-					if ($url) {
-						$outs[] = 'Disallow: '.$url;
-					}
-				}
-			}
-		}
-
-		$xtra = $mod->GetPreference('robot_end','');
-		if ($xtra) {
-			$outs[] = $xtra;
-		}
-
-		@fwrite($fp,implode(PHP_EOL,$outs));
-		@fwrite($fp,PHP_EOL);
-		@fclose($fp);
-		return TRUE;
-	}
-
-	public function createSitemap($mod)
-	{
+	/**
+	createSitemap:
+	@mod: reference to SEOTools module object
+	@push: optional boolean, whether to force a push to searchers, default false
+	If @push is false, the module's 'push_sitemap' preference will
+	 determine whether to push.
+	If robots file exists already, it must be writbable.
+	Returns: boolean T/F indicating success
+	*/
+	public function createSitemap($mod, $push = false) {
 		$gCms = cmsms(); //CMSMS 1.8+
 		$db = $gCms->GetDb();
 		$pre = cms_db_prefix();
-		$query = 'SELECT content_id,hierarchy,default_content,modified_date FROM '.$pre.'content WHERE active=1 AND type!="errorpage" ORDER BY hierarchy';
+		$query = 'SELECT content_id,hierarchy,default_content,modified_date FROM '.
+			$pre.'content WHERE active=1 AND type!="errorpage" ORDER BY hierarchy';
 		$rst = $db->Execute($query);
 		if ($rst == false)
 			return false;
@@ -139,14 +94,20 @@ EOS
 		@fwrite($fp, '</urlset>'.PHP_EOL);
 		@fclose($fp);
 
-		if ($mod->GetPreference('push_sitemap',0)) {
+		if ($push || $mod->GetPreference('push_sitemap',0)) {
 			return self::pushSitemap($rooturl);
 		}
 		else {
-			return TRUE;
+			return true;
 		}
 	}
 
+	/**
+	pushSitemap:
+	Ping searchers google, bing/msn/yahoo, ask
+	@rooturl: optional url of website root (where the robots file resides), default false
+	Returns: boolean T/F indicating success
+	*/
 	public function pushSitemap($rooturl = false) {
 		if (ini_get('allow_url_fopen')) {
 			$pusher = 1;
@@ -155,7 +116,7 @@ EOS
 			$pusher = 2;
 		}
 		else {
-			return FALSE;
+			return false;
 		}
 
 		if(!$rooturl) {
@@ -198,7 +159,6 @@ EOS
 		curl_close($ch);
 		return ($httpCode == "200");
 	}
-
 }
 
 ?>
