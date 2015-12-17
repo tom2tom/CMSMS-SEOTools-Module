@@ -27,7 +27,7 @@ if (!$result)
 // meta-groups table schema
 $flds = "
 group_id I(2) AUTO KEY,
-name C(64),
+gname C(64),
 vieworder I(2),
 active I(1) NOTNULL DEFAULT 1
 ";
@@ -40,11 +40,11 @@ $sql = 'INSERT INTO '.$pre.'module_seotools_group (name,vieworder,active) VALUES
 $i = 1;
 foreach (array(
 'before'=>1, //1
-'meta_standard'=>1, //2
-'meta_dublincore'=>0, //3
-'meta_opengraph'=>0, //4
-'meta_twitter'=>0, //5
-'meta_googleplus'=>0, //6
+'meta_std'=>1, //2
+'meta_dc'=>0, //3
+'meta_og'=>0, //4
+'meta_twt'=>0, //5
+'meta_gplus'=>0, //6
 'after'=>1 //7
 ) as $name=>$act) {
 	$db->Execute($sql,array($name,$i,$act));
@@ -55,7 +55,7 @@ foreach (array(
 $flds = "
 meta_id I(2) AUTO KEY,
 group_id I(2),
-name C(128),
+mname C(128),
 value C(255),
 output C(128),
 calc I(1) NOTNULL DEFAULT 0,
@@ -67,7 +67,7 @@ $sqlarray = $dict->CreateTableSQL($pre.'module_seotools_meta',$flds,$taboptarray
 $result = ($sqlarray) ? ($dict->ExecuteSQLArray($sqlarray,false) == 2) : false;
 if (!$result)
 	return $this->Lang('install_database_error');
-// add default meta
+// table default metadata
 require ('method.setmeta.php'); 
 
 // permissions
@@ -75,7 +75,6 @@ $this->CreatePermission('Edit SEO Settings',$this->Lang('perm_editsettings'));
 $this->CreatePermission('Edit page descriptions',$this->Lang('perm_editdescription'));
 
 // preferences
-//X$this->SetPreference('content_type','html');
 $this->SetPreference('create_robots',1);
 $this->SetPreference('create_sitemap',1);
 $this->SetPreference('push_sitemap',0);
@@ -100,34 +99,9 @@ $this->SetPreference('keyword_exclude',trim($words));
 $this->SetPreference('keyword_headline_weight',2);
 $this->SetPreference('keyword_minimum_weight',7);
 $this->SetPreference('keyword_minlength',6);
-$this->SetPreference('keyword_separator',' ');
+$this->SetPreference('keyword_separator',',');
 $this->SetPreference('keyword_title_weight',6);
-
-//X$this->SetPreference('additional_meta_tags','');
-//X$this->SetPreference('meta_contributor','');
-//X$this->SetPreference('meta_copyright','(C). All rights reserved.');
-
-//X$this->SetPreference('meta_dublincore',0);
-//X$this->SetPreference('meta_latitude','');
-//X$this->SetPreference('meta_location','');
-//X$this->SetPreference('meta_longitude','');
-//$this->SetPreference('meta_opengraph_admins','');
-//$this->SetPreference('meta_opengraph_application','');
-
-//X$this->SetPreference('meta_opengraph',0);
-//X$this->SetPreference('meta_opengraph_image','');
-//X$sitename = get_site_preference('sitename','CMSMS Site');
-//X$this->SetPreference('meta_opengraph_sitename',$sitename);
-//X$this->SetPreference('meta_opengraph_title','{title}');
-//X$this->SetPreference('meta_opengraph_type','');
-//X$this->SetPreference('meta_publisher','');
-//X$this->SetPreference('meta_region','');
-//X$this->SetPreference('meta_standard',1);
-//X$this->SetPreference('meta_title','{title} | {$sitename}');
-
 $this->SetPreference('robot_start','');
 $this->SetPreference('robot_end','');
-//Xthis->SetPreference('title','{title} | {$sitename} - {$title_keywords}');
-//x$this->SetPreference('verification','');
 
 ?>
