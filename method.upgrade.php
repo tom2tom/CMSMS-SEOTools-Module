@@ -4,11 +4,10 @@
 # Copyright (C) 2014-2015 Tom Phane <tpgww@onepost.net>
 # Refer to licence and other details at the top of file SEOTools.module.php
 
-switch($oldversion)
-{
-	$dict = NewDataDictionary($db);
-	$pre = cms_db_prefix();
+$dict = NewDataDictionary($db);
+$pre = cms_db_prefix();
 
+switch ($oldversion) {
 	case "1.0":
 	case "1.1":
 	case "1.2":
@@ -80,7 +79,6 @@ EOS;
 		elseif ($sep != ',')
 			$words = str_replace(',',$sep,$words);
 		$this->SetPreference('keyword_exclude',$words);
-
 	case "1.6":
 		// renamed pref
 		$val = $this->GetPreference('default_keywords','');
@@ -128,12 +126,10 @@ active I(1) NOTNULL DEFAULT 1
 		if (!$result) return false;
 		// extra index
 		$sqlarray = $dict->CreateIndexSQL('idx_seogrps', $pre.'module_seotools_meta', 'group_id');
-		$dict->ExecuteSQLArray($sqlarray);	
-		
+		$dict->ExecuteSQLArray($sqlarray);
 		// add default meta, and delete redundant prefs
-		require ('method.setmeta.php'); 
+		require ('method.setmeta.php');
 
-		break;
 }
 
 ?>
