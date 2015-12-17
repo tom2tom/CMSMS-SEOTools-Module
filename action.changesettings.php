@@ -16,10 +16,20 @@ if (isset($_POST['display_robots_file']))
 	$this->Redirect($id, 'robot');
 
 if (isset($_POST['do_regenerate'])) {
-	$funcs = new SEO_file();
-	$botok = ($this->GetPreference('create_robots',0)) ? $funcs->createRobotsTXT($this) : false;
-	$mapok = ($this->GetPreference('create_sitemap',0)) ? $funcs->createSitemap($this) : false;
-
+	if ($this->GetPreference('create_robots',0)) {
+		$funcs = new SEO_robot();
+		$botok = $funcs->createRobotsTXT($this);
+	}
+	else {
+		$botok = false;
+	}
+	if ($this->GetPreference('create_sitemap',0)) {
+		$funcs = new SEO_sitemap();
+		$mapok = $funcs->createSitemap($this);
+	}
+	else {
+		$mapok = false;
+	}
 	if ($botok || $mapok) {
 		if ($botok && $mapok) {
 			$audit = 'Manually regenerated sitemap.xml and robots.txt';

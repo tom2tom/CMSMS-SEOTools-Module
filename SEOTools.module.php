@@ -184,7 +184,7 @@ EOS;
 	{
 		if ($this->GetPreference('create_sitemap',0))
 		{
-			$funcs = new SEO_file();
+			$funcs = new SEO_sitemap();
 			$funcs->createSitemap($this);
 		}
 		// Clean up
