@@ -74,7 +74,7 @@ if (isset($_POST['save_meta_settings'])) {
 
 	// Update metadata
 	$query = 'UPDATE '.$pre.'module_seotools_meta SET value=?,active=? WHERE mname=?';
-	$foreach($_POST as $name=>$val) {
+	foreach ($_POST as $name=>$val) {
 		switch ($name) {
 		 case 'description_block':
 			$old = $this->GetPreference('description_block','');
@@ -94,7 +94,7 @@ if (isset($_POST['save_meta_settings'])) {
 					$this->SetPreference('description_block',$_POST['description_block']);
 					$args['message'] = 'TODO'; //TODO lang key to tell user about conforming block-name in all templates and pages
 				}
-				if ($rst) $rst->Close(); 
+				if ($rst) $rst->Close();
 			}
 			break;
 		 default:
@@ -149,7 +149,7 @@ if (isset($_POST['save_keyword_settings'])) {
 			$args['message'] = 'TODO'; //lang key to tell user about conforming block-name in all templates and pages
 			$old = $new; //maybe needed for separator-updates
 		}
-		if ($rst) $rst->Close(); 
+		if ($rst) $rst->Close();
 	}
 	else {
 		$old = str_replace(' ','_',$val);
