@@ -129,63 +129,48 @@
 
 {$start_meta_tab}
 {$startform_settings}
-  <p class="pagetext" style="margin-top:0;">{$pr_ctype}:</p>
-  <p class="pageinput">{$in_ctype}</p>
+<div class="pageoverflow">
+ {foreach from=$ungrouped item=entry}
+<p class="pagetext" style="margin:0.5em 0 0.5em 5%;">{$entry->title}:
+{if !empty($entry->inline)}&nbsp;&nbsp;{$entry->input}</p>{else}</p><p class="pageinput">{$entry->input}</p>{/if}
+{if !empty($entry->help)}<p class="pageinput">{$entry->help}</p>{/if}
+ {/foreach}
+</div>
 {$start_page_set}
- <div class="pageoverflow">
-  <p class="pagetext" style="margin-top:0;">{$pr_ptitle}:</p>
-  <p class="pageinput">{$in_ptitle}</p>
-  <p class="pagetext">{$pr_mtitle}:</p>
-  <p class="pageinput">{$in_mtitle}</p>
-  <p class="pagetext">{$pr_blockname}:</p>
-  <p class="pageinput">{$in_blockname}</p>
-  <p class="pagetext">{$pr_autodesc}:&nbsp;{$in_autodesc}</p>
-  <p class="pagetext">{$pr_autotext}:</p>
-  <p class="pageinput">{$in_autotext}</p>
- </div>
+<div class="pageoverflow" style="margin-top:0;">
+ {foreach from=$pageset item=entry}
+<p class="pagetext" style="margin:0.5em 0 0.5em 5%;">{$entry->title}:
+{if !empty($entry->inline)}&nbsp;&nbsp;{$entry->input}</p>{else}</p><p class="pageinput">{$entry->input}</p>{/if}
+{if !empty($entry->help)}<p class="pageinput">{$entry->help}</p>{/if}
+ {/foreach}
+</div>
 {$end_set}
 {$start_meta_set}
- <div class="pageoverflow">
-  <p class="pagetext" style="margin-top:0;">{$pr_meta_stand}&nbsp;{$in_meta_stand}</p>
-  <p class="pagetext">{$pr_meta_dublin}&nbsp;{$in_meta_dublin}</p>
-  <p class="pagetext">{$pr_meta_open}&nbsp;{$in_meta_open}</p>
+ <div class="pageoverflow" style="margin-top:0;">
+ {foreach from=$metatypes item=entry}
+<p class="pagetext" style="margin:0.5em 0 0.5em 5%;">{$entry->title}:&nbsp; {$entry->input}</p>
+{if !empty($entry->help)}<p class="pageinput">{$entry->help}</p>{/if}
+ {/foreach}
  </div>
 {$end_set}
 {$start_deflt_set}
- <div class="pageoverflow">
-  <p class="pagetext" style="margin-top:0;">{$pr_publish}:</p>
-  <p class="pageinput">{$in_publish}</p>
-  <p class="pagetext">{$pr_contrib}:</p>
-  <p class="pageinput">{$in_contrib}</p>
-  <p class="pagetext">{$pr_copyr}:</p>
-  <p class="pageinput">{$in_copyr}</p>
-  <h4 class="pageinput" style="margin-top:15px;">{$intro_location}:</h4>
-  <p class="pagetext">{$pr_location}:</p>
-  <p class="pageinput">{$in_location}</p>
-  <p class="pagetext">{$pr_region}:</p>
-  <p class="pageinput">{$in_region}</p>
-  <p class="pagetext">{$pr_lat}:</p>
-  <p class="pageinput">{$in_lat}</p>
-  <p class="pagetext">{$pr_long}:</p>
-  <p class="pageinput">{$in_long}</p>
-  <h4 class="pageinput" style="margin-top:15px;">{$intro_ogmeta}:</h4>
-  <p class="pagetext">{$pr_ogtitle}:</p>
-  <p class="pageinput">{$in_ogtitle}</p>
-  <p class="pagetext">{$pr_ogtype}:</p>
-  <p class="pageinput">{$in_ogtype}</p>
-  <p class="pagetext">{$pr_ogsite}:</p>
-  <p class="pageinput">{$in_ogsite}</p>
-  <p class="pagetext">{$pr_ogimage}:</p>
-  <p class="pageinput">{$in_ogimage}</p>
-  <p class="pagetext">{$pr_ogadmin}:</p>
-  <p class="pageinput">{$in_ogadmin}</p>
-  <p class="pagetext">{$pr_ogapp}:</p>
-  <p class="pageinput">{$in_ogapp}</p>
+ <div class="pageoverflow" style="margin-top:0;">
+ {foreach from=$metadeflts item=entry}
+{if !empty($entry->head)}<h4 class="pageinput" style="margin-top:15px;">{$entry->head}:</h4>{/if} 
+<p class="pagetext" style="margin:0.5em 0 0.5em 5%;">{$entry->title}:
+{if !empty($entry->inline)}&nbsp;&nbsp;{$entry->input}</p>{else}</p><p class="pageinput">{$entry->input}</p>{/if}
+{if !empty($entry->help)}<p class="pageinput">{$entry->help}</p>{/if}
+ {/foreach}
  </div>
 {$end_set}
 {$start_extra_set}
- <p class="pagetext" style="margin-top:0;">{$pr_extra}:</p>
- <p class="pageinput">{$in_extra}</p>
+ <div class="pageoverflow" style="margin-top:0;">
+ {foreach from=$extraset item=entry}
+<p class="pagetext" style="margin:0.5em 0 0.5em 5%;">{$entry->title}:
+{if !empty($entry->inline)}&nbsp;&nbsp;{$entry->input}</p>{else}</p><p class="pageinput">{$entry->input}</p>{/if}
+{if !empty($entry->help)}<p class="pageinput">{$entry->help}</p>{/if}
+ {/foreach}
+ </div>
 {$end_set}
 <br />
 <p class="pageinput">{$submit1}&nbsp;{$cancel}</p>
@@ -193,63 +178,49 @@
 {$end_tab}
 
 {$start_keyword_tab}
+<strong>{$keyword_help}</strong>
+<br />
 {$startform_settings}
 {$start_ksettings_set}
- <div class="pageoverflow">
-  <p class="pagetext" style="margin-top:0;">{$pr_min_length}:</p>
-  <p class="pageinput">{$in_min_length}</p>
-  <p class="pagetext">{$pr_title_weight}:</p>
-  <p class="pageinput">{$in_title_weight}</p>
-  <p class="pagetext">{$pr_desc_weight}:</p>
-  <p class="pageinput">{$in_desc_weight}</p>
-  <p class="pagetext">{$pr_head_weight}:</p>
-  <p class="pageinput">{$in_head_weight}</p>
-  <p class="pagetext">{$pr_cont_weight}:</p>
-  <p class="pageinput">{$in_cont_weight}</p>
-  <p class="pagetext">{$pr_min_weight}:</p>
-  <p class="pageinput">{$in_min_weight}</p>
+ <div class="pageoverflow" style="margin-top:0;">
+ {foreach from=$keyset item=entry}
+<p class="pagetext" style="margin:0.5em 0 0.5em 5%;">{$entry->title}:
+{if !empty($entry->inline)}&nbsp;&nbsp;{$entry->input}</p>{else}</p><p class="pageinput">{$entry->input}</p>{/if}
+{if !empty($entry->help)}<p class="pageinput">{$entry->help}</p>{/if}
+ {/foreach}
  </div>
 {$end_set}
-{$start_kexclude_set}
- <div class="pageoverflow">
-  <p class="pagetext" style="margin-top:0;">{$pr_wordsblock_name}:</p>
-  <p class="pageinput">{$in_wordsblock_name}</p>
-  <p class="pagetext">{$pr_kw_sep}:</p>
-  <p class="pageinput">{$in_kw_sep}</p>
-  <p class="pagetext">{$pr_incl_words}:</p>
-  <p class="pageinput">{$in_incl_words}</p>
-  <p class="pagetext">{$pr_excl_words}:</p>
-  <p class="pageinput">{$in_excl_words}</p>
+{$start_klist_set}
+ <div class="pageoverflow" style="margin-top:0;">
+ {foreach from=$listset item=entry}
+<p class="pagetext" style="margin:0.5em 0 0.5em 5%;">{$entry->title}:
+{if !empty($entry->inline)}&nbsp;&nbsp;{$entry->input}</p>{else}</p><p class="pageinput">{$entry->input}</p>{/if}
+{if !empty($entry->help)}<p class="pageinput">{$entry->help}</p>{/if}
+ {/foreach}
  </div>
 {$end_set}
 <br />
-<p class="pageinput">{$submit3}&nbsp;{$cancel}</p>
+<p class="pageinput">{$submit2}&nbsp;{$cancel}</p>
 {$end_form}
-<br />
-{$keyword_help}
 {$end_tab}
 
 {$start_sitemap_tab}
 {$startform_settings}
 {$start_map_set}
- <div class="pageoverflow">
-  <p class="pagetext" style="margin-top:0;">{$pr_create_map}:&nbsp;{$in_create_map}</p>
-  <p class="pagetext">{$pr_push_map}:&nbsp;{$in_push_map}</p>
-  <p class="pagetext">{$pr_verify_code}:</p>
-  <p class="pageinput">{$in_verify_code}<br />{$help_verify}</p>
-  <p class="pagetext">{$pr_create_bots}:&nbsp;{$in_create_bots}</p>
-  <p class="pagetext">{$pr_early_bots}:</p>
-  <p class="pageinput">{$in_early_bots}</p>
-  <p class="pagetext">{$pr_late_bots}:</p>
-  <p class="pageinput">{$in_late_bots}</p>
+ <div class="pageoverflow" style="margin-top:0;">
+ {foreach from=$fileset item=entry}
+<p class="pagetext" style="margin:0.5em 0 0.5em 5%;">{$entry->title}:
+{if !empty($entry->inline)}&nbsp;&nbsp;{$entry->input}</p>{else}</p><p class="pageinput">{$entry->input}</p>{/if}
+{if !empty($entry->help)}<p class="pageinput">{$entry->help}</p>{/if}
+ {/foreach}
   <br />
-  <p class="pageinput">{$submit2}&nbsp;{$cancel}&nbsp;{$display}</p>
+  <p class="pageinput">{$submit3}&nbsp;{$cancel}&nbsp;{$display}</p>
  </div>
 {$end_set}
 {if isset($regenerate)}
  {$start_regen_set}
-  <div class="pageoverflow">
-   <p class="pageinput" style="margin-top:0;">{$regenerate}<br />{$help_regenerate}</p>
+  <div class="pageoverflow" style="margin-top:0;">
+   <p class="pageinput">{$regenerate}<br /><br />{$help_regenerate}</p>
    <br />
   {$sitemap_help}
   </div>
