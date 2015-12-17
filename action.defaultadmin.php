@@ -485,7 +485,7 @@ $iconreset = '<img src="'.$this->GetModuleURLPath().'/images/reset.png" class="s
 $iconedit = '<img src="'.$theme_url.'/system/edit.gif" class="systemicon" />';
 $icondown = '<img src="'.$theme_url.'/system/arrow-d.gif" class="systemicon" />';
 $iconup = '<img src="'.$theme_url.'/system/arrow-u.gif" class="systemicon" />';
-$default_ogtype = $this->GetPreference('meta_opengraph_type','');
+$default_ogtype = $this->GetPreference('meta_og_type','');
 $sep = $this->GetPreference('keyword_separator',' ');
 
 $items = array();
@@ -617,9 +617,9 @@ $smarty->assign('startform_settings',$this->CreateFormStart($id, 'changesettings
 $ungrouped = array();
 //ctype
 $oneset = new stdClass();
-$oneset->title = $this->Lang('title_type');
+$oneset->title = $this->Lang('content_type_title');
 $oneset->input = $this->CreateInputText(null, 'content_type', $this->GetPreference('content_type','html'), 10);
-$oneset->help = $this->Lang('help_content_type');
+$oneset->help = $this->Lang('content_type_help');
 $ungrouped[] = $oneset;
 
 $smarty->assign('ungrouped', $ungrouped);
@@ -630,23 +630,23 @@ $pageset = array();
 $oneset = new stdClass();
 $oneset->title = $this->Lang('title_title');
 $oneset->input = $this->CreateInputText(null, 'title', $this->GetPreference('title','{title} | {$sitename} - {$title_keywords}'), 60);
-$oneset->help = $this->Lang('title_title_help');
+$oneset->help = $this->Lang('title_help');
 $pageset[] = $oneset;
 //mtitle
 $oneset = new stdClass();
-$oneset->title = $this->Lang('title_meta_title');
-$oneset->input = $this->CreateInputText(null, 'meta_title', $this->GetPreference('meta_title','{title} | {$sitename}'), 60);
-$oneset->help = $this->Lang('title_meta_help');
+$oneset->title = $this->Lang('meta_std_title_title');
+$oneset->input = $this->CreateInputText(null, 'meta_std_title', $this->GetPreference('meta_std_title','{title} | {$sitename}'), 60);
+$oneset->help = $this->Lang('meta_std_title_help');
 $pageset[] = $oneset;
 //blockname
 $oneset = new stdClass();
-$oneset->title = $this->Lang('title_description_block');
+$oneset->title = $this->Lang('description_block_title');
 $oneset->input = $this->CreateInputText(null, 'description_block', $this->GetPreference('description_block',''), 60);
 $oneset->help = $this->Lang('description_block_help');
 $pageset[] = $oneset;
 //autodesc
 $oneset = new stdClass();
-$oneset->title = $this->Lang('description_auto_generate');
+$oneset->title = $this->Lang('description_auto_generate_title');
 $oneset->inline = 1;
 $oneset->input = $this->CreateInputCheckbox(null, 'description_auto_generate', 1, $this->GetPreference('description_auto_generate',0));
 //$oneset->help = ;
@@ -666,22 +666,36 @@ $smarty->assign('start_meta_set',$this->CreateFieldsetStart(null, 'meta_type', $
 $metatypes = array();
 //meta_stand
 $oneset = new stdClass();
-$oneset->title = $this->Lang('meta_create_standard');
-$oneset->input = $this->CreateInputCheckbox(null, 'meta_standard', 1, $this->GetPreference('meta_standard',0));
+$oneset->title = $this->Lang('meta_std_title');
+$oneset->input = $this->CreateInputCheckbox(null, 'meta_std', 1, $this->GetPreference('meta_std',0));
 //$oneset->help = ;
 $metatypes[] = $oneset;
 //meta_dublin
 $oneset = new stdClass();
-$oneset->title = $this->Lang('meta_create_dublincore');
-$oneset->input = $this->CreateInputCheckbox(null, 'meta_dublincore', 1, $this->GetPreference('meta_dublincore',0));
+$oneset->title = $this->Lang('meta_dc_title');
+$oneset->input = $this->CreateInputCheckbox(null, 'meta_dc', 1, $this->GetPreference('meta_dc',0));
 //$oneset->help = ;
 $metatypes[] = $oneset;
-//meta_open
+//meta_opengraph
 $oneset = new stdClass();
-$oneset->title = $this->Lang('meta_create_opengraph');
-$oneset->input = $this->CreateInputCheckbox(null, 'meta_opengraph', 1, $this->GetPreference('meta_opengraph',0));
+$oneset->title = $this->Lang('meta_og_title');
+$oneset->input = $this->CreateInputCheckbox(null, 'meta_og', 1, $this->GetPreference('meta_og',0));
 //$oneset->help = ;
 $metatypes[] = $oneset;
+
+/*
+//meta_google
+'meta_gplus'
+'meta_gplus_description'
+'meta_gplus_name'
+ETC
+//meta_twitter
+'meta_twt'
+'meta_twt_description'
+'meta_twt_site'
+'meta_twt_title'
+ETC
+*/
 
 $smarty->assign('metatypes', $metatypes);
 
@@ -691,65 +705,65 @@ $smarty->assign('start_deflt_set',$this->CreateFieldsetStart(null, 'meta_default
 $metadeflts = array();
 //publish
 $oneset = new stdClass();
-$oneset->title = $this->Lang('meta_publisher');
-$oneset->input = $this->CreateInputText(null, 'meta_publisher', $this->GetPreference('meta_publisher',''), 32);
-$oneset->help = $this->Lang('meta_publisher_help');
+$oneset->title = $this->Lang('meta_std_publisher_title');
+$oneset->input = $this->CreateInputText(null, 'meta_std_publisher', $this->GetPreference('meta_std_publisher',''), 32);
+$oneset->help = $this->Lang('meta_std_publisher_help');
 $metadeflts[] = $oneset;
 //contrib
 $oneset = new stdClass();
-$oneset->title = $this->Lang('meta_contributor');
-$oneset->input = $this->CreateInputText(null, 'meta_contributor', $this->GetPreference('meta_contributor',''), 32);
-$oneset->help = $this->Lang('meta_contributor_help');
+$oneset->title = $this->Lang('meta_std_contributor_title');
+$oneset->input = $this->CreateInputText(null, 'meta_std_contributor', $this->GetPreference('meta_std_contributor',''), 32);
+$oneset->help = $this->Lang('meta_std_contributor_help');
 $metadeflts[] = $oneset;
 //copyr
 $oneset = new stdClass();
-$oneset->title = $this->Lang('meta_copyright');
-$oneset->input = $this->CreateInputText(null, 'meta_copyright', $this->GetPreference('meta_copyright','(C) '.date('Y').'. All rights reserved.'), 32);
-$oneset->help = $this->Lang('meta_copyright_help');
+$oneset->title = $this->Lang('meta_std_copyright_title');
+$oneset->input = $this->CreateInputText(null, 'meta_std_copyright', $this->GetPreference('meta_std_copyright','(C) '.date('Y').'. All rights reserved.'), 32);
+$oneset->help = $this->Lang('meta_std_copyright_help');
 $metadeflts[] = $oneset;
 //location
 $oneset = new stdClass();
-$oneset->head = $this->Lang('meta_location_description');
-$oneset->title = $this->Lang('meta_location');
-$oneset->input = $this->CreateInputText(null, 'meta_location', $this->GetPreference('meta_location',''), 32);
-$oneset->help = $this->Lang('meta_location_help');
+$oneset->head = $this->Lang('meta_std_location_description');
+$oneset->title = $this->Lang('meta_std_location_title');
+$oneset->input = $this->CreateInputText(null, 'meta_std_location', $this->GetPreference('meta_std_location',''), 32);
+$oneset->help = $this->Lang('meta_std_location_help');
 $metadeflts[] = $oneset;
 //region
 $oneset = new stdClass();
-$oneset->title = $this->Lang('meta_region');
-$oneset->input = $this->CreateInputText(null, 'meta_region', $this->GetPreference('meta_region',''), 5);
-$oneset->help = $this->Lang('meta_region_help');
+$oneset->title = $this->Lang('meta_std_region_title');
+$oneset->input = $this->CreateInputText(null, 'meta_std_region', $this->GetPreference('meta_std_region',''), 5);
+$oneset->help = $this->Lang('meta_std_region_help');
 $metadeflts[] = $oneset;
 //lat
 $oneset = new stdClass();
-$oneset->title = $this->Lang('meta_latitude');
-$oneset->input = $this->CreateInputText(null, 'meta_latitude', $this->GetPreference('meta_latitude',''), 15);
-$oneset->help = $this->Lang('meta_latitude_help');
+$oneset->title = $this->Lang('meta_std_latitude_title');
+$oneset->input = $this->CreateInputText(null, 'meta_std_latitude', $this->GetPreference('meta_std_latitude',''), 15);
+$oneset->help = $this->Lang('meta_std_latitude_help');
 $metadeflts[] = $oneset;
 //long
 $oneset = new stdClass();
-$oneset->title = $this->Lang('meta_longitude');
-$oneset->input = $this->CreateInputText(null, 'meta_longitude', $this->GetPreference('meta_longitude',''), 15);
-$oneset->help = $this->Lang('meta_longitude_help');
+$oneset->title = $this->Lang('meta_std_longitude_title');
+$oneset->input = $this->CreateInputText(null, 'meta_std_longitude', $this->GetPreference('meta_std_longitude',''), 15);
+$oneset->help = $this->Lang('meta_std_longitude_help');
 $metadeflts[] = $oneset;
 //ogtitle
 $oneset = new stdClass();
-$oneset->head = $this->Lang('meta_opengraph_description');
-$oneset->title = $this->Lang('meta_opengraph_title');
-$oneset->input = $this->CreateInputText(null, 'meta_opengraph_title', $this->GetPreference('meta_opengraph_title','{title}'), 32);
-$oneset->help = $this->Lang('meta_opengraph_title_help');
+$oneset->head = $this->Lang('meta_og_description');
+$oneset->title = $this->Lang('meta_og_title_title');
+$oneset->input = $this->CreateInputText(null, 'meta_og_title', $this->GetPreference('meta_og_title','{title}'), 32);
+$oneset->help = $this->Lang('meta_og_title_help');
 $metadeflts[] = $oneset;
 //ogtype
 $oneset = new stdClass();
-$oneset->title = $this->Lang('meta_opengraph_type');
-$oneset->input = $this->CreateInputText(null, 'meta_opengraph_type', $this->GetPreference('meta_opengraph_type',''), 32);
-$oneset->help = $this->Lang('meta_opengraph_type_help');
+$oneset->title = $this->Lang('meta_og_type_title');
+$oneset->input = $this->CreateInputText(null, 'meta_og_type', $this->GetPreference('meta_og_type',''), 32);
+$oneset->help = $this->Lang('meta_og_type_help');
 $metadeflts[] = $oneset;
 //ogsite
 $oneset = new stdClass();
-$oneset->title = $this->Lang('meta_opengraph_sitename');
-$oneset->input = $this->CreateInputText(null, 'meta_opengraph_sitename', $this->GetPreference('meta_opengraph_sitename',''), 32);
-$oneset->help = $this->Lang('meta_opengraph_sitename_help');
+$oneset->title = $this->Lang('meta_og_sitename_title');
+$oneset->input = $this->CreateInputText(null, 'meta_og_sitename', $this->GetPreference('meta_og_sitename',''), 32);
+$oneset->help = $this->Lang('meta_og_sitename_help');
 $metadeflts[] = $oneset;
 //ogimage
 $files_list = array('('.$this->Lang('none').')'=>'');
@@ -778,21 +792,21 @@ if ($dp) {
 	closedir($dp);
 }
 $oneset = new stdClass();
-$oneset->title = $this->Lang('meta_opengraph_image');
-$oneset->input = $this->CreateInputDropdown(null, 'meta_opengraph_image', $files_list, null, $this->GetPreference('meta_opengraph_image',''));
-$oneset->help = $this->Lang('meta_opengraph_image_help');
+$oneset->title = $this->Lang('meta_og_image_title');
+$oneset->input = $this->CreateInputDropdown(null, 'meta_og_image', $files_list, null, $this->GetPreference('meta_og_image',''));
+$oneset->help = $this->Lang('meta_og_image_help');
 $metadeflts[] = $oneset;
 //ogadmin
 $oneset = new stdClass();
-$oneset->title = $this->Lang('meta_opengraph_admins');
-$oneset->input = $this->CreateInputText(null, 'meta_opengraph_admins', $this->GetPreference('meta_opengraph_admins',''), 32);
-$oneset->help = $this->Lang('meta_opengraph_admins_help');
+$oneset->title = $this->Lang('meta_og_admins_title');
+$oneset->input = $this->CreateInputText(null, 'meta_og_admins', $this->GetPreference('meta_og_admins',''), 32);
+$oneset->help = $this->Lang('meta_og_admins_help');
 $metadeflts[] = $oneset;
 //ogapp
 $oneset = new stdClass();
-$oneset->title = $this->Lang('meta_opengraph_application');
-$oneset->input = $this->CreateInputText(null, 'meta_opengraph_application', $this->GetPreference('meta_opengraph_application',''), 32);
-$oneset->help = $this->Lang('meta_opengraph_application_help');
+$oneset->title = $this->Lang('meta_og_application_title');
+$oneset->input = $this->CreateInputText(null, 'meta_og_application', $this->GetPreference('meta_og_application',''), 32);
+$oneset->help = $this->Lang('meta_og_application_help');
 $metadeflts[] = $oneset;
 
 /*
@@ -815,15 +829,15 @@ $smarty->assign('metadeflts', $metadeflts);
 
 /* Additional Meta Tags */
 
-$smarty->assign('start_extra_set',$this->CreateFieldsetStart(null, 'additional_meta', $this->Lang('title_additional_meta_tags')));
+$smarty->assign('start_extra_set',$this->CreateFieldsetStart(null, 'meta_additional', $this->Lang('title_meta_additional')));
 
 //extra
 $extraset = array();
 $oneset = new stdClass();
-$oneset->title = $this->Lang('additional_meta_tags_title');
-$oneset->input = $this->CreateTextArea(false, null, $this->GetPreference('additional_meta_tags',''),
-	'additional_meta_tags', '', '', '', '', 60, 5,'','','style="height:10em;"');
-$oneset->help = $this->Lang('additional_meta_tags_help');
+$oneset->title = $this->Lang('meta_additional_title');
+$oneset->input = $this->CreateTextArea(false, null, $this->GetPreference('meta_additional',''),
+	'meta_additional', '', '', '', '', 60, 5,'','','style="height:10em;"');
+$oneset->help = $this->Lang('meta_additional_help');
 $extraset[] = $oneset;
 
 $smarty->assign('extraset', $extraset);
@@ -837,7 +851,7 @@ $smarty->assign('start_ksettings_set',$this->CreateFieldsetStart(null, 'keyword_
 $keyset = array();
 //wordsblock_name
 $oneset = new stdClass();
-$oneset->title = $this->Lang('title_keyword_block');
+$oneset->title = $this->Lang('keyword_block_title');
 $oneset->input = $this->CreateInputText(null, 'keyword_block', $this->GetPreference('keyword_block',''), 60);
 $oneset->help = $this->Lang('keyword_block_help');
 $keyset[] = $oneset;
