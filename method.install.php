@@ -1,7 +1,7 @@
 <?php
 # This file is part of CMS Made Simple module: SEOTools.
 # Copyright (C) 2010-2011 Henning Schaefer <henning.schaefer@gmail.com>
-# Copyright (C) 2014-2015 Tom Phane <tpgww@onepost.net>
+# Copyright (C) 2012-2015 Tom Phane <tpgww@onepost.net>
 # Refer to licence and other details at the top of file SEOTools.module.php
 
 // mysql-specific, but ignored by other database
@@ -67,6 +67,10 @@ $sqlarray = $dict->CreateTableSQL($pre.'module_seotools_meta',$flds,$taboptarray
 $result = ($sqlarray) ? ($dict->ExecuteSQLArray($sqlarray,false) == 2) : false;
 if (!$result)
 	return $this->Lang('install_database_error');
+// as fast as possible
+$sqlarray = $dict->CreateIndexSQL('idx_seogrps', $pre.'module_seotools_meta', 'group_id');
+$dict->ExecuteSQLArray($sqlarray);	
+	
 // table default metadata
 require ('method.setmeta.php'); 
 
