@@ -4,18 +4,24 @@
 # Copyright (C) 2014-2015 Tom Phane <tpgww@onepost.net>
 # Refer to licence and other details at the top of file SEOTools.module.php
 
-// remove the database table
+// remove database tables
 $dict = NewDataDictionary($db);
-$sqlarray = $dict->DropTableSQL(cms_db_prefix().'module_seotools');
+$pre = cms_db_prefix();
+$sqlarray = $dict->DropTableSQL($pre.'module_seotools');
+$dict->ExecuteSQLArray($sqlarray);
+$sqlarray = $dict->DropTableSQL($pre.'module_seotools_group');
+$dict->ExecuteSQLArray($sqlarray);
+$sqlarray = $dict->DropTableSQL($pre.'module_seotools_meta');
 $dict->ExecuteSQLArray($sqlarray);
 
-// remove the permissions
+// remove permissions
 $this->RemovePermission('Edit SEO Settings');
 $this->RemovePermission('Edit page descriptions');
 
 // remove all preferences for this module
 $this->RemovePreference();
 
+// remove event handlers
 $this->RemoveEventHandler('Core','ContentEditPost');
 $this->RemoveEventHandler('Core','ContentDeletePost');
 

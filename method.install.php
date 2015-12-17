@@ -8,8 +8,9 @@
 $taboptarray = array('mysql' => 'ENGINE MyISAM CHARACTER SET utf8 COLLATE utf8_general_ci',
 	'mysqli' => 'ENGINE MyISAM CHARACTER SET utf8 COLLATE utf8_general_ci');
 $dict = NewDataDictionary($db);
+$pre = cms_db_prefix();
 
-// table schema description
+// main table schema
 $flds = "
 content_id I KEY,
 indexable I(1) NOTNULL DEFAULT 1,
@@ -18,17 +19,63 @@ priority I(4),
 ogtype C(32),
 ignored X
 ";
-$sqlarray = $dict->CreateTableSQL(cms_db_prefix().'module_seotools',$flds,$taboptarray);
+$sqlarray = $dict->CreateTableSQL($pre.'module_seotools',$flds,$taboptarray);
 $result = ($sqlarray) ? ($dict->ExecuteSQLArray($sqlarray,false) == 2) : false;
 if (!$result)
 	return $this->Lang('install_database_error');
+
+// meta-groups table schema
+$flds = "
+group_id I(2) AUTO KEY,
+name C(64),
+vieworder I(2),
+active I(1) NOTNULL DEFAULT 1
+";
+$sqlarray = $dict->CreateTableSQL($pre.'module_seotools_group',$flds,$taboptarray);
+$result = ($sqlarray) ? ($dict->ExecuteSQLArray($sqlarray,false) == 2) : false;
+if (!$result)
+	return $this->Lang('install_database_error');
+// add default groups
+$sql = 'INSERT INTO '.$pre.'module_seotools_group (name,vieworder,active) VALUES (?,?,?)';
+$i = 1;
+foreach (array(
+'before'=>1, //1
+'meta_standard'=>1, //2
+'meta_dublincore'=>0, //3
+'meta_opengraph'=>0, //4
+'meta_twitter'=>0, //5
+'meta_googleplus'=>0, //6
+'after'=>1 //7
+) as $name=>$act) {
+	$db->Execute($sql,array($name,$i,$act));
+	$i++;
+}
+
+// meta table schema
+$flds = "
+meta_id I(2) AUTO KEY,
+group_id I(2),
+name C(128),
+value C(255),
+output C(128),
+calc I(1) NOTNULL DEFAULT 0,
+smarty I(1) NOTNULL DEFAULT 0,
+vieworder I(2),
+active I(1) NOTNULL DEFAULT 1
+";
+$sqlarray = $dict->CreateTableSQL($pre.'module_seotools_meta',$flds,$taboptarray);
+$result = ($sqlarray) ? ($dict->ExecuteSQLArray($sqlarray,false) == 2) : false;
+if (!$result)
+	return $this->Lang('install_database_error');
+// add default meta
+require ('method.setmeta.php'); 
 
 // permissions
 $this->CreatePermission('Edit SEO Settings',$this->Lang('perm_editsettings'));
 $this->CreatePermission('Edit page descriptions',$this->Lang('perm_editdescription'));
 
 // preferences
-$this->SetPreference('content_type','html');
+//X$this->SetPreference('content_type','html');
 $this->SetPreference('create_robots',1);
 $this->SetPreference('create_sitemap',1);
 $this->SetPreference('push_sitemap',0);
@@ -55,28 +102,32 @@ $this->SetPreference('keyword_minimum_weight',7);
 $this->SetPreference('keyword_minlength',6);
 $this->SetPreference('keyword_separator',' ');
 $this->SetPreference('keyword_title_weight',6);
-$this->SetPreference('additional_meta_tags','');
-$this->SetPreference('meta_contributor','');
-$this->SetPreference('meta_copyright','(C). All rights reserved.');
-$this->SetPreference('meta_dublincore',0);
-$this->SetPreference('meta_latitude','');
-$this->SetPreference('meta_location','');
-$this->SetPreference('meta_longitude','');
-$this->SetPreference('meta_opengraph_admins','');
-$this->SetPreference('meta_opengraph_application','');
-$this->SetPreference('meta_opengraph',0);
-$this->SetPreference('meta_opengraph_image','');
-$sitename = get_site_preference('sitename','CMSMS Site');
-$this->SetPreference('meta_opengraph_sitename',$sitename);
-$this->SetPreference('meta_opengraph_title','{title}');
-$this->SetPreference('meta_opengraph_type','');
-$this->SetPreference('meta_publisher','');
-$this->SetPreference('meta_region','');
-$this->SetPreference('meta_standard',1);
-$this->SetPreference('meta_title','{title} | {$sitename}');
+
+//X$this->SetPreference('additional_meta_tags','');
+//X$this->SetPreference('meta_contributor','');
+//X$this->SetPreference('meta_copyright','(C). All rights reserved.');
+
+//X$this->SetPreference('meta_dublincore',0);
+//X$this->SetPreference('meta_latitude','');
+//X$this->SetPreference('meta_location','');
+//X$this->SetPreference('meta_longitude','');
+//$this->SetPreference('meta_opengraph_admins','');
+//$this->SetPreference('meta_opengraph_application','');
+
+//X$this->SetPreference('meta_opengraph',0);
+//X$this->SetPreference('meta_opengraph_image','');
+//X$sitename = get_site_preference('sitename','CMSMS Site');
+//X$this->SetPreference('meta_opengraph_sitename',$sitename);
+//X$this->SetPreference('meta_opengraph_title','{title}');
+//X$this->SetPreference('meta_opengraph_type','');
+//X$this->SetPreference('meta_publisher','');
+//X$this->SetPreference('meta_region','');
+//X$this->SetPreference('meta_standard',1);
+//X$this->SetPreference('meta_title','{title} | {$sitename}');
+
 $this->SetPreference('robot_start','');
 $this->SetPreference('robot_end','');
-$this->SetPreference('title','{title} | {$sitename} - {$title_keywords}');
-$this->SetPreference('verification','');
+//Xthis->SetPreference('title','{title} | {$sitename} - {$title_keywords}');
+//x$this->SetPreference('verification','');
 
 ?>
