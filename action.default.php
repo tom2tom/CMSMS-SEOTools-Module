@@ -79,19 +79,19 @@ $rooturl = (empty($_SERVER['HTTPS'])) ? $config['root_url'] : $config['ssl_url']
 // Show base?
 if (empty($params['showbase']) || strcasecmp($params['showbase'],'false') != 0)
 	$out[] = '<base href="'.$rooturl.'/" />';
-/*
-$coord = FALSE; //cahce for first of lat. or long.
 
-$query = 'SELECT * FROM '.$pre.'module_seotools_meta M
+$coord = FALSE; //cache for first of lat. or long.
+
+$query = 'SELECT mname,value,output,calc,smarty FROM '.$pre.'module_seotools_meta M
 LEFT JOIN '.$pre.'module_seotools_group G ON M.group_id = G.group_id
 WHERE G.active=1 AND M.active=1
-ORDER BY G.vieworder M.vieworder';
+ORDER BY G.vieworder,M.vieworder';
+$rows = $db->GetAssoc($query);
 
-$rows = $db->GetArray($query);
-foreach ($rows as &$one) {
+foreach ($rows as $name=>&$one) {
 	$val = $one['value'];
 	if ($one['calc']) {
-		switch ($one['name']) {
+		switch ($name) {
 		 case 'content_type':
 			if (!$val) {
 				$val = strtolower($content->Markup());
@@ -102,33 +102,36 @@ foreach ($rows as &$one) {
 			else {
 				$out[] = '<meta charset="'.$config['default_encoding'].'" />';
 			}
-			break 2;
+			$val = 'UNUSED';
+			break;
 		 case 'indexable':
 			if (!array_key_exists('indexable',$page_row) || $page_row['indexable'] == "1")
 				$out[] = '<meta name="robots" content="index,follow" />';
 			else
 				$out[] = '<meta name="robots" content="noindex" />';
-			break 2;
+			$val = 'UNUSED';
+			break;
 		 case 'title':
 			if (!$val) {
 				$val = '{title} | {$sitename} - {seo_keywords}';
 			}
 			$val = str_replace(array('{title}','{seo_keywords}'),array($page_name,$title_keywords),$val);
-		 case 'meta_title':
+			break;
+		 case 'meta_std_title':
 			if (!$val) {
 				$val = '{title} | {$sitename}';
 			}
 			$val = str_replace(array('{title}','{seo_keywords}'),array($page_name,$title_keywords),$val);
 			break;
-		 case 'meta_description':
+		 case 'meta_std_description':
 			$val = $description;
 			break;
-		 case 'meta_keywords':
+		 case 'meta_std_keywords':
 			if ($merged) {
 				$val = implode($sep, $merged);
 			}
 			break;
-		 case 'meta_latitude':
+		 case 'meta_std_latitude':
 			if ($val && strpos($val,',') !== false) {
 				$val = str_replace(',','.',$val);
 			}
@@ -139,8 +142,9 @@ foreach ($rows as &$one) {
 			elseif ($val && ($coord === false)) {
 				$coord = $val;
 			}
-			break 2;
-		 case 'meta_longitude':
+			$val = 'UNUSED';
+			break;
+		 case 'meta_std_longitude':
 			if ($val && strpos($val,',') !== false) {
 				$val = str_replace(',','.',$val);
 			}
@@ -151,214 +155,79 @@ foreach ($rows as &$one) {
 			elseif ($val && ($coord === false)) {
 				$coord = $val;
 			}
-			break 2;
-		 case 'meta_date':
+			$val = 'UNUSED';
+			break;
+		 case 'meta_std_date':
 			$val = date('Y-m-d\TH:i:sP',$content->GetCreationDate());
 			break;
-		 case 'meta_lastdate':
-		 case 'meta_revised':
+		 case 'meta_std_lastdate':
+		 case 'meta_std_revised':
 			$val = $page_mdate;
 			break;
-		 case 'meta_dublin':
-			$meta_title = (!empty($rows['meta_title'])) ? $rows['meta_title']['value'] : ''; //TODO find it properly
-			if($meta_title) $out[] = '<meta name="title" content="'.$meta_title.'" />';
-			if ($description) $out[] = '<meta name="description" content="'.$description.'" />';
-			if ($merged) $out[] = '<meta name="keywords" content="'.implode($sep, $merged).'" />';
-			$out[] = '<meta name="date" content="'.date('Y-m-d\TH:i:sP',$content->GetCreationDate()).'" />';
-			$out[] = '<meta name="lastupdate" content="'.$page_mdate.'" />';
-			$out[] = '<meta name="revised" content="'.$page_mdate.'" />';
-/ * TODO
-	$pref = $this->GetPreference('meta_publisher','');
-	if ($pref) $out[] = '<meta name="DC.publisher" content="'.$pref.'" />';
-	$pref = $this->GetPreference('meta_contributor','');
-	if ($pref) $out[] = '<meta name="DC.contributor" content="'.$pref.'" />';
-	$lang = str_replace('_','-',get_site_preference('frontendlang','en'));
-	$out[] = '<meta name="DC.language" content="'.$lang.'" scheme="DCTERMS.RFC3066" />';
-	$pref = $this->GetPreference('meta_copyright','');
-	if ($pref) $out[] = '<meta name="DC.rights" content="'.$pref.'" />';
-	if ($meta_title) $out[] = '<meta name="DC.title" content="'.$meta_title.'" />';
-	if ($description) $out[] = '<meta name="DC.description" content="'.$description.'" />';
-	if ($merged) $out[] = '<meta name="DC.subject" content="'.implode($sep, $merged).'" />';
-	$out[] = '<meta name="DC.date" content="'.$page_mdate.'" scheme="DCTERMS.W3CDTF" />';
-	$out[] = '<meta name="DC.identifier" content="'.$page_url.'" scheme="DCTERMS.URI" />';
- * /
-			break 2;
-		 case 'meta_opengraph_url':
+		 case 'meta_dc':
+		 //TODO don't hard-code these, but still suppport shared data ...
+			$out[] = '<meta name="DC.identifier" content="'.$page_url.'" scheme="DCTERMS.URI" />';
+			$val = (!empty($rows['meta_std_title'])) ? $rows['meta_std_title']['value'] : '';
+			if ($val) $out[] = '<meta name="DC.title" content="'.$val.'" />';
+			if ($description) $out[] = '<meta name="DC.description" content="'.$description.'" />';
+			if ($merged) $out[] = '<meta name="DC.subject" content="'.implode($sep, $merged).'" />';
+			$val = (!empty($rows['meta_std_publisher'])) ? $rows['meta_std_publisher']['value'] : '';
+			$out[] = '<meta name="DC.date" content="'.$page_mdate.'" scheme="DCTERMS.W3CDTF" />';
+			if ($val) $out[] = '<meta name="DC.publisher" content="'.$val.'" />';
+			$val = (!empty($rows['meta_std_contributor'])) ? $rows['meta_std_contributor']['value'] : '';
+			if ($val) $out[] = '<meta name="DC.contributor" content="'.$val.'" />';
+			$val = str_replace('_','-',get_site_preference('frontendlang','en'));
+			$out[] = '<meta name="DC.language" content="'.$val.'" scheme="DCTERMS.RFC3066" />';
+			$val = (!empty($rows['meta_std_copyright'])) ? $rows['meta_std_copyright']['value'] : '';
+			if ($val) $out[] = '<meta name="DC.rights" content="'.$val.'" />';
+			$val = 'UNUSED';
+			break;
+		 case 'meta_og_url':
 			 $val = $page_url;
 			 break;
-		 case 'meta_opengraph_title':
+		 case 'meta_og_title':
 			if (!$val) {
 				$val = '{title}';
 			}
 			$val = str_replace('{title}',$page_name,$val);
 			break;
-		 case 'meta_opengraph_type':
+		 case 'meta_og_type':
 			if (!empty($page_row['ogtype'])) {
 				$val = $page_row['ogtype']; //override CHECKME
 			}
 			break;
-		 case 'meta_opengraph_image':
+		//TODO populate these
+		 case 'meta_og_image':
 			break;
 		 case 'meta_gplus_description':
+			$val = $description;
 			break;
 		 case 'meta_gplus_name':
 			break;
 		 case 'meta_twt_description':
+			$val = $description;
 			break;
 		 case 'meta_twt_site':
 			break;
 		 case 'meta_twt_title':
 			break;
-		 case 'meta_additional':
-			//TODO
-			break;
+//		 case 'meta_additional':
+//			break;
 		}
 	}
-	if ($val) {
+	if ($val && $val !== 'UNUSED') {
 		if ($one['smarty']) {
 			$val = $this->ProcessTemplateFromData($val);
 		}
-		if ($one['output']) {
-			$outs[] = sprintf($one['output'], $val);
+		if ($one['output'] && $one['output'] !== 'UNUSED') {
+			$out[] = sprintf($one['output'], $val);
 		}
 		else {
-			$outs[] = $val;
+			$out[] = $val;
 		}
 	}
 }
 unset($one);
-*/
-// Page title
-$pref = $this->GetPreference('title','{title} | {$sitename} - {seo_keywords}');
-$title = str_replace('{title}',$page_name,$pref);
-$title = str_replace('{seo_keywords}',$title_keywords,$title);
-$title = $this->ProcessTemplateFromData($title);
-if ($title) $out[] = '<title>'.$title.'</title>';
-
-// META tags for content type etc.
-$type = $this->GetPreference('content_type','html');
-if ($type == '')
-	$type = strtolower ($content->Markup());
-if ($type)
-	$out[] = '<meta http-equiv="Content-Type" content="text/'.$type.'; charset='.$config['default_encoding'].'" />';
-else
-	$out[] = '<meta charset="'.$config['default_encoding'].'" />';
-
-if (!array_key_exists('indexable',$page_row) || $page_row['indexable'] == "1")
-	$out[] = '<meta name="robots" content="index, follow" />';
-else
-	$out[] = '<meta name="robots" content="noindex" />';
-
-$pref = $this->GetPreference('verification','');
-if ($pref) $out[] = '<meta name="google-site-verification" content="'.$pref.'" />';
-
-$pref = $this->GetPreference('meta_title','{title} | {$sitename}');
-$meta_title = str_replace('{title}',$page_name,$pref);
-$meta_title = str_replace('{seo_keywords}',$title_keywords,$meta_title);
-$meta_title = $this->ProcessTemplateFromData($meta_title);
-
-$lat = $this->GetPreference('meta_latitude','');
-if($lat && strpos($lat,',') !== false) {
-	$lat = str_replace(',','.',$lat);
-}
-$long = $this->GetPreference('meta_longitude','');
-if($long && strpos($long,',') !== false) {
-	$long = str_replace(',','.',$long);
-}
-
-// Standard META tags
-if ($this->GetPreference('meta_standard',0)) {
-	if ($meta_title) $out[] = '<meta name="title" content="'.$meta_title.'" />';
-	if ($description) $out[] = '<meta name="description" content="'.$description.'" />';
-	if ($merged) $out[] = '<meta name="keywords" content="'.implode($sep, $merged).'" />';
-	$out[] = '<meta name="date" content="'.date('Y-m-d\TH:i:sP',$content->GetCreationDate()).'" />';
-	$out[] = '<meta name="lastupdate" content="'.$page_mdate.'" />';
-	$out[] = '<meta name="revised" content="'.$page_mdate.'" />';
-	$pref = $this->GetPreference('meta_publisher','');
-	if ($pref) $out[] = '<meta name="author" content="'.$pref.'" />';
-	$pref = $this->GetPreference('meta_location','');
-	if ($pref) $out[] = '<meta name="geo.placename" content="'.$pref.'" />';
-	$pref = $this->GetPreference('meta_region','');
-	if ($pref) $out[] = '<meta name="geo.region" content="'.$pref.'" />';
-	if (is_numeric($lat) && is_numeric($long)) {
-		$out[] = '<meta name="geo.position" content="'.$lat.';'.$long.'" />';
-		$out[] = '<meta name="ICBM" content="'.$lat.', '.$long.'" />';
-	}
-}
-
-// DublinCore META tags
-if ($this->GetPreference('meta_dublincore',0)) {
-	$out[] = '<link rel="schema.DC" href="http://purl.org/dc/elements/1.1/" />';
-	$out[] = '<link rel="schema.DCTERMS" href="http://purl.org/dc/terms/" />';
-	$out[] = '<meta name="DC.type" content="Text" scheme="DCTERMS.DCMIType" />';
-	$out[] = '<meta name="DC.format" content="text/html" scheme="DCTERMS.IMT" />';
-	$out[] = '<meta name="DC.relation" content="http://dublincore.org/" scheme="DCTERMS.URI" />';
-	$pref = $this->GetPreference('meta_publisher','');
-	if ($pref) $out[] = '<meta name="DC.publisher" content="'.$pref.'" />';
-	$pref = $this->GetPreference('meta_contributor','');
-	if ($pref) $out[] = '<meta name="DC.contributor" content="'.$pref.'" />';
-	$lang = str_replace('_','-',get_site_preference('frontendlang','en'));
-	$out[] = '<meta name="DC.language" content="'.$lang.'" scheme="DCTERMS.RFC3066" />';
-	$pref = $this->GetPreference('meta_copyright','');
-	if ($pref) $out[] = '<meta name="DC.rights" content="'.$pref.'" />';
-	if ($meta_title) $out[] = '<meta name="DC.title" content="'.$meta_title.'" />';
-	if ($description) $out[] = '<meta name="DC.description" content="'.$description.'" />';
-	if ($merged) $out[] = '<meta name="DC.subject" content="'.implode($sep, $merged).'" />';
-	$out[] = '<meta name="DC.date" content="'.$page_mdate.'" scheme="DCTERMS.W3CDTF" />';
-	$out[] = '<meta name="DC.identifier" content="'.$page_url.'" scheme="DCTERMS.URI" />';
-}
-
-// OpenGraph META tags
-if ($this->GetPreference('meta_opengraph',0)) {
-	$pref = $this->GetPreference('meta_opengraph_title','{title}');
-	$opengraph_title = str_replace('{title}',$page_name,$pref);
-	$opengraph_title = $this->ProcessTemplateFromData($opengraph_title);
-	if ($opengraph_title) $out[] = '<meta property="og:title" content="'.$opengraph_title.'" />';
-	if (!empty($page_row['ogtype'])) {
-		$out[] = '<meta property="og:type" content="'.$page_row['ogtype'].'" />';
-	}
-	else {
-		$pref = $this->GetPreference('meta_opengraph_type','');
-		if ($pref) $out[] = '<meta property="og:type" content="'.$pref.'" />';
-	}
-	$out[] = '<meta property="og:url" content="'.$page_url.'" />';
-
-	if ($page_image) {
-		$image = $page_image;
-	}
-	else {
-		$image = $this->GetPreference('meta_opengraph_image','');
-	}
-	if ($image) {
-		$out[] = '<meta property="og:image" content="'.$root_url.'/uploads/images/'.$image.'" />';
-	}
-	$defname = get_site_preference('sitename','CMSMS Site');
-	$out[] = '<meta property="og:site_name" content="'.$this->GetPreference('meta_opengraph_sitename',$defname).'" />';
-	if ($description) $out[] = '<meta property="og:description" content="'.$description.'" />';
-	$pref = $this->GetPreference('meta_opengraph_application','');
-	if ($pref) {
-		$out[] = '<meta property="fb:app_id" content="'.$pref.'" />';
-	}
-	else {
-		$pref = $this->GetPreference('meta_opengraph_admins','');
-		if ($pref) $out[] = '<meta property="fb:admins" content="'.$pref.'" />';
-	}
-	$pref = $this->GetPreference('meta_location','');
-	if ($pref) $out[] = '<meta property="og:locality" content="'.$pref.'" />';
-	$pref = $this->GetPreference('meta_region','');
-	if ($pref) $out[] = '<meta property="og:region" content="'.$pref.'" />';
-	$pref = $this->GetPreference('meta_latitude','');
-	$long = $this->GetPreference('meta_longitude','');
-	if (is_numeric($lat) && is_numeric($long)) {
-		$out[] = '<meta property="og:latitude" content="'.$lat.'" />';
-		$out[] = '<meta property="og:longitude" content="'.$long.'" />';
-	}
-}
-
-$pref = $this->GetPreference('additional_meta_tags','');
-if ($pref) {
-	$out[] = $this->ProcessTemplateFromData($pref);
-}
 
 // Image-Link
 if ($page_image) {
