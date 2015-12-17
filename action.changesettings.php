@@ -54,56 +54,59 @@ if (isset($_POST['do_regenerate'])) {
 $pre = cms_db_prefix();
 
 if (isset($_POST['save_meta_settings'])) {
-	$this->SetPreference('meta_standard',$_POST['meta_standard']);
-	$this->SetPreference('meta_dublincore',$_POST['meta_dublincore']);
-	$this->SetPreference('meta_opengraph',$_POST['meta_opengraph']);
-	$this->SetPreference('additional_meta_tags',$_POST['additional_meta_tags']);
+	// These are irrelevant here
+	unset($_POST['save_meta_settings']);
+	unset($_POST['mact']);
+	unset($_POST[$this->secstr]);
 
-	$this->SetPreference('meta_publisher',$_POST['meta_publisher']);
-	$this->SetPreference('meta_contributor',$_POST['meta_contributor']);
-	$this->SetPreference('meta_copyright',$_POST['meta_copyright']);
-
-	$this->SetPreference('meta_location',$_POST['meta_location']);
-	$this->SetPreference('meta_region',$_POST['meta_region']);
-	$this->SetPreference('meta_latitude',$_POST['meta_latitude']);
-	$this->SetPreference('meta_longitude',$_POST['meta_longitude']);
-
-	$this->SetPreference('meta_opengraph_title',$_POST['meta_opengraph_title']);
-	$this->SetPreference('meta_opengraph_type',$_POST['meta_opengraph_type']);
-	$this->SetPreference('meta_opengraph_sitename',$_POST['meta_opengraph_sitename']);
-	$this->SetPreference('meta_opengraph_image',$_POST['meta_opengraph_image']);
-	$this->SetPreference('meta_opengraph_admins',$_POST['meta_opengraph_admins']);
-	$this->SetPreference('meta_opengraph_application',$_POST['meta_opengraph_application']);
-
-	$this->SetPreference('content_type',$_POST['content_type']);
-	$this->SetPreference('title',$_POST['title']);
-	$this->SetPreference('meta_title',$_POST['meta_title']);
-
-	$val = $this->GetPreference('description_block','');
-	$new = $_POST['description_block'];
-	if ($new && $new != $val) {
-		$new = str_replace(' ','_',$new);
-		$rst = $db->Execute('SELECT content_id FROM '.$pre.'content_props WHERE prop_name=?',
-			array($new));
-		if ($rst && !$rst->EOF) {
-			//TODO warn user about no change
-		}
-		else {
-			$old = str_replace(' ','_',$val);
-			// conform tabled properties
-			$db->Execute('UPDATE '.$pre.'content_props SET prop_name=? WHERE prop_name=?',
-				array($new,$old));
-			$this->SetPreference('description_block',$_POST['description_block']);
-			//TODO warn user about conforming block-name in all templates and pages
-		}
-		if ($rst) $rst->Close(); 
+	// Update active groups
+	$pre = cms_db_prefix();
+	$query = 'SELECT gname FROM '.$pre.'module_seotools_group WHERE gname != \'before\' AND gname != \'after\'';
+	$groups = $db->GetCol($query);
+	$query = 'UPDATE '.$pre.'module_seotools_group SET active=? WHERE gname=?';
+	foreach ($groups as $name) {
+		$val = !empty($_POST[$name]) ? 1 : 0;
+		$db->Execute($query, array($val,$name));
+		unset($_POST[$name]);
 	}
-	$this->SetPreference('description_auto_generate',$_POST['description_auto_generate']);
-	$this->SetPreference('description_auto',$_POST['description_auto']);
+
+	$args = array('message'=>'settings_updated','tab'=>'metasettings');
+
+	// Update metadata
+	$query = 'UPDATE '.$pre.'module_seotools_meta SET value=?,active=? WHERE mname=?';
+	$foreach($_POST as $name=>$val) {
+		switch ($name) {
+		 case 'description_block':
+			$old = $this->GetPreference('description_block','');
+			if ($val && $val != $old) {
+				$val = str_replace(' ','_',$val);
+				$rst = $db->Execute('SELECT content_id FROM '.$pre.'content_props WHERE prop_name=?',
+					array($val));
+				if ($rst && !$rst->EOF) {
+					$args['message'] = 'TODO'; //lang key to warn user about no change
+					$args['warning'] = 1;
+				}
+				else {
+					$old = str_replace(' ','_',$old);
+					// conform tabled properties
+					$db->Execute('UPDATE '.$pre.'content_props SET prop_name=? WHERE prop_name=?',
+						array($val,$old));
+					$this->SetPreference('description_block',$_POST['description_block']);
+					$args['message'] = 'TODO'; //TODO lang key to tell user about conforming block-name in all templates and pages
+				}
+				if ($rst) $rst->Close(); 
+			}
+			break;
+		 default:
+			//TODO manage injection-risk here
+			//TODO handle runtime booleans for [in]active
+		 	$db->Execute($query,array($val,1,$mname));
+			break;
+		}
+	}
 
 	$this->Audit(0, $this->Lang('friendlyname'), 'Edited META settings');
-	//TODO see comments above about warning(s)
-	$this->Redirect($id, 'defaultadmin', '', array('message'=>'settings_updated','tab'=>'metasettings'));
+	$this->Redirect($id, 'defaultadmin', '', $args);
 }
 
 if (isset($_POST['save_sitemap_settings'])) {
@@ -124,6 +127,9 @@ if (isset($_POST['save_sitemap_settings'])) {
 }
 
 if (isset($_POST['save_keyword_settings'])) {
+
+	$args = array('message'=>'settings_updated','tab'=>'keywordsettings');
+
 	$val = $this->GetPreference('keyword_block','');
 	$new = $_POST['keyword_block'];
 	if ($new && $new != $val) {
@@ -131,7 +137,8 @@ if (isset($_POST['save_keyword_settings'])) {
 		$rst = $db->Execute('SELECT content_id FROM '.$pre.'content_props WHERE prop_name=?',
 			array($new));
 		if ($rst && !$rst->EOF) {
-			//TODO warn user about duplication, no change
+			$args['message'] = 'TODO'; //lang key to warn user about no change
+			$args['warning'] = 1;
 		}
 		else {
 			$old = str_replace(' ','_',$val);
@@ -139,7 +146,7 @@ if (isset($_POST['save_keyword_settings'])) {
 			$db->Execute('UPDATE '.$pre.'content_props SET prop_name=? WHERE prop_name=?',
 				array($new,$old));
 			$this->SetPreference('keyword_block',$_POST['keyword_block']);
-			//TODO warn user about conforming block-name in all templates and pages
+			$args['message'] = 'TODO'; //lang key to tell user about conforming block-name in all templates and pages
 			$old = $new; //maybe needed for separator-updates
 		}
 		if ($rst) $rst->Close(); 
@@ -193,8 +200,7 @@ if (isset($_POST['save_keyword_settings'])) {
 	}
 
 	$this->Audit(0, $this->Lang('friendlyname'), 'Edited keyword settings');
-	//TODO see comments above about warning(s)
-	$this->Redirect($id, 'defaultadmin', '', array('message'=>'settings_updated','tab'=>'keywordsettings'));
+	$this->Redirect($id, 'defaultadmin', '', $args);
 }
 
 ?>
