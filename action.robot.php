@@ -25,7 +25,7 @@ if (isset($_POST['newrobotfile'])) {
 		array('warning'=>1,'message'=>'robots_not_writeable','tab'=>'sitemapsettings'));
 	}
 	// Recreate
-	$funcs = new SEO_file();
+	$funcs = new SEO_robot();
 	if (!$funcs->createRobotsTXT($this)) {
 		$this->Redirect($id, 'defaultadmin', '',
 		array('warning'=>1,'message'=>'error','tab'=>'sitemapsettings'));
