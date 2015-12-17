@@ -208,7 +208,7 @@ $lang['upgraded'] = 'Module upgraded to version %s.';
 $lang['use_standard_meta'] = 'You should always enable the standard Meta generator';
 $lang['use_standard_or_dublincore_meta'] = 'Use at least one of the standard or Dublin Core Meta Tag generators';
 
-$lang['verification_help'] = 'The code you obtain from Google Webmaster Tools, just the hash, not the complete meta tag';
+$lang['verification_help'] = 'Code obtained from Google Webmaster Tools, just the hash, not the complete meta tag';
 $lang['verification_title'] = 'Google site-verification code';
 $lang['view_all'] = 'View all';
 $lang['visit_settings'] = 'Change settings';
