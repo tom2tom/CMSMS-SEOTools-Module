@@ -11,7 +11,7 @@ class SEO_populator
 /*
 	public function GetNotificationOutput(&$mod, $priority = 2)
 	{
-		$alerts = getUrgentAlerts($mod,TRUE,TRUE);
+		$alerts = getUrgentAlerts($mod,true,true);
 		if ($alerts) {
 			$obj = new StdClass;
 			$obj->priority = $priority;

@@ -31,7 +31,7 @@ class SEOTools extends CMSModule
 		parent::__construct();
 		$this->before20 = (version_compare($CMS_VERSION,'2.0') < 0);
 		$this->secstr = constant('CMS_SECURE_PARAM_NAME');
-		$this->RegisterModulePlugin(TRUE);
+		$this->RegisterModulePlugin(true);
 	}
 
 	function GetName()
@@ -72,7 +72,7 @@ class SEOTools extends CMSModule
 
 	function IsPluginModule()
 	{
-		return TRUE;
+		return true;
 	}
 
 	//CMSMS 1.11+
@@ -83,7 +83,7 @@ class SEOTools extends CMSModule
 
 	function HasAdmin()
 	{
-		return TRUE;
+		return true;
 	}
 
 	function GetAdminSection()
