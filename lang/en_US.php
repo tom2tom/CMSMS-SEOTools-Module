@@ -29,8 +29,6 @@ $lang['custom_before_title'] = 'Optional extra content to insert near the start 
 
 $lang['decrease_priority'] = 'Decrease priority by 10%';
 $lang['default'] = 'default';
-$lang['default_keywords_help'] = 'Word(s) (and/or group(s) of words, if the separator is not a space) to apply to every page';
-$lang['default_keywords_title'] = 'Always include these keywords';
 $lang['description'] = 'Description';
 $lang['description_auto_generate_title'] = 'Automatically generate a page description where none is provided';
 $lang['description_auto_help'] = 'The <code>{keywords}</code> tag <strong>must</strong> be included here';
@@ -75,6 +73,8 @@ $lang['keyword_block_help'] = 'The name of each page\'s keywords content-block. 
 $lang['keyword_block_title'] = 'Name of keywords content-block';
 $lang['keyword_content_weight_help'] = 'The weight of words inside the plain content. The higher a word\'s weight, the more likely it is to become a keyword';
 $lang['keyword_content_weight_title'] = 'Weight of words in plain content';
+$lang['keyword_default_help'] = 'Word(s) (and/or group(s) of words, if the separator is not a space) to apply to every page';
+$lang['keyword_default_title'] = 'Always include these keywords';
 $lang['keyword_description_weight_help'] = 'The weight of words in the page description. The higher a word\'s weight, the more likely it is to become a keyword';
 $lang['keyword_description_weight_title'] = 'Weight of words in the page description';
 $lang['keyword_exclude_help'] = 'Words (and/or group(s) of words, if the separator is not a space) to exclude from the keywords for every page';

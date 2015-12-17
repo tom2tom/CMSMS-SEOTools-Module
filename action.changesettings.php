@@ -161,13 +161,11 @@ if (isset($_POST['save_keyword_settings'])) {
 	$this->SetPreference('keyword_content_weight',$_POST['keyword_content_weight']);
 	$this->SetPreference('keyword_minimum_weight',$_POST['keyword_minimum_weight']);
 
-	$val = $this->GetPreference('keyword_separator',' ');
+	$val = $this->GetPreference('keyword_separator',',');
 	$new = $_POST['keyword_separator'];
 	if ($new && $new != $val) {
-		$words = explode($val,$_POST['default_keywords']);
-		$this->SetPreference('default_keywords',implode($new,$words));
-		$words = explode($val,$_POST['keyword_exclude']);
-		$this->SetPreference('keyword_exclude',implode($new,$words));
+		$this->SetPreference('keyword_default',str_replace($val,$new,$_POST['keyword_default']));
+		$this->SetPreference('keyword_exclude',str_replace($val,$new,$_POST['keyword_exclude']));
 		// Replace sep in all tabled keyword fields
 		$rst = $db->Execute('SELECT content_id,keywords FROM '.$pre.
 			'module_seotools WHERE keywords IS NOT null AND keywords!=""');
@@ -195,7 +193,7 @@ if (isset($_POST['save_keyword_settings'])) {
 		$this->SetPreference('keyword_separator',$_POST['keyword_separator']);
 	}
 	else {
-		$this->SetPreference('default_keywords',$_POST['default_keywords']);
+		$this->SetPreference('keyword_default',$_POST['keyword_default']);
 		$this->SetPreference('keyword_exclude',$_POST['keyword_exclude']);
 	}
 

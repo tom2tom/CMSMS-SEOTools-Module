@@ -904,10 +904,10 @@ $smarty->assign('start_klist_set',$this->CreateFieldsetStart(null, 'keyword_excl
 $listset = array();
 //incl_words
 $oneset = new stdClass();
-$oneset->title = $this->Lang('default_keywords_title');
-$oneset->input = $this->CreateTextArea(false, null, $this->GetPreference('default_keywords',''),
-	'default_keywords', '', '', '', '', 60, 5,'','','style="height:5em;"');
-$oneset->help = $this->Lang('default_keywords_help');
+$oneset->title = $this->Lang('keyword_default_title');
+$oneset->input = $this->CreateTextArea(false, null, $this->GetPreference('keyword_default',''),
+	'keyword_default', '', '', '', '', 60, 5, '' ,'', 'style="height:5em;"');
+$oneset->help = $this->Lang('keyword_default_help');
 $listset[] = $oneset;
 //excl_words
 $oneset = new stdClass();

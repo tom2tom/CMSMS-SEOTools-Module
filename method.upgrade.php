@@ -82,6 +82,10 @@ EOS;
 		$this->SetPreference('keyword_exclude',$words);
 
 	case "1.6":
+		// renamed pref
+		$val = $this->GetPreference('default_keywords','');
+		$this->SetPreference('keyword_default',$val);
+		$this->RemovePreference('default_keywords');
 		// meta-groups table schema
 		$flds = "
 group_id I(2) AUTO KEY,

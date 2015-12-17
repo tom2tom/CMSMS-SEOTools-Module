@@ -82,12 +82,12 @@ $this->CreatePermission('Edit page descriptions',$this->Lang('perm_editdescripti
 $this->SetPreference('create_robots',1);
 $this->SetPreference('create_sitemap',1);
 $this->SetPreference('push_sitemap',0);
-$this->SetPreference('default_keywords','');
 $this->SetPreference('description_auto','This page covers the topics {keywords}');
 $this->SetPreference('description_auto_generate',0);
 $this->SetPreference('description_block','metadescription');
 $this->SetPreference('keyword_block','metakeywords');
 $this->SetPreference('keyword_content_weight',1);
+$this->SetPreference('keyword_default','');
 $this->SetPreference('keyword_description_weight',4);
 $words = <<< EOS
 i,me,my,myself,we,our,ours,ourselves,you,your,yours,yourself,yourselves,

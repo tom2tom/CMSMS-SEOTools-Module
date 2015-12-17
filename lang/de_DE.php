@@ -29,8 +29,6 @@ $lang['custom_before_title'] = 'Optional extra content to insert near the start 
 
 $lang['decrease_priority'] = 'Priorität um 10% verringern';
 $lang['default'] = 'default';
-$lang['default_keywords_help'] = 'Word(s) (and/or group(s) of words, if the separator is not a space) to apply to every page';
-$lang['default_keywords_title'] = 'Always include these keywords';
 $lang['description'] = 'Beschreibung';
 $lang['description_auto_generate_title'] = 'Eine automatische Seitenbeschreibung erzeugen wo keine vorgegeben ist';
 $lang['description_auto_help'] = 'Sie <b>m&uuml;ssen</b> das {keywords}-Tag hier verwenden, optional ist das {title}-Tag';
@@ -75,6 +73,8 @@ $lang['keyword_block_title'] = 'Name of keywords content-block';
 $lang['keyword_content_weight_help'] = 'Das Gewicht der Worte innerhalb des reinen Inhalts. Je h&ouml;her das Gewicht eines Wortes, desto h&uml;her die Wahrscheinlichkeit, da&szlig; es zum Keyword wird';
 $lang['keyword_content_weight_title'] = 'Gewicht von Worten im reinen Inhalt';
 $lang['keyword_description_weight_help'] = 'Das Gewicht der Worte in der Seitenbeschreibung. Je h&ouml;her das Gewicht eines Wortes, desto h&uml;her die Wahrscheinlichkeit, da&szlig; es zum Keyword wird';
+$lang['keyword_default_help'] = 'Word(s) (and/or group(s) of words, if the separator is not a space) to apply to every page';
+$lang['keyword_default_title'] = 'Always include these keywords';
 $lang['keyword_description_weight_title'] = 'Gewicht der Worte in der Seitenbeschreibung';
 $lang['keyword_exclude_help'] = 'Geben Sie eine Leerzeichen-getrennte Liste von Worten an, die nie in den Keyword-Listen auftauchen sollten';
 $lang['keyword_exclude_title'] = 'Worte, die nie als Keyword in Frage kommen';

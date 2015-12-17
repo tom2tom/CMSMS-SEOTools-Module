@@ -32,7 +32,7 @@ $pre = cms_db_prefix();
 // Keyword generator
 
 $sep = $this->GetPreference('keyword_separator',' ');
-$pref = $this->GetPreference('default_keywords','');
+$pref = $this->GetPreference('keyword_default','');
 $smarty->assign('default_keywords',$pref);
 
 $keywords = explode($sep,$pref);
