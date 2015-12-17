@@ -11,7 +11,7 @@ class SEO_robot
 	@mod: reference to SEOTools module object
 	Returns: boolean T/F indicating success
 	*/
-	public function createRobotsTXT($mod)
+	public function createRobotsTXT(&$mod)
 	{
 		// Get robots file in root directory (whereever that actually is)
 		$offs = strpos(__FILE__,'modules'.DIRECTORY_SEPARATOR.$mod->GetName());
