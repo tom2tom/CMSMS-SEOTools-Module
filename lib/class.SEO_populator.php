@@ -1,7 +1,7 @@
 <?php
 # This file is part of CMS Made Simple module: SEOTools.
 # Copyright (C) 2010-2011 Henning Schaefer <henning.schaefer@gmail.com>
-# Copyright (C) 2014-2015 Tom Phane <tpgww@onepost.net>
+# Copyright (C) 2012-2015 Tom Phane <tpgww@onepost.net>
 # Refer to licence and other details at the top of file SEOTools.module.php
 
 class SEO_populator
@@ -12,8 +12,7 @@ class SEO_populator
 	public function GetNotificationOutput(&$mod, $priority = 2)
 	{
 		$alerts = getUrgentAlerts($mod,TRUE,TRUE);
-		if ($alerts)
-		{
+		if ($alerts) {
 			$obj = new StdClass;
 			$obj->priority = $priority;
 			$obj->html = $mod->Lang('problem_alert',$mod->CreateLink(null, 'defaultadmin', '', $mod->Lang('problem_link_title')));
@@ -52,21 +51,22 @@ class SEO_populator
 
 	public function getUrgentAlerts(&$mod, $omit_inactive = false, $omit_ignored = false)
 	{
-		$gCms = cmsms(); //CMSMS 1.8+
 		$alerts = array();
-		// No Meta tags are inserted
-		if (!($mod->GetPreference('meta_standard',0) || $mod->GetPreference('meta_dublincore',0)))
-		{
+		$gCms = cmsms(); //CMSMS 1.8+
+		$db = $gCms->GetDb();
+		$pre = cms_db_prefix();
+		$groups = $db->GetArray('SELECT * FROM '.$pre.'module_seotools_group WHERE gname != \'before\' AND gname != \'after\' AND active=1');
+		$meta = $db->GetAssoc('SELECT mname,value FROM '.$pre.'module_seotools_meta WHERE active=1');
+
+		// No Meta tags are used
+		if (!$groups) {
 			$alert = array();
 			$alert['group'] = 'settings';
-			$alert['message'] = $mod->Lang('use_standard_or_dublincore_meta');
+			$alert['message'] = $mod->Lang('use_standard_or_dublincore_meta'); //TODO generalise
 			$alert['links'][] = self::getSeeLink($mod,4,$mod->Lang('visit_settings'));
 			$alerts[] = $alert;
 		}
-		$db = $gCms->GetDb();
-		$pre = cms_db_prefix();
-		if (!$mod->GetPreference('description_auto_generate',0))
-		{
+		if (!$mod->GetPreference('description_auto_generate',0)) {
 			$pref = $mod->GetPreference('description_block','');
 			if ($pref) {
 				// Content pages without description
@@ -93,7 +93,7 @@ class SEO_populator
 							$alert['group'] = 'pages';
 							$alert['active'] = $problem['active'];
 							$alert['pages'] = array($problem['content_name']);
-							$alert['message'] = $mod->Lang('meta_description_missing');
+							$alert['message'] = $mod->Lang('description_missing');
 							$alert['ignored'] = $problem['ignored'];
 							$alert['links_data'][$problem['content_id']] = array($problem['content_name'],$code);
 							$alerts[] = $alert;
@@ -146,9 +146,9 @@ class SEO_populator
 			}
 		}
 
-		if ($mod->GetPreference('meta_opengraph',0)) {
+		if (in_array('meta_og',$groups)) {
 			// No OpenGraph admin set
-			if (($mod->GetPreference('meta_opengraph_admins','') == '') && ($mod->GetPreference('meta_opengraph_application','') == '')) {
+			if (empty($meta['meta_og_admins']) && empty($meta['meta_og_application'])) {
 				$alert = array();
 				$alert['group'] = 'opengraph';
 				$alert['message'] = $mod->Lang('no_opengraph_admins');
@@ -156,7 +156,7 @@ class SEO_populator
 				$alerts[] = $alert;
 			}
 			// No OpenGraph page type set
-			if ($mod->GetPreference('meta_opengraph_type','') == '') {
+			if (empty($meta['meta_og_type'])) {
 				$alert = array();
 				$alert['group'] = 'opengraph';
 				$alert['message'] = $mod->Lang('no_opengraph_type');
@@ -164,7 +164,7 @@ class SEO_populator
 				$alerts[] = $alert;
 			}
 			// No OpenGraph sitename set
-			if ($mod->GetPreference('meta_opengraph_sitename','') == '') {
+			if (empty($meta['meta_og_sitename'])) {
 				$alert = array();
 				$alert['group'] = 'opengraph';
 				$alert['message'] = $mod->Lang('no_opengraph_sitename');
@@ -172,13 +172,14 @@ class SEO_populator
 				$alerts[] = $alert;
 			}
 			// No OpenGraph image set
-			if ($mod->GetPreference('meta_opengraph_image','') == '') {
+			if (empty($meta['meta_og_image'])) {
 				$alert = array();
 				$alert['group'] = 'opengraph';
 				$alert['message'] = $mod->Lang('no_opengraph_image');
 				$alert['links'][] = self::getSeeLink($mod,4,$mod->Lang('visit_settings'));
 				$alerts[] = $alert;
 			}
+			//TODO checks for twitter, google tags
 		}
 		return $alerts;
 	}
@@ -240,7 +241,7 @@ class SEO_populator
 					$alert['group'] = 'descriptions';
 					$alert['active'] = $problem['active'];
 					$alert['pages'] = array($problem['content_name']);
-					$alert['message'] = $mod->Lang('meta_description_short');
+					$alert['message'] = $mod->Lang('description_short');
 					$alert['ignored'] = $problem['ignored'];
 					$alert['links_data'][$problem['content_id']] = array($problem['content_name'],$code);
 					$alerts[] = $alert;
@@ -325,7 +326,8 @@ WHERE(p1.prop_name = ? AND p1.content_id < p2.content_id  AND p1.content != ? AN
 			$rst->Close();
 		}
 		// No author provided
-		if ($mod->GetPreference('meta_publisher','') == '') {
+		$meta = $db->GetAssoc('SELECT mname,value FROM '.$pre.'module_seotools_meta WHERE active=1');
+		if (array_key_exists('meta_std_publisher',$meta) && !$meta['meta_std_publisher']) {
 			$alert = array();
 			$alert['group'] = 'settings';
 			$alert['message'] = $mod->Lang('provide_an_author');
@@ -343,8 +345,8 @@ WHERE(p1.prop_name = ? AND p1.content_id < p2.content_id  AND p1.content != ? AN
 	public function getNoticeAlerts(&$mod)
 	{
 		$alerts = array();
-		// No standard meta
-		if (!$mod->GetPreference('meta_standard',0)) {
+		// No standard metadata
+		if (!$db->GetOne('SELECT 1 FROM '.$pre.'module_seotools_group WHERE gname=\'meta_std\' AND active=1')) {
 			$alert = array();
 			$alert['message'] = $mod->Lang('use_standard_meta');
 			$alert['links'][] = self::getTabLink(4,$mod->Lang('visit_settings'));
