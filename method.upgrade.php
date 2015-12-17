@@ -93,7 +93,7 @@ active I(1) NOTNULL DEFAULT 1
 		$result = ($sqlarray) ? ($dict->ExecuteSQLArray($sqlarray,false) == 2) : false;
 		if (!$result) return false;
 		// add default groups
-		$sql = 'INSERT INTO '.$pre.'module_seotools_group (name,vieworder,active) VALUES (?,?,?)';
+		$sql = 'INSERT INTO '.$pre.'module_seotools_group (gname,vieworder,active) VALUES (?,?,?)';
 		$i = 1;
 		foreach (array(
 			'before'=>1, //1
