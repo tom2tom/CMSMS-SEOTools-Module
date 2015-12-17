@@ -12,7 +12,7 @@ class SEO_sitemap
 	@push: optional boolean, whether to force a push to searchers, default false
 	If @push is false, the module's 'push_sitemap' preference will
 	 determine whether to push.
-	If robots file exists already, it must be writbable.
+	If robots.txt file exists already, it must be writable.
 	Returns: boolean T/F indicating success
 	*/
 	public function createSitemap($mod, $push = false) {
