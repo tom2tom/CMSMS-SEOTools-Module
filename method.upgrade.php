@@ -122,6 +122,10 @@ active I(1) NOTNULL DEFAULT 1
 		$sqlarray = $dict->CreateTableSQL($pre.'module_seotools_meta',$flds,$taboptarray);
 		$result = ($sqlarray) ? ($dict->ExecuteSQLArray($sqlarray,false) == 2) : false;
 		if (!$result) return false;
+		// extra index
+		$sqlarray = $dict->CreateIndexSQL('idx_seogrps', $pre.'module_seotools_meta', 'group_id');
+		$dict->ExecuteSQLArray($sqlarray);	
+		
 		// add default meta, and delete redundant prefs
 		require ('method.setmeta.php'); 
 
