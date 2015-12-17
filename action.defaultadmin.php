@@ -31,11 +31,12 @@ if (isset($_GET['what'])) {
 		$db->Execute($query, array($cid));
 		$db->Execute($query2, array($cid, 1, $cid));
 /* only manual updates
-		$funcs = new SEO_file();
 		if ($this->GetPreference('create_robots',0)) {
+			$funcs = new SEO_robot();
 			$funcs->createRobotsTXT($this);
 		}
 		if ($this->GetPreference('create_sitemap',0)) {
+			$funcs = new SEO_sitemap();
 			$funcs->createSitemap($this);
 		}
 */
@@ -92,7 +93,7 @@ if (isset($_GET['what'])) {
 		$db->Execute($query2, array($cid, $_GET['priority'], $cid));
 /* only manual updates
 		if ($this->GetPreference('create_sitemap',0)) {
-			$funcs = new SEO_file();
+			$funcs = new SEO_sitemap();
 			$funcs->createSitemap($this);
 		}
 */
@@ -102,7 +103,7 @@ if (isset($_GET['what'])) {
 		$db->Execute($query,array($cid));
 /* only manual updates
 		if ($this->GetPreference('create_sitemap',0)) {
-			$funcs = new SEO_file();
+			$funcs = new SEO_sitemap();
 			$funcs->createSitemap($this);
 		}
 */
@@ -607,8 +608,150 @@ $smarty->assign('index',$this->CreateInputSubmit(null, 'index_selected',
 $smarty->assign('unindex',$this->CreateInputSubmit(null, 'unindex_selected',
 	$this->Lang('unindex'),'title="'.$this->Lang('help_unindex').'" onclick="return confirm_click(\'indx\');"'));
 
+$smarty->assign('cancel',$this->CreateInputSubmit(null, 'cancel', $this->Lang('cancel')));
+
 /* SEO Settings Tab */
 
+$smarty->assign('startform_settings',$this->CreateFormStart($id, 'changesettings'));
+
+$ungrouped = array();
+//ctype
+$oneset = new stdClass();
+$oneset->title = $this->Lang('title_type');
+$oneset->input = $this->CreateInputText(null, 'content_type', $this->GetPreference('content_type','html'), 10);
+$oneset->help = $this->Lang('help_content_type');
+$ungrouped[] = $oneset;
+
+$smarty->assign('ungrouped', $ungrouped);
+
+$smarty->assign('start_page_set',$this->CreateFieldsetStart(null, 'title_description', $this->Lang('title_title_description')));
+$pageset = array();
+//ptitle
+$oneset = new stdClass();
+$oneset->title = $this->Lang('title_title');
+$oneset->input = $this->CreateInputText(null, 'title', $this->GetPreference('title','{title} | {$sitename} - {$title_keywords}'), 60);
+$oneset->help = $this->Lang('title_title_help');
+$pageset[] = $oneset;
+//mtitle
+$oneset = new stdClass();
+$oneset->title = $this->Lang('title_meta_title');
+$oneset->input = $this->CreateInputText(null, 'meta_title', $this->GetPreference('meta_title','{title} | {$sitename}'), 60);
+$oneset->help = $this->Lang('title_meta_help');
+$pageset[] = $oneset;
+//blockname
+$oneset = new stdClass();
+$oneset->title = $this->Lang('title_description_block');
+$oneset->input = $this->CreateInputText(null, 'description_block', $this->GetPreference('description_block',''), 60);
+$oneset->help = $this->Lang('description_block_help');
+$pageset[] = $oneset;
+//autodesc
+$oneset = new stdClass();
+$oneset->title = $this->Lang('description_auto_generate');
+$oneset->inline = 1;
+$oneset->input = $this->CreateInputCheckbox(null, 'description_auto_generate', 1, $this->GetPreference('description_auto_generate',0));
+//$oneset->help = ;
+$pageset[] = $oneset;
+//autotext
+$oneset = new stdClass();
+$oneset->title = $this->Lang('description_auto_title');
+$oneset->input = $this->CreateInputText(null, 'description_auto', $this->GetPreference('description_auto','This page covers the topics {keywords}'), 40);
+$oneset->help = $this->Lang('description_auto_help');
+$pageset[] = $oneset;
+
+$smarty->assign('pageset', $pageset);
+
+/* META Types */
+
+$smarty->assign('start_meta_set',$this->CreateFieldsetStart(null, 'meta_type', $this->Lang('title_meta_type')));
+$metatypes = array();
+//meta_stand
+$oneset = new stdClass();
+$oneset->title = $this->Lang('meta_create_standard');
+$oneset->input = $this->CreateInputCheckbox(null, 'meta_standard', 1, $this->GetPreference('meta_standard',0));
+//$oneset->help = ;
+$metatypes[] = $oneset;
+//meta_dublin
+$oneset = new stdClass();
+$oneset->title = $this->Lang('meta_create_dublincore');
+$oneset->input = $this->CreateInputCheckbox(null, 'meta_dublincore', 1, $this->GetPreference('meta_dublincore',0));
+//$oneset->help = ;
+$metatypes[] = $oneset;
+//meta_open
+$oneset = new stdClass();
+$oneset->title = $this->Lang('meta_create_opengraph');
+$oneset->input = $this->CreateInputCheckbox(null, 'meta_opengraph', 1, $this->GetPreference('meta_opengraph',0));
+//$oneset->help = ;
+$metatypes[] = $oneset;
+
+$smarty->assign('metatypes', $metatypes);
+
+/* META Defaults */
+
+$smarty->assign('start_deflt_set',$this->CreateFieldsetStart(null, 'meta_defaults', $this->Lang('title_meta_defaults')));
+$metadeflts = array();
+//publish
+$oneset = new stdClass();
+$oneset->title = $this->Lang('meta_publisher');
+$oneset->input = $this->CreateInputText(null, 'meta_publisher', $this->GetPreference('meta_publisher',''), 32);
+$oneset->help = $this->Lang('meta_publisher_help');
+$metadeflts[] = $oneset;
+//contrib
+$oneset = new stdClass();
+$oneset->title = $this->Lang('meta_contributor');
+$oneset->input = $this->CreateInputText(null, 'meta_contributor', $this->GetPreference('meta_contributor',''), 32);
+$oneset->help = $this->Lang('meta_contributor_help');
+$metadeflts[] = $oneset;
+//copyr
+$oneset = new stdClass();
+$oneset->title = $this->Lang('meta_copyright');
+$oneset->input = $this->CreateInputText(null, 'meta_copyright', $this->GetPreference('meta_copyright','(C) '.date('Y').'. All rights reserved.'), 32);
+$oneset->help = $this->Lang('meta_copyright_help');
+$metadeflts[] = $oneset;
+//location
+$oneset = new stdClass();
+$oneset->head = $this->Lang('meta_location_description');
+$oneset->title = $this->Lang('meta_location');
+$oneset->input = $this->CreateInputText(null, 'meta_location', $this->GetPreference('meta_location',''), 32);
+$oneset->help = $this->Lang('meta_location_help');
+$metadeflts[] = $oneset;
+//region
+$oneset = new stdClass();
+$oneset->title = $this->Lang('meta_region');
+$oneset->input = $this->CreateInputText(null, 'meta_region', $this->GetPreference('meta_region',''), 5);
+$oneset->help = $this->Lang('meta_region_help');
+$metadeflts[] = $oneset;
+//lat
+$oneset = new stdClass();
+$oneset->title = $this->Lang('meta_latitude');
+$oneset->input = $this->CreateInputText(null, 'meta_latitude', $this->GetPreference('meta_latitude',''), 15);
+$oneset->help = $this->Lang('meta_latitude_help');
+$metadeflts[] = $oneset;
+//long
+$oneset = new stdClass();
+$oneset->title = $this->Lang('meta_longitude');
+$oneset->input = $this->CreateInputText(null, 'meta_longitude', $this->GetPreference('meta_longitude',''), 15);
+$oneset->help = $this->Lang('meta_longitude_help');
+$metadeflts[] = $oneset;
+//ogtitle
+$oneset = new stdClass();
+$oneset->head = $this->Lang('meta_opengraph_description');
+$oneset->title = $this->Lang('meta_opengraph_title');
+$oneset->input = $this->CreateInputText(null, 'meta_opengraph_title', $this->GetPreference('meta_opengraph_title','{title}'), 32);
+$oneset->help = $this->Lang('meta_opengraph_title_help');
+$metadeflts[] = $oneset;
+//ogtype
+$oneset = new stdClass();
+$oneset->title = $this->Lang('meta_opengraph_type');
+$oneset->input = $this->CreateInputText(null, 'meta_opengraph_type', $this->GetPreference('meta_opengraph_type',''), 32);
+$oneset->help = $this->Lang('meta_opengraph_type_help');
+$metadeflts[] = $oneset;
+//ogsite
+$oneset = new stdClass();
+$oneset->title = $this->Lang('meta_opengraph_sitename');
+$oneset->input = $this->CreateInputText(null, 'meta_opengraph_sitename', $this->GetPreference('meta_opengraph_sitename',''), 32);
+$oneset->help = $this->Lang('meta_opengraph_sitename_help');
+$metadeflts[] = $oneset;
+//ogimage
 $files_list = array('('.$this->Lang('none').')'=>'');
 // Get image-files in uploads dir (wherever that actually is)
 if(isset($config['image_uploads_path'])) {
@@ -634,114 +777,193 @@ if ($dp) {
 	}
 	closedir($dp);
 }
+$oneset = new stdClass();
+$oneset->title = $this->Lang('meta_opengraph_image');
+$oneset->input = $this->CreateInputDropdown(null, 'meta_opengraph_image', $files_list, null, $this->GetPreference('meta_opengraph_image',''));
+$oneset->help = $this->Lang('meta_opengraph_image_help');
+$metadeflts[] = $oneset;
+//ogadmin
+$oneset = new stdClass();
+$oneset->title = $this->Lang('meta_opengraph_admins');
+$oneset->input = $this->CreateInputText(null, 'meta_opengraph_admins', $this->GetPreference('meta_opengraph_admins',''), 32);
+$oneset->help = $this->Lang('meta_opengraph_admins_help');
+$metadeflts[] = $oneset;
+//ogapp
+$oneset = new stdClass();
+$oneset->title = $this->Lang('meta_opengraph_application');
+$oneset->input = $this->CreateInputText(null, 'meta_opengraph_application', $this->GetPreference('meta_opengraph_application',''), 32);
+$oneset->help = $this->Lang('meta_opengraph_application_help');
+$metadeflts[] = $oneset;
 
-$smarty->assign('cancel',$this->CreateInputSubmit(null, 'cancel', $this->Lang('cancel')));
+/*
+<!-- Schema.org markup for Google+ -->
+<meta itemprop="name" content="The Name or Title Here">
+<meta itemprop="description" content="This is the page description">
+<meta itemprop="image" content="http://www.example.com/image.jpg">
 
-$smarty->assign('startform_settings',$this->CreateFormStart($id, 'changesettings')); //several uses
-/* Page Title */
+<!-- Twitter Card data -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:site" content="@publisher_handle">
+<meta name="twitter:title" content="Page Title">
+<meta name="twitter:description" content="Page description less than 200 characters">
+<meta name="twitter:creator" content="@author_handle">
+<!-- Twitter summary card with large image must be at least 280x150px -->
+<meta name="twitter:image:src" content="http://www.example.com/image.html">
+*/
 
-$smarty->assign('pr_ctype',$this->Lang('title_type'));
-$smarty->assign('in_ctype',$this->CreateInputText(null, 'content_type', $this->GetPreference('content_type','html'), 10)
-	.'<br />'.$this->Lang('help_content_type'));
-$smarty->assign('start_page_set',$this->CreateFieldsetStart(null, 'title_description', $this->Lang('title_title_description')));
-$smarty->assign('pr_ptitle',$this->Lang('title_title'));
-$smarty->assign('in_ptitle',$this->CreateInputText(null, 'title', $this->GetPreference('title','{title} | {$sitename} - {$title_keywords}'), 60)
-	.'<br />'.$this->Lang('title_title_help'));
-$smarty->assign('pr_mtitle',$this->Lang('title_meta_title'));
-$smarty->assign('in_mtitle',$this->CreateInputText(null, 'meta_title', $this->GetPreference('meta_title','{title} | {$sitename}'), 60)
-	.'<br />'.$this->Lang('title_meta_help'));
-$smarty->assign('pr_blockname',$this->Lang('title_description_block'));
-$smarty->assign('in_blockname',$this->CreateInputText(null, 'description_block', $this->GetPreference('description_block',''), 60)
-	.'<br />'.$this->Lang('description_block_help'));
-$smarty->assign('pr_autodesc',$this->Lang('description_auto_generate'));
-$smarty->assign('in_autodesc',$this->CreateInputCheckbox(null, 'description_auto_generate', 1, $this->GetPreference('description_auto_generate',0)));
-$smarty->assign('pr_autotext',$this->Lang('description_auto_title'));
-$smarty->assign('in_autotext',$this->CreateInputText(null, 'description_auto', $this->GetPreference('description_auto','This page covers the topics {keywords}'), 40)
-	.'<br />'.$this->Lang('description_auto_help'));
-/* META Types */
-$smarty->assign('start_meta_set',$this->CreateFieldsetStart(null, 'meta_type', $this->Lang('title_meta_type')));
-$smarty->assign('pr_meta_stand',$this->Lang('meta_create_standard'));
-$smarty->assign('in_meta_stand',$this->CreateInputCheckbox(null, 'meta_standard', 1, $this->GetPreference('meta_standard',0)));
-$smarty->assign('pr_meta_dublin',$this->Lang('meta_create_dublincore'));
-$smarty->assign('in_meta_dublin',$this->CreateInputCheckbox(null, 'meta_dublincore', 1, $this->GetPreference('meta_dublincore',0)));
-$smarty->assign('pr_meta_open',$this->Lang('meta_create_opengraph'));
-$smarty->assign('in_meta_open',$this->CreateInputCheckbox(null, 'meta_opengraph', 1, $this->GetPreference('meta_opengraph',0)));
-/* META Defaults */
-$smarty->assign('start_deflt_set',$this->CreateFieldsetStart(null, 'meta_defaults', $this->Lang('title_meta_defaults')));
-$smarty->assign('pr_publish',$this->Lang('meta_publisher'));
-$smarty->assign('in_publish',$this->CreateInputText(null, 'meta_publisher', $this->GetPreference('meta_publisher',''), 32)
-	.'<br />'.$this->Lang('meta_publisher_help'));
-$smarty->assign('pr_contrib',$this->Lang('meta_contributor'));
-$smarty->assign('in_contrib',$this->CreateInputText(null, 'meta_contributor', $this->GetPreference('meta_contributor',''), 32)
-	.'<br />'.$this->Lang('meta_contributor_help'));
-$smarty->assign('pr_copyr',$this->Lang('meta_copyright'));
-$smarty->assign('in_copyr',$this->CreateInputText(null, 'meta_copyright', $this->GetPreference('meta_copyright','(C) '.date('Y').'. All rights reserved.'), 32)
-	.'<br />'.$this->Lang('meta_copyright_help'));
-$smarty->assign('intro_location',$this->Lang('meta_location_description'));
-$smarty->assign('pr_location',$this->Lang('meta_location'));
-$smarty->assign('in_location',$this->CreateInputText(null, 'meta_location', $this->GetPreference('meta_location',''), 32)
-	.'<br />'.$this->Lang('meta_location_help'));
-$smarty->assign('pr_region',$this->Lang('meta_region'));
-$smarty->assign('in_region',$this->CreateInputText(null, 'meta_region', $this->GetPreference('meta_region',''), 5, 5)
-	.'<br />'.$this->Lang('meta_region_help'));
-$smarty->assign('pr_lat',$this->Lang('meta_latitude'));
-$smarty->assign('in_lat',$this->CreateInputText(null, 'meta_latitude', $this->GetPreference('meta_latitude',''), 15)
-	.'<br />'.$this->Lang('meta_latitude_help'));
-$smarty->assign('pr_long',$this->Lang('meta_longitude'));
-$smarty->assign('in_long',$this->CreateInputText(null, 'meta_longitude', $this->GetPreference('meta_longitude',''), 15)
-	.'<br />'.$this->Lang('meta_longitude_help'));
-$smarty->assign('intro_ogmeta',$this->Lang('meta_opengraph_description'));
-$smarty->assign('pr_ogtitle',$this->Lang('meta_opengraph_title'));
-$smarty->assign('in_ogtitle',$this->CreateInputText(null, 'meta_opengraph_title', $this->GetPreference('meta_opengraph_title','{title}'), 32)
-	.'<br />'.$this->Lang('meta_opengraph_title_help'));
-$smarty->assign('pr_ogtype',$this->Lang('meta_opengraph_type'));
-$smarty->assign('in_ogtype',$this->CreateInputText(null, 'meta_opengraph_type', $this->GetPreference('meta_opengraph_type',''), 32)
-	.'<br />'.$this->Lang('meta_opengraph_type_help'));
-$smarty->assign('pr_ogsite',$this->Lang('meta_opengraph_sitename'));
-$smarty->assign('in_ogsite',$this->CreateInputText(null, 'meta_opengraph_sitename', $this->GetPreference('meta_opengraph_sitename',''), 32)
-	.'<br />'.$this->Lang('meta_opengraph_sitename_help'));
-$smarty->assign('pr_ogimage',$this->Lang('meta_opengraph_image'));
-$smarty->assign('in_ogimage',$this->CreateInputDropdown(null, 'meta_opengraph_image', $files_list, null, $this->GetPreference('meta_opengraph_image',''))
-	.'<br />'.$this->Lang('meta_opengraph_image_help'));
-$smarty->assign('pr_ogadmin',$this->Lang('meta_opengraph_admins'));
-$smarty->assign('in_ogadmin',$this->CreateInputText(null, 'meta_opengraph_admins', $this->GetPreference('meta_opengraph_admins',''), 32)
-	.'<br />'.$this->Lang('meta_opengraph_admins_help'));
-$smarty->assign('pr_ogapp',$this->Lang('meta_opengraph_application'));
-$smarty->assign('in_ogapp',$this->CreateInputText(null, 'meta_opengraph_application', $this->GetPreference('meta_opengraph_application',''), 32)
-	.'<br />'.$this->Lang('meta_opengraph_application_help'));
+$smarty->assign('metadeflts', $metadeflts);
+
 /* Additional Meta Tags */
+
 $smarty->assign('start_extra_set',$this->CreateFieldsetStart(null, 'additional_meta', $this->Lang('title_additional_meta_tags')));
-$smarty->assign('pr_extra',$this->Lang('additional_meta_tags_title'));
-$smarty->assign('in_extra',
-	$this->CreateTextArea(false, null, $this->GetPreference('additional_meta_tags',''), 'additional_meta_tags', '', '', '', '', '60', '1','','','style="height:10em;"')
-	.'<br />'.$this->Lang('additional_meta_tags_help'));
+
+//extra
+$extraset = array();
+$oneset = new stdClass();
+$oneset->title = $this->Lang('additional_meta_tags_title');
+$oneset->input = $this->CreateTextArea(false, null, $this->GetPreference('additional_meta_tags',''),
+	'additional_meta_tags', '', '', '', '', 60, 5,'','','style="height:10em;"');
+$oneset->help = $this->Lang('additional_meta_tags_help');
+$extraset[] = $oneset;
+
+$smarty->assign('extraset', $extraset);
+//$smarty->assign('', $);
 
 $smarty->assign('submit1',$this->CreateInputSubmit(null, 'save_meta_settings', $this->Lang('save')));
+
+/* KEYWORD Settings */
+
+$smarty->assign('start_ksettings_set',$this->CreateFieldsetStart(null, 'keyword_weight_description', $this->Lang('title_keyword_weight')));
+$keyset = array();
+//wordsblock_name
+$oneset = new stdClass();
+$oneset->title = $this->Lang('title_keyword_block');
+$oneset->input = $this->CreateInputText(null, 'keyword_block', $this->GetPreference('keyword_block',''), 60);
+$oneset->help = $this->Lang('keyword_block_help');
+$keyset[] = $oneset;
+//kw_sep
+$oneset = new stdClass();
+$oneset->title = $this->Lang('keyword_separator_title');
+$oneset->input = $this->CreateInputText(null, 'keyword_separator', $sep, 1);
+$oneset->help = $this->Lang('keyword_separator_help');
+$keyset[] = $oneset;
+//min_length
+$oneset = new stdClass();
+$oneset->title = $this->Lang('keyword_minlength_title');
+$oneset->input = $this->CreateInputText(null, 'keyword_minlength', $this->GetPreference('keyword_minlength',6), 2);
+$oneset->help = $this->Lang('keyword_minlength_help');
+$keyset[] = $oneset;
+//title_weight
+$oneset = new stdClass();
+$oneset->title = $this->Lang('keyword_title_weight_title');
+$oneset->input = $this->CreateInputText(null, 'keyword_title_weight', $this->GetPreference('keyword_title_weight',6), 2);
+$oneset->help = $this->Lang('keyword_title_weight_help');
+$keyset[] = $oneset;
+//desc_weight
+$oneset = new stdClass();
+$oneset->title = $this->Lang('keyword_description_weight_title');
+$oneset->input = $this->CreateInputText(null, 'keyword_description_weight', $this->GetPreference('keyword_description_weight',4), 2);
+$oneset->help = $this->Lang('keyword_description_weight_help');
+$keyset[] = $oneset;
+//head_weight
+$oneset = new stdClass();
+$oneset->title = $this->Lang('keyword_headline_weight_title');
+$oneset->input = $this->CreateInputText(null, 'keyword_headline_weight', $this->GetPreference('keyword_headline_weight',2), 2);
+$oneset->help = $this->Lang('keyword_headline_weight_help');
+$keyset[] = $oneset;
+//cont_weight
+$oneset = new stdClass();
+$oneset->title = $this->Lang('keyword_content_weight_title');
+$oneset->input = $this->CreateInputText(null, 'keyword_content_weight', $this->GetPreference('keyword_content_weight',1), 2);
+$oneset->help = $this->Lang('keyword_content_weight_help');
+$keyset[] = $oneset;
+//min_weight
+$oneset = new stdClass();
+$oneset->title = $this->Lang('keyword_minimum_weight_title');
+$oneset->input = $this->CreateInputText(null, 'keyword_minimum_weight', $this->GetPreference('keyword_minimum_weight',7), 2);
+$oneset->help = $this->Lang('keyword_minimum_weight_help');
+$keyset[] = $oneset;
+
+$smarty->assign('keyset', $keyset);
+
+$smarty->assign('start_klist_set',$this->CreateFieldsetStart(null, 'keyword_exclude_description', $this->Lang('title_keyword_exclude')));
+$listset = array();
+//incl_words
+$oneset = new stdClass();
+$oneset->title = $this->Lang('default_keywords_title');
+$oneset->input = $this->CreateTextArea(false, null, $this->GetPreference('default_keywords',''),
+	'default_keywords', '', '', '', '', 60, 5,'','','style="height:5em;"');
+$oneset->help = $this->Lang('default_keywords_help');
+$listset[] = $oneset;
+//excl_words
+$oneset = new stdClass();
+$oneset->title = $this->Lang('keyword_exclude_title');
+$oneset->input = $this->CreateTextArea(false, null, $this->GetPreference('keyword_exclude',''),
+	'keyword_exclude', '', '', '', '', 60, 5,'','','style="height:5em;"');
+$oneset->help = $this->Lang('keyword_exclude_help');
+$listset[] = $oneset;
+
+$smarty->assign('listset', $listset);
+
+$smarty->assign('keyword_help',$this->Lang('help_keyword_generator'));
+
+$smarty->assign('submit2',$this->CreateInputSubmit(null, 'save_keyword_settings', $this->Lang('save')));
 
 /* SITEMAP Settings */
 
 $smarty->assign('start_map_set',$this->CreateFieldsetStart(null, 'sitemap_description', $this->Lang('title_sitemap_description')));
-$smarty->assign('pr_create_map',$this->Lang('create_sitemap_title').' *');
-$smarty->assign('in_create_map',$this->CreateInputCheckbox(null, 'create_sitemap', 1, $this->GetPreference('create_sitemap',0)));
-$smarty->assign('pr_push_map',$this->Lang('push_sitemap_title'));
+$fileset = array();
+//create_map
+$oneset = new stdClass();
+$oneset->title = $this->Lang('create_sitemap_title').' *';
+$oneset->inline = 1;
+$oneset->input = $this->CreateInputCheckbox(null, 'create_sitemap', 1, $this->GetPreference('create_sitemap',0));
+//$oneset->help = ;
+$fileset[] = $oneset;
+//push_map
+$oneset = new stdClass();
+$oneset->title = $this->Lang('push_sitemap_title');
 if (ini_get('allow_url_fopen') || function_exists('curl_version')) {
-	$smarty->assign('in_push_map',$this->CreateInputCheckbox(null, 'push_sitemap', 1, $this->GetPreference('push_sitemap',0)));
+	$oneset->inline = 1;
+	$i = $this->CreateInputCheckbox(null, 'push_sitemap', 1, $this->GetPreference('push_sitemap',0));
 }
 else {
-	$smarty->assign('input_push_map',$this->Lang('no_pusher'));
+	$i = $this->Lang('no_pusher');
 }
-$smarty->assign('pr_verify_code',$this->Lang('verification_title'));
-$smarty->assign('in_verify_code',$this->CreateInputText(null, 'verification', $this->GetPreference('verification',''), 40));
-$smarty->assign('help_verify',$this->Lang('verification_help'));
-$smarty->assign('pr_create_bots',$this->Lang('create_robots_title').' *');
-$smarty->assign('in_create_bots',$this->CreateInputCheckbox(null, 'create_robots', 1, $this->GetPreference('create_robots',0)));
-$smarty->assign('pr_early_bots',$this->Lang('custom_before_title'));
-$smarty->assign('in_early_bots',$this->CreateTextArea(false, null, $this->GetPreference('robot_start',''),
- 'robot_start', '', '', '', '', 50, 5, '', '', 'style="height:5em;width:50em;"')); //needs inline styling
-$smarty->assign('pr_late_bots',$this->Lang('custom_after_title'));
-$smarty->assign('in_late_bots',$this->CreateTextArea(false, null, $this->GetPreference('robot_end',''),
- 'robot_end', '', '', '', '', 50, 5, '', '', 'style="height:5em;width:50em;"'));
-$smarty->assign('submit2',$this->CreateInputSubmit(null, 'save_sitemap_settings', $this->Lang('save')));
+$oneset->input = $i;
+//$oneset->help = ;
+$fileset[] = $oneset;
+//verify_code
+$oneset = new stdClass();
+$oneset->title = $this->Lang('verification_title');
+$oneset->input = $this->CreateInputText(null, 'verification', $this->GetPreference('verification',''), 40);
+$oneset->help = $this->Lang('verification_help');
+$fileset[] = $oneset;
+//create_bots
+$oneset = new stdClass();
+$oneset->title = $this->Lang('create_robots_title').' *';
+$oneset->inline = 1;
+$oneset->input = $this->CreateInputCheckbox(null, 'create_robots', 1, $this->GetPreference('create_robots',0));
+//$oneset->help = ;
+$fileset[] = $oneset;
+//early_bots
+$oneset = new stdClass();
+$oneset->title = $this->Lang('custom_before_title');
+$oneset->input = $this->CreateTextArea(false, null, $this->GetPreference('robot_start',''),
+ 'robot_start', '', '', '', '', 50, 5, '', '', 'style="height:5em;width:50em;"'); //needs inline styling
+//$oneset->help = ;
+$fileset[] = $oneset;
+//late_bots
+$oneset = new stdClass();
+$oneset->title = $this->Lang('custom_after_title');
+$oneset->input = $this->CreateTextArea(false, null, $this->GetPreference('robot_end',''),
+ 'robot_end', '', '', '', '', 50, 5, '', '', 'style="height:5em;width:50em;"');
+//$oneset->help = ;
+$fileset[] = $oneset;
+
+$smarty->assign('fileset', $fileset);
+
+$smarty->assign('submit3',$this->CreateInputSubmit(null, 'save_sitemap_settings', $this->Lang('save')));
 $smarty->assign('display',$this->CreateInputSubmit(null, 'display_robots_file', $this->Lang('display'),
  'title="'.$this->Lang('robots_display').'"'));
 
@@ -763,46 +985,6 @@ if ($title != null) {
 	$smarty->assign('regenerate',$this->CreateInputSubmit(null, 'do_regenerate', $title));
 	$smarty->assign('sitemap_help',$this->Lang('help_sitemap_robots'));
 }
-
-/* KEYWORD Settings */
-$smarty->assign('start_ksettings_set',$this->CreateFieldsetStart(null, 'keyword_weight_description', $this->Lang('title_keyword_weight')));
-
-$smarty->assign('pr_wordsblock_name',$this->Lang('title_keyword_block'));
-$smarty->assign('in_wordsblock_name',$this->CreateInputText(null, 'keyword_block', $this->GetPreference('keyword_block',''), 60)
-	.'<br />'.$this->Lang('keyword_block_help'));
-$smarty->assign('pr_kw_sep',$this->Lang('keyword_separator_title'));
-$smarty->assign('in_kw_sep',$this->CreateInputText(null, 'keyword_separator', $sep, 1)
-	.'<br />'.$this->Lang('keyword_separator_help'));
-$smarty->assign('pr_min_length',$this->Lang('keyword_minlength_title'));
-$smarty->assign('in_min_length',$this->CreateInputText(null, 'keyword_minlength', $this->GetPreference('keyword_minlength','6'), 2)
-	.'<br />'.$this->Lang('keyword_minlength_help'));
-$smarty->assign('pr_title_weight',$this->Lang('keyword_title_weight_title'));
-$smarty->assign('in_title_weight',$this->CreateInputText(null, 'keyword_title_weight', $this->GetPreference('keyword_title_weight','6'), 2)
-	.'<br />'.$this->Lang('keyword_title_weight_help'));
-$smarty->assign('pr_desc_weight',$this->Lang('keyword_description_weight_title'));
-$smarty->assign('in_desc_weight',$this->CreateInputText(null, 'keyword_description_weight', $this->GetPreference('keyword_description_weight','4'), 2)
-	.'<br />'.$this->Lang('keyword_description_weight_help'));
-$smarty->assign('pr_head_weight',$this->Lang('keyword_headline_weight_title'));
-$smarty->assign('in_head_weight',$this->CreateInputText(null, 'keyword_headline_weight', $this->GetPreference('keyword_headline_weight','2'), 2)
-	.'<br />'.$this->Lang('keyword_headline_weight_help'));
-$smarty->assign('pr_cont_weight',$this->Lang('keyword_content_weight_title'));
-$smarty->assign('in_cont_weight',$this->CreateInputText(null, 'keyword_content_weight', $this->GetPreference('keyword_content_weight','1'), 2)
-	.'<br />'.$this->Lang('keyword_content_weight_help'));
-$smarty->assign('pr_min_weight',$this->Lang('keyword_minimum_weight_title'));
-$smarty->assign('in_min_weight',$this->CreateInputText(null, 'keyword_minimum_weight', $this->GetPreference('keyword_minimum_weight','7'), 2)
-	.'<br />'.$this->Lang('keyword_minimum_weight_help'));
-$smarty->assign('start_kexclude_set',$this->CreateFieldsetStart(null, 'keyword_exclude_description', $this->Lang('title_keyword_exclude')));
-
-$smarty->assign('pr_incl_words',$this->Lang('default_keywords_title'));
-$smarty->assign('in_incl_words',
-	$this->CreateTextArea(false, null, $this->GetPreference('default_keywords',''), 'default_keywords', '', '', '', '', '60', '1','','','style="height:5em;"')
-	.'<br />'.$this->Lang('default_keywords_help'));
-$smarty->assign('pr_excl_words',$this->Lang('keyword_exclude_title'));
-$smarty->assign('in_excl_words',
-	$this->CreateTextArea(false, null, $this->GetPreference('keyword_exclude',''), 'keyword_exclude', '', '', '', '', '60', '1','','','style="height:5em;"')
-	.'<br />'.$this->Lang('keyword_exclude_help'));
-$smarty->assign('submit3',$this->CreateInputSubmit(null, 'save_keyword_settings', $this->Lang('save')));
-$smarty->assign('keyword_help',$this->Lang('help_keyword_generator'));
 
 echo $this->ProcessTemplate('adminpanel.tpl');
 
