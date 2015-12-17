@@ -6,12 +6,14 @@
 
 switch($oldversion)
 {
+	$dict = NewDataDictionary($db);
+	$pre = cms_db_prefix();
+
 	case "1.0":
 	case "1.1":
 	case "1.2":
-		$dict = NewDataDictionary($db);
 		//non-unique index
-		$tbl = cms_db_prefix().'module_seotools';
+		$tbl = $pre.'module_seotools';
 		//standard field sizes (e.g. for postgresql)
 		$sql = $dict->AlterColumnSQL($tbl, 'indexable L NOTNULL DEFAULT 1, priority I(4)');
 		$dict->ExecuteSQLArray($sql);
@@ -78,6 +80,51 @@ EOS;
 		elseif ($sep != ',')
 			$words = str_replace(',',$sep,$words);
 		$this->SetPreference('keyword_exclude',$words);
+
+	case "1.6":
+		// meta-groups table schema
+		$flds = "
+group_id I(2) AUTO KEY,
+gname C(64),
+vieworder I(2),
+active I(1) NOTNULL DEFAULT 1
+";
+		$sqlarray = $dict->CreateTableSQL($pre.'module_seotools_group',$flds,$taboptarray);
+		$result = ($sqlarray) ? ($dict->ExecuteSQLArray($sqlarray,false) == 2) : false;
+		if (!$result) return false;
+		// add default groups
+		$sql = 'INSERT INTO '.$pre.'module_seotools_group (name,vieworder,active) VALUES (?,?,?)';
+		$i = 1;
+		foreach (array(
+			'before'=>1, //1
+			'meta_std'=>1, //2
+			'meta_dc'=>0, //3
+			'meta_og'=>0, //4
+			'meta_twt'=>0, //5
+			'meta_gplus'=>0, //6
+			'after'=>1 //7
+		) as $name=>$act) {
+			$db->Execute($sql,array($name,$i,$act));
+			$i++;
+		}
+		// meta table schema
+		$flds = "
+meta_id I(2) AUTO KEY,
+group_id I(2),
+mname C(128),
+value C(255),
+output C(128),
+calc I(1) NOTNULL DEFAULT 0,
+smarty I(1) NOTNULL DEFAULT 0,
+vieworder I(2),
+active I(1) NOTNULL DEFAULT 1
+";
+		$sqlarray = $dict->CreateTableSQL($pre.'module_seotools_meta',$flds,$taboptarray);
+		$result = ($sqlarray) ? ($dict->ExecuteSQLArray($sqlarray,false) == 2) : false;
+		if (!$result) return false;
+		// add default meta, and delete redundant prefs
+		require ('method.setmeta.php'); 
+
 		break;
 }
 
