@@ -120,8 +120,8 @@ if (isset($_POST['save_sitemap_settings'])) {
 	$this->SetPreference('robot_start',$val);
 	$val = (isset($_POST['robot_end'])) ? $_POST['robot_end'] : '';
 	$this->SetPreference('robot_end',$val);
-	$this->SetPreference('verification', $_POST['verification']);
-
+	$db->Execute('UPDATE '.$pre.'module_seotools_meta SET value=? WHERE mname=\'verification\'',
+ 		array($_POST['verification']));
 	$this->Audit(0, $this->Lang('friendlyname'), 'Edited sitemap settings');
 	$this->Redirect($id, 'defaultadmin', '', array('message'=>'settings_updated','tab'=>'sitemapsettings'));
 }
