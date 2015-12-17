@@ -27,6 +27,8 @@ if ($page_image == -1) {
 
 $out = array();
 
+$pre = cms_db_prefix();
+
 // Keyword generator
 
 $sep = $this->GetPreference('keyword_separator',' ');
@@ -35,7 +37,7 @@ $smarty->assign('default_keywords',$pref);
 
 $keywords = explode($sep,$pref);
 
-$query = 'SELECT * FROM '.cms_db_prefix().'module_seotools WHERE content_id=?';
+$query = 'SELECT * FROM '.$pre.'module_seotools WHERE content_id=?';
 $page_row = $db->GetRow($query,array($page_id));
 
 $funcs = new SEO_keyword();
@@ -77,7 +79,155 @@ $rooturl = (empty($_SERVER['HTTPS'])) ? $config['root_url'] : $config['ssl_url']
 // Show base?
 if (empty($params['showbase']) || strcasecmp($params['showbase'],'false') != 0)
 	$out[] = '<base href="'.$rooturl.'/" />';
+/*
+$coord = FALSE; //cahce for first of lat. or long.
 
+$query = 'SELECT * FROM '.$pre.'module_seotools_meta M
+LEFT JOIN '.$pre.'module_seotools_group G ON M.group_id = G.group_id
+WHERE G.active=1 AND M.active=1
+ORDER BY G.vieworder M.vieworder';
+
+$rows = $db->GetArray($query);
+foreach ($rows as &$one) {
+	$val = $one['value'];
+	if ($one['calc']) {
+		switch ($one['name']) {
+		 case 'content_type':
+			if (!$val) {
+				$val = strtolower($content->Markup());
+			}
+			if ($val) {
+				$out[] = '<meta http-equiv="Content-Type" content="text/'.$val.'; charset='.$config['default_encoding'].'" />';
+			}
+			else {
+				$out[] = '<meta charset="'.$config['default_encoding'].'" />';
+			}
+			break 2;
+		 case 'indexable':
+			if (!array_key_exists('indexable',$page_row) || $page_row['indexable'] == "1")
+				$out[] = '<meta name="robots" content="index,follow" />';
+			else
+				$out[] = '<meta name="robots" content="noindex" />';
+			break 2;
+		 case 'title':
+			if (!$val) {
+				$val = '{title} | {$sitename} - {seo_keywords}';
+			}
+			$val = str_replace(array('{title}','{seo_keywords}'),array($page_name,$title_keywords),$val);
+		 case 'meta_title':
+			if (!$val) {
+				$val = '{title} | {$sitename}';
+			}
+			$val = str_replace(array('{title}','{seo_keywords}'),array($page_name,$title_keywords),$val);
+			break;
+		 case 'meta_description':
+			$val = $description;
+			break;
+		 case 'meta_keywords':
+			if ($merged) {
+				$val = implode($sep, $merged);
+			}
+			break;
+		 case 'meta_latitude':
+			if ($val && strpos($val,',') !== false) {
+				$val = str_replace(',','.',$val);
+			}
+			if (is_numeric($val) && is_numeric($coord)) {
+				$out[] = '<meta name="geo.position" content="'.$val.';'.$coord.'" />';
+				$out[] = '<meta name="ICBM" content="'.$val.','.$coord.'" />';
+			}
+			elseif ($val && ($coord === false)) {
+				$coord = $val;
+			}
+			break 2;
+		 case 'meta_longitude':
+			if ($val && strpos($val,',') !== false) {
+				$val = str_replace(',','.',$val);
+			}
+			if (is_numeric($val) && is_numeric($coord)) {
+				$out[] = '<meta name="geo.position" content="'.$coord.';'.$val.'" />';
+				$out[] = '<meta name="ICBM" content="'.$coord.','.$val.'" />';
+			}
+			elseif ($val && ($coord === false)) {
+				$coord = $val;
+			}
+			break 2;
+		 case 'meta_date':
+			$val = date('Y-m-d\TH:i:sP',$content->GetCreationDate());
+			break;
+		 case 'meta_lastdate':
+		 case 'meta_revised':
+			$val = $page_mdate;
+			break;
+		 case 'meta_dublin':
+			$meta_title = (!empty($rows['meta_title'])) ? $rows['meta_title']['value'] : ''; //TODO find it properly
+			if($meta_title) $out[] = '<meta name="title" content="'.$meta_title.'" />';
+			if ($description) $out[] = '<meta name="description" content="'.$description.'" />';
+			if ($merged) $out[] = '<meta name="keywords" content="'.implode($sep, $merged).'" />';
+			$out[] = '<meta name="date" content="'.date('Y-m-d\TH:i:sP',$content->GetCreationDate()).'" />';
+			$out[] = '<meta name="lastupdate" content="'.$page_mdate.'" />';
+			$out[] = '<meta name="revised" content="'.$page_mdate.'" />';
+/ * TODO
+	$pref = $this->GetPreference('meta_publisher','');
+	if ($pref) $out[] = '<meta name="DC.publisher" content="'.$pref.'" />';
+	$pref = $this->GetPreference('meta_contributor','');
+	if ($pref) $out[] = '<meta name="DC.contributor" content="'.$pref.'" />';
+	$lang = str_replace('_','-',get_site_preference('frontendlang','en'));
+	$out[] = '<meta name="DC.language" content="'.$lang.'" scheme="DCTERMS.RFC3066" />';
+	$pref = $this->GetPreference('meta_copyright','');
+	if ($pref) $out[] = '<meta name="DC.rights" content="'.$pref.'" />';
+	if ($meta_title) $out[] = '<meta name="DC.title" content="'.$meta_title.'" />';
+	if ($description) $out[] = '<meta name="DC.description" content="'.$description.'" />';
+	if ($merged) $out[] = '<meta name="DC.subject" content="'.implode($sep, $merged).'" />';
+	$out[] = '<meta name="DC.date" content="'.$page_mdate.'" scheme="DCTERMS.W3CDTF" />';
+	$out[] = '<meta name="DC.identifier" content="'.$page_url.'" scheme="DCTERMS.URI" />';
+ * /
+			break 2;
+		 case 'meta_opengraph_url':
+			 $val = $page_url;
+			 break;
+		 case 'meta_opengraph_title':
+			if (!$val) {
+				$val = '{title}';
+			}
+			$val = str_replace('{title}',$page_name,$val);
+			break;
+		 case 'meta_opengraph_type':
+			if (!empty($page_row['ogtype'])) {
+				$val = $page_row['ogtype']; //override CHECKME
+			}
+			break;
+		 case 'meta_opengraph_image':
+			break;
+		 case 'meta_gplus_description':
+			break;
+		 case 'meta_gplus_name':
+			break;
+		 case 'meta_twt_description':
+			break;
+		 case 'meta_twt_site':
+			break;
+		 case 'meta_twt_title':
+			break;
+		 case 'meta_additional':
+			//TODO
+			break;
+		}
+	}
+	if ($val) {
+		if ($one['smarty']) {
+			$val = $this->ProcessTemplateFromData($val);
+		}
+		if ($one['output']) {
+			$outs[] = sprintf($one['output'], $val);
+		}
+		else {
+			$outs[] = $val;
+		}
+	}
+}
+unset($one);
+*/
 // Page title
 $pref = $this->GetPreference('title','{title} | {$sitename} - {seo_keywords}');
 $title = str_replace('{title}',$page_name,$pref);
@@ -185,7 +335,7 @@ if ($this->GetPreference('meta_opengraph',0)) {
 	$defname = get_site_preference('sitename','CMSMS Site');
 	$out[] = '<meta property="og:site_name" content="'.$this->GetPreference('meta_opengraph_sitename',$defname).'" />';
 	if ($description) $out[] = '<meta property="og:description" content="'.$description.'" />';
-	$pref = $this->GetPreference('meta_opengraph_application',''); 
+	$pref = $this->GetPreference('meta_opengraph_application','');
 	if ($pref) {
 		$out[] = '<meta property="fb:app_id" content="'.$pref.'" />';
 	}
@@ -205,7 +355,7 @@ if ($this->GetPreference('meta_opengraph',0)) {
 	}
 }
 
-$pref = $this->GetPreference('additional_meta_tags',''); 
+$pref = $this->GetPreference('additional_meta_tags','');
 if ($pref) {
 	$out[] = $this->ProcessTemplateFromData($pref);
 }
