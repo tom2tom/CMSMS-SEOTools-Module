@@ -6,6 +6,8 @@
 
 # Setup and display admin page, after processing any action-request
 
+//require ('method.setmeta.php');
+
 if (!$this->CheckAccess()) {
 	return $this->DisplayErrorPage($this->Lang('accessdenied'));
 }
@@ -832,7 +834,7 @@ $name = 'meta_og_sitename';
 $k = $name.'_title';
 $oneset->title = (array_key_exists($k,$trans)) ? $trans[$k] : $name;
 $val = (!empty($meta[$name])) ? $meta[$name]['value']:'';
-$oneset->input = $this->CreateInputText(null, $name, $val, 32);
+$oneset->input = $this->CreateInputText(null, $name, $val, 25);
 $k = $name.'_help';
 $oneset->help = (array_key_exists($k,$trans)) ? htmlentities($trans[$k]) : null;
 $metavals[$name] = $oneset;
@@ -852,7 +854,7 @@ $name = 'meta_og_admins';
 $k = $name.'_title';
 $oneset->title = (array_key_exists($k,$trans)) ? $trans[$k] : $name;
 $val = (!empty($meta[$name])) ? $meta[$name]['value']:'';
-$oneset->input = $this->CreateInputText(null, $name, $val, 32);
+$oneset->input = $this->CreateInputText(null, $name, $val, 48);
 $k = $name.'_help';
 $oneset->help = (array_key_exists($k,$trans)) ? htmlentities($trans[$k]) : null;
 $metavals[$name] = $oneset;
@@ -867,27 +869,7 @@ $k = $name.'_help';
 $oneset->help = (array_key_exists($k,$trans)) ? htmlentities($trans[$k]) : null;
 $metavals[$name] = $oneset;
 
-$oneset = new stdClass();
-$oneset->head = $this->Lang('meta_twt_description');
-$name = 'meta_twt_card';
-$k = $name.'_title';
-$oneset->title = (array_key_exists($k,$trans)) ? $trans[$k] : $name;
-$val = (!empty($meta[$name])) ? $meta[$name]['value']:'';
-$oneset->input = $this->CreateInputText(null, $name, $val, 32);
-$k = $name.'_help';
-$oneset->help = (array_key_exists($k,$trans)) ? htmlentities($trans[$k]) : null;
-$metavals[$name] = $oneset;
-
-$oneset = new stdClass();
-$name = 'meta_twt_site';
-$k = $name.'_title';
-$oneset->title = (array_key_exists($k,$trans)) ? $trans[$k] : $name;
-$val = (!empty($meta[$name])) ? $meta[$name]['value']:'';
-$oneset->input = $this->CreateInputText(null, $name, $val, 18);
-$k = $name.'_help';
-$oneset->help = (array_key_exists($k,$trans)) ? htmlentities($trans[$k]) : null;
-$metavals[$name] = $oneset;
-
+/* twitter metas derived from others
 $oneset = new stdClass();
 $name = 'meta_twt_title';
 $k = $name.'_title';
@@ -907,6 +889,18 @@ $oneset->input = $this->CreateInputText(null, $name, $val, 32);
 $k = $name.'_help';
 $oneset->help = (array_key_exists($k,$trans)) ? htmlentities($trans[$k]) : null;
 $metavals[$name] = $oneset;
+*/
+
+$oneset = new stdClass();
+$oneset->head = $this->Lang('meta_twt_description');
+$name = 'meta_twt_card';
+$k = $name.'_title';
+$oneset->title = (array_key_exists($k,$trans)) ? $trans[$k] : $name;
+$val = (!empty($meta[$name])) ? $meta[$name]['value']:'';
+$oneset->input = $this->CreateInputText(null, $name, $val, 24);
+$k = $name.'_help';
+$oneset->help = (array_key_exists($k,$trans)) ? htmlentities($trans[$k]) : null;
+$metavals[$name] = $oneset;
 
 $oneset = new stdClass();
 $name = 'meta_twt_image';
@@ -914,6 +908,16 @@ $k = $name.'_title';
 $oneset->title = (array_key_exists($k,$trans)) ? $trans[$k] : $name;
 $val = (!empty($meta[$name])) ? $meta[$name]['value']:'';
 $oneset->input = $this->CreateInputDropdown(null, $name, $img_files, null, $val);
+$k = $name.'_help';
+$oneset->help = (array_key_exists($k,$trans)) ? htmlentities($trans[$k]) : null;
+$metavals[$name] = $oneset;
+
+$oneset = new stdClass();
+$name = 'meta_twt_site';
+$k = $name.'_title';
+$oneset->title = (array_key_exists($k,$trans)) ? $trans[$k] : $name;
+$val = (!empty($meta[$name])) ? $meta[$name]['value']:'';
+$oneset->input = $this->CreateInputText(null, $name, $val, 18);
 $k = $name.'_help';
 $oneset->help = (array_key_exists($k,$trans)) ? htmlentities($trans[$k]) : null;
 $metavals[$name] = $oneset;
@@ -928,6 +932,7 @@ $k = $name.'_help';
 $oneset->help = (array_key_exists($k,$trans)) ? htmlentities($trans[$k]) : null;
 $metavals[$name] = $oneset;
 
+/* google+ metas derived from others
 $oneset = new stdClass();
 $oneset->head = $this->Lang('meta_gplus_description');
 $name = 'meta_gplus_name';
@@ -958,7 +963,7 @@ $oneset->input = $this->CreateInputDropdown(null, $name, $img_files, null, $val)
 $k = $name.'_help';
 $oneset->help = (array_key_exists($k,$trans)) ? htmlentities($trans[$k]) : null;
 $metavals[$name] = $oneset;
-
+*/
 /*
 <!-- Schema.org markup for Google+ -->
 <meta itemprop="name" content="The Name or Title Here">
