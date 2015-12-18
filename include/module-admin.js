@@ -35,9 +35,9 @@ $(document).ready(function(){
   $t.data('tipNew',$n);
  }, function() {
    $t = $(this);
-   $t.data('tipNew').fadeOut(200,function(){
-     $t.attr('title',$t.data('tipText'))
-       .data('tipNew').remove();
+   $t.attr('title',$t.data('tipText'))
+     .data('tipNew').fadeOut(200,function(){
+       $t.data('tipNew').remove();
    });
  });
 });
