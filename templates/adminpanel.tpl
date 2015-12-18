@@ -166,6 +166,7 @@
 {$start_deflt_set}
  <div class="pageoverflow" style="margin-top:0;">
  {foreach from=$metadeflts item=entry}
+{if !empty($entry->head)}<h4 class="pageinput" style="margin-top:15px;">{$entry->head}:</h4>{/if} 
 {if empty($entry->inline)}
 <p class="pagetext" style="margin:0.5em 0 0.5em 5%;">{$entry->title}:</p>
 <p {if !empty($entry->help)}class="pageinput masterTooltip" title="{$entry->help}"{else}class="pageinput"{/if}>{$entry->input}</p>
