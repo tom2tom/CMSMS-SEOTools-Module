@@ -3,20 +3,7 @@
 # Copyright (C) 2010-2011 Henning Schaefer <henning.schaefer@gmail.com>
 # Copyright (C) 2014-2015 Tom Phane <tpgww@onepost.net>
 # Refer to licence and other details at the top of file SEOTools.module.php
-/*
-Schema.org markup for Google+
-<meta itemprop="name" content="The Name or Title Here">
-<meta itemprop="description" content="This is the page description">
-<meta itemprop="image" content="http://www.example.com/image.jpg">
-Twitter Card data
-<meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:site" content="@publisher_handle">
-<meta name="twitter:title" content="Page Title">
-<meta name="twitter:description" content="Page description less than 200 characters">
-<meta name="twitter:creator" content="@author_handle">
-Twitter summary card with large image must be at least 280x150px
-<meta name="twitter:image:src" content="http://www.example.com/image.html">
-*/
+
 $sitename = get_site_preference('sitename','CMSMS Site');
 
 $defs = array(
@@ -49,16 +36,16 @@ $defs = array(
 'meta_og_application'=>array('gid'=>4,'value'=>'','output'=>'<meta property="fb:app_id" content="%s" />','calc'=>0,'smarty'=>0,'active'=>1),
 'meta_og_admins'=>array     ('gid'=>4,'value'=>'','output'=>'<meta property="fb:admins" content="%s" />','calc'=>0,'smarty'=>0,'active'=>1),
 
-'meta_twt_card'=>array       ('gid'=>5,'value'=>'','output'=>'<meta name="twitter:card" content="%s" />','calc'=>0,'smarty'=>0,'active'=>1),
-'meta_twt_site'=>array       ('gid'=>5,'value'=>'','output'=>'<meta name="twitter:site" content="%s" />','calc'=>1,'smarty'=>1,'active'=>1),
-'meta_twt_title'=>array      ('gid'=>5,'value'=>'{title}','output'=>'<meta name="twitter:title" content="%s" />','calc'=>1,'smarty'=>1,'active'=>1),
-'meta_twt_description'=>array('gid'=>5,'value'=>'','output'=>'<meta name="twitter:description" content="%s" />','calc'=>1,'smarty'=>1,'active'=>1),
+'meta_twt_title'=>array      ('gid'=>5,'value'=>'UNUSED','output'=>'<meta name="twitter:title" content="%s" />','calc'=>1,'smarty'=>1,'active'=>1),
+'meta_twt_description'=>array('gid'=>5,'value'=>'UNUSED','output'=>'<meta name="twitter:description" content="%s" />','calc'=>1,'smarty'=>1,'active'=>1),
+'meta_twt_site'=>array       ('gid'=>5,'value'=>'','output'=>'<meta name="twitter:site" content="%s" />','calc'=>0,'smarty'=>0,'active'=>1), //handle, not url
 'meta_twt_creator'=>array    ('gid'=>5,'value'=>'','output'=>'<meta name="twitter:creator" content="%s" />','calc'=>0,'smarty'=>0,'active'=>1),
+'meta_twt_card'=>array       ('gid'=>5,'value'=>'','output'=>'<meta name="twitter:card" content="%s" />','calc'=>0,'smarty'=>0,'active'=>1),
 'meta_twt_image'=>array      ('gid'=>5,'value'=>'','output'=>'<meta name="twitter:image:src" content="%s" />','calc'=>0,'smarty'=>0,'active'=>1),
 
-'meta_gplus_name'=>array       ('gid'=>6,'value'=>'{title}','output'=>'<meta itemprop="name" content="%s" />','calc'=>1,'smarty'=>1,'active'=>1), //name or title
-'meta_gplus_description'=>array('gid'=>6,'value'=>'','output'=>'<meta itemprop="description" content="%s" />','calc'=>1,'smarty'=>1,'active'=>1),
-'meta_gplus_image'=>array      ('gid'=>6,'value'=>'','output'=>'<meta itemprop="image" content="%s" />','calc'=>0,'smarty'=>0,'active'=>1),
+'meta_gplus_name'=>array       ('gid'=>6,'value'=>'UNUSED','output'=>'<meta itemprop="name" content="%s" />','calc'=>1,'smarty'=>1,'active'=>1), //name or title
+'meta_gplus_description'=>array('gid'=>6,'value'=>'UNUSED','output'=>'<meta itemprop="description" content="%s" />','calc'=>1,'smarty'=>1,'active'=>1),
+'meta_gplus_image'=>array      ('gid'=>6,'value'=>'UNUSED','output'=>'<meta itemprop="image" content="%s" />','calc'=>0,'smarty'=>0,'active'=>1),
 
 'meta_additional'=>array  ('gid'=>7,'value'=>'','output'=>'UNUSED','calc'=>1,'smarty'=>1,'active'=>1),
 );
