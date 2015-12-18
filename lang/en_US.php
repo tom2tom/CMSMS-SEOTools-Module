@@ -94,7 +94,7 @@ $lang['meta_additional_title'] = 'Additional meta tags to be inserted';
 $lang['meta_dc_title'] = 'Generate Dublin Core meta tags';
 $lang['meta_gplus_description'] = 'If you are creating Google+ meta tags, please fill in the following values';
 $lang['meta_gplus_title'] = 'Generate GooglePlus meta tags';
-$lang['meta_new_description'] = 'The following are new, and not documented';
+$lang['meta_new_description'] = 'The following are not documented, please advise the site administrator';
 $lang['meta_og_admins_help'] = 'A comma-separated list of facebook account IDs who are able to administer the streams of your pages';
 $lang['meta_og_admins_title'] = 'Facebook site administrators';
 $lang['meta_og_application_help'] = 'The ID of a facebook application able to administer the streams of your pages';
@@ -130,6 +130,25 @@ $lang['meta_std_title_help'] = 'The page title to be used in the Meta title tags
 $lang['meta_std_title_title'] = 'Page meta title';
 $lang['meta_twt_description'] = 'If you are creating Twitter meta tags, please fill in the following values';
 $lang['meta_twt_title'] = 'Generate Twitter meta tags';
+
+$lang['meta_gplus_description_help'] = '';
+$lang['meta_gplus_description_title'] = 'Page description';
+$lang['meta_gplus_image_help'] = '';
+$lang['meta_gplus_image_title'] = 'Image';
+$lang['meta_gplus_name_help'] = '';
+$lang['meta_gplus_name_title'] = 'Name or title';
+$lang['meta_twt_card_help'] = '';
+$lang['meta_twt_card_title'] = 'Summary card';
+$lang['meta_twt_creator_help'] = 'Include leading \'@\'';
+$lang['meta_twt_creator_title'] = 'Page author\'s twitter-handle';
+$lang['meta_twt_description_help'] = 'Less than 200 characters';
+$lang['meta_twt_description_title'] = 'Page description';
+$lang['meta_twt_image_help'] = 'Image must be at least 280x150px';
+$lang['meta_twt_image_title'] = 'Summary card image';
+$lang['meta_twt_site_help'] = 'Include leading \'@\'';
+$lang['meta_twt_site_title'] = 'Site publisher\'s twitter-handle';
+$lang['meta_twt_title_help'] = '';
+$lang['meta_twt_title_title'] = 'Page title';
 
 $lang['moddescription'] = 'Several tools to help with Search Engine Optimization and check for suboptimal SEO-related things.';
 
