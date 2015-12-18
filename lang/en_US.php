@@ -35,10 +35,10 @@ $lang['description_auto_help'] = 'The <code>{keywords}</code> tag <strong>must</
 $lang['description_auto_title'] = 'Text for auto-generated descriptions';
 $lang['description_block_help'] = 'The name of each page\'s description content-block. Please read the module help for an explanation';
 $lang['description_block_title'] = 'Name of page description content-block';
-$lang['description_missing'] = 'Missing Meta description';
-$lang['description_short'] = 'Short (< 75 chars) Meta description';
+$lang['description_missing'] = 'Missing meta description';
+$lang['description_short'] = 'Short (< 75 chars) meta description';
 $lang['display'] = 'Display';
-$lang['duplicate_descriptions'] = 'Pages have the same Meta description';
+$lang['duplicate_descriptions'] = 'Pages have the same meta description';
 $lang['duplicate_titles'] = 'Pages have the same title';
 
 $lang['edit_page'] = 'Edit \'%s\'';
@@ -91,22 +91,25 @@ $lang['keyword_title_weight_help'] = 'The weight of words in the page title. The
 $lang['keyword_title_weight_title'] = 'Weight of words in the page title';
 $lang['keywords'] = 'Keywords #';
 
-$lang['meta_additional_help'] = 'Specify additional Meta tags here to be inserted into the page header. Smarty variables and UDTs can be used here.';
-$lang['meta_additional_title'] = 'Additional Meta tags to be inserted';
-$lang['meta_dc_title'] = 'Generate Dublin Core Meta Tags';
+$lang['meta_additional_help'] = 'Specify additional meta tags here to be inserted into the page header. Smarty variables and UDTs can be used here.';
+$lang['meta_additional_title'] = 'Additional meta tags to be inserted';
+$lang['meta_dc_title'] = 'Generate Dublin Core meta tags';
+$lang['meta_gplus_description'] = 'If you are creating Google+ meta tags, please fill in the following values';
+$lang['meta_gplus_title'] = 'Generate GooglePlus meta tags';
 $lang['meta_og_admins_help'] = 'A comma-separated list of facebook account IDs who are able to administer the streams of your pages';
 $lang['meta_og_admins_title'] = 'Facebook site administrators';
 $lang['meta_og_application_help'] = 'The ID of a facebook application able to administer the streams of your pages';
 $lang['meta_og_application_title'] = 'Facebook application';
-$lang['meta_og_description'] = 'If you are creating OpenGraph META tags, please fill in the following values';
+$lang['meta_og_description'] = 'If you are creating OpenGraph meta tags, please fill in the following values';
 $lang['meta_og_image_help'] = 'Select an image from the site\'s /uploads/images directory to be used as the default for OpenGraph pages';
 $lang['meta_og_image_title'] = 'OpenGraph default image';
 $lang['meta_og_sitename_help'] = 'A short version of this site\'s name, e.g. "Your Company", max. 25 chars';
 $lang['meta_og_sitename_title'] = 'OpenGraph site name';
-$lang['meta_og_title'] = 'Generate OpenGraph Meta Tags (e.g. for Facebook Like-Button)';
+$lang['meta_og_title'] = 'Generate OpenGraph meta tags (e.g. for Facebook like-button)';
 $lang['meta_og_title_help'] = 'The tag <code>{title}</code> and/or any smarty tag(s) may be used here, e.g. to replace with the actual page title';
 $lang['meta_og_title_title'] = 'OpenGraph page title';
-$lang['meta_og_type_help'] = 'The default page type for OpenGraph, can be overridden for each page. Look <a href="http://developers.facebook.com/docs/opengraph#types" onclick="window.open(this.href,\'_blank\');return false;">here</a> for a list of allowed values';
+//$lang['meta_og_type_help'] = 'The default page type for OpenGraph, can be overridden for each page. Look <a href="http://developers.facebook.com/docs/opengraph#types" onclick="window.open(this.href,\'_blank\');return false;">here</a> for a list of allowed values';
+$lang['meta_og_type_help'] = 'The default page type for OpenGraph, can be overridden for each page. Allowed types are listed at http://developers.facebook.com/docs/opengraph#types';
 $lang['meta_og_type_title'] = 'OpenGraph default page type';
 $lang['meta_std_contributor_help'] = 'Usually, this would be you or any other content author';
 $lang['meta_std_contributor_title'] = 'Site contributor';
@@ -123,9 +126,12 @@ $lang['meta_std_publisher_help'] = 'This is usually the organization whose websi
 $lang['meta_std_publisher_title'] = 'Site publisher';
 $lang['meta_std_region_help'] = 'Enter something like "US-IL" for an entity located in Illinois, US';
 $lang['meta_std_region_title'] = 'Region of site entity';
-$lang['meta_std_title'] = 'Generate standard Meta Tags';
+$lang['meta_std_title'] = 'Generate standard meta tags';
 $lang['meta_std_title_help'] = 'The page title to be used in the Meta title tags. Tags <code>{title}</code>, <code>{seo_keywords}</code> and/or any smarty tag(s) and UDT(s) can be used here';
-$lang['meta_std_title_title'] = 'Page Meta title';
+$lang['meta_std_title_title'] = 'Page meta title';
+$lang['meta_twt_description'] = 'If you are creating Twitter meta tags, please fill in the following values';
+$lang['meta_twt_title'] = 'Generate Twitter meta tags';
+
 $lang['moddescription'] = 'Several tools to help with Search Engine Optimization and check for suboptimal SEO-related things.';
 
 $lang['no_opengraph_admins'] = 'No OpenGraph sdmin is set admin application resp. admin list';
@@ -164,7 +170,7 @@ $lang['robots_title'] = 'Current robots.txt';
 
 $lang['save'] = 'Save';
 $lang['set_up_auto_description'] = 'Set up the description auto-generator and ensure the text contains the tag <code>{keywords}</code>';
-$lang['set_up_description_block'] = 'No content block has been defined for Meta descriptions';
+$lang['set_up_description_block'] = 'No content block has been defined for meta descriptions';
 $lang['settings_updated'] = 'The SEO settings were successfully updated.';
 $lang['sitemap_not_writeable'] = 'The site\'s /sitemap.xml file is not writeable by the web server';
 $lang['sitemap_regenerated'] = 'The sitemap has been successfully regenerated.';
@@ -186,8 +192,8 @@ $lang['title_index'] = 'Indexable';
 $lang['title_keyword_exclude'] = 'Keyword lists';
 $lang['title_keyword_weight'] = 'Keyword generator';
 $lang['title_keywordsettings'] = 'Keyword settings';
-$lang['title_meta_additional'] = 'Additional Meta Tags';
-$lang['title_meta_defaults'] = 'META Tag Values';
+$lang['title_meta_additional'] = 'Additional meta tags';
+$lang['title_meta_defaults'] = 'Meta Tag Values';
 $lang['title_meta_type'] = 'Meta Tag Generator';
 $lang['title_metasettings'] = 'Page title & Meta information';
 $lang['title_pages'] = 'Page(s)  ';
@@ -205,24 +211,20 @@ $lang['unignore'] = 'UnIgnore';
 $lang['unindex'] = 'UnIndex';
 $lang['uninstalled'] = 'Module Uninstalled.';
 $lang['upgraded'] = 'Module upgraded to version %s.';
-$lang['use_standard_meta'] = 'You should always enable the standard Meta generator';
-$lang['use_standard_or_dublincore_meta'] = 'Use at least one of the standard or Dublin Core Meta Tag generators';
+$lang['use_standard_meta'] = 'You should always enable the standard meta generator';
+$lang['use_standard_or_dublincore_meta'] = 'Use at least one of the meta tag generators';
 
 $lang['verification_help'] = 'Code obtained from Google Webmaster Tools, just the hash, not the complete meta tag';
 $lang['verification_title'] = 'Google site-verification code';
 $lang['view_all'] = 'View all';
 $lang['visit_settings'] = 'Change settings';
 
-//$lang['duplicate_descriptions'] = 'The pages <em>%s</em> and <em>%s</em> have the same Meta description';
-//$lang['duplicate_titles'] = 'The pages <em>%s</em> and <em>%s</em> have the same title';
 //$lang['grouptitle_descriptions'] = '%d page-description problem(s) detected';
 //$lang['grouptitle_opengraph'] = '%d OpenGraph-related problem(s) detected';
 //$lang['grouptitle_pages'] = '%d content-page problem(s) detected';
 //$lang['grouptitle_settings'] = '%d SEO-settings problem(s) detected';
 //$lang['grouptitle_system'] = '%d system-configuration problem(s) detected';
 //$lang['grouptitle_titles'] = '%d page-title problem(s) detected';
-//$lang['description_missing'] = 'The page <em>%s</em> is lacking a Meta description';
-//$lang['description_short'] = 'The Meta description of <em>%s</em> is rather short (< 75 chars)';
 
 $lang['help'] = <<<EOS
 <h3>What Does This Do?</h3>
