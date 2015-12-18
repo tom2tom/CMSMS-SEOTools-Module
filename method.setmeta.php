@@ -41,11 +41,11 @@ $defs = array(
 'meta_twt_site'=>array       ('gid'=>5,'value'=>'','output'=>'<meta name="twitter:site" content="%s" />','calc'=>0,'smarty'=>0,'active'=>1), //handle, not url
 'meta_twt_creator'=>array    ('gid'=>5,'value'=>'','output'=>'<meta name="twitter:creator" content="%s" />','calc'=>0,'smarty'=>0,'active'=>1),
 'meta_twt_card'=>array       ('gid'=>5,'value'=>'','output'=>'<meta name="twitter:card" content="%s" />','calc'=>0,'smarty'=>0,'active'=>1),
-'meta_twt_image'=>array      ('gid'=>5,'value'=>'','output'=>'<meta name="twitter:image:src" content="%s" />','calc'=>0,'smarty'=>0,'active'=>1),
+'meta_twt_image'=>array      ('gid'=>5,'value'=>'','output'=>'<meta name="twitter:image:src" content="%s" />','calc'=>1,'smarty'=>0,'active'=>1),
 
 'meta_gplus_name'=>array       ('gid'=>6,'value'=>'UNUSED','output'=>'<meta itemprop="name" content="%s" />','calc'=>1,'smarty'=>1,'active'=>1), //name or title
 'meta_gplus_description'=>array('gid'=>6,'value'=>'UNUSED','output'=>'<meta itemprop="description" content="%s" />','calc'=>1,'smarty'=>1,'active'=>1),
-'meta_gplus_image'=>array      ('gid'=>6,'value'=>'UNUSED','output'=>'<meta itemprop="image" content="%s" />','calc'=>0,'smarty'=>0,'active'=>1),
+'meta_gplus_image'=>array      ('gid'=>6,'value'=>'UNUSED','output'=>'<meta itemprop="image" content="%s" />','calc'=>1,'smarty'=>0,'active'=>1),
 
 'meta_additional'=>array  ('gid'=>7,'value'=>'','output'=>'UNUSED','calc'=>1,'smarty'=>1,'active'=>1),
 );
