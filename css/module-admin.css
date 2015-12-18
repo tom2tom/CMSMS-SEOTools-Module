@@ -9,11 +9,12 @@ input.seocb { width:20px; }
  min-width: 100px;
  max-width: 50%;
  z-index: 20;
- padding: 8px;
+ padding: 5px;
+ text-align: left;
  font-size: 1.2em;
- line-height: 1.2;
+ line-height: 1;
  color: #000;
- border: 2px solid #ddd;
+ border: 2px solid #bfbfbf;
  background-color: #efefef;
  -webkit-border-radius: 5px;
  -moz-border-radius: 5px;

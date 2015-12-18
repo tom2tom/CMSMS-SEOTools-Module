@@ -22,18 +22,22 @@ $(document).ready(function(){
   return false;
  });
  $('.masterTooltip').hover(function(){
-  var title = $(this).attr('title');
-  $(this).data('tipText', title).removeAttr('title');
-  $('<p class="tooltip"></p>')
-   .text(title)
+  var $t = $(this),
+   h = $t.height() + 5,
+   p = $t.offset(),
+   title = $t.attr('title'),
+   $n = $('<p class="tooltip"></p>');
+  $t.removeAttr('title').data('tipText',title);
+  $n.text(title)
    .appendTo('body')
-   .fadeIn('slow');
+   .css({ top: p.top + h, left: p.left + 5})
+   .fadeIn(500);
+  $t.data('tipNew',$n);
  }, function() {
-   $(this).attr('title', $(this).data('tipText'));
-   $('.tooltip').remove();
- }).mousemove(function(e) {
-   var mousex = e.pageX + 10; //X coordinate
-   var mousey = e.pageY + 16; //Y coordinate
-   $('.tooltip').css({ top: mousey, left: mousex })
+   $t = $(this);
+   $t.data('tipNew').fadeOut(200,function(){
+     $t.attr('title',$t.data('tipText'))
+       .data('tipNew').remove();
+   });
  });
 });
