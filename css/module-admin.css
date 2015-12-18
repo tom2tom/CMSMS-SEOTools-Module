@@ -2,3 +2,14 @@ table.pagetable { padding: 3px; }
 p.pagetext { clear: both; }
 a img { border-style: none !important; vertical-align:middle; }
 input.seocb { width:20px; }
+
+.tooltip {
+ display:none;
+ position:absolute;
+ border:2px solid #333;
+ background-color:#161616;
+ border-radius:5px;
+ padding:8px;
+ color:#fff;
+ font-size:1.2em;
+}

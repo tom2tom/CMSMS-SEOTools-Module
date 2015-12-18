@@ -21,4 +21,19 @@ $(document).ready(function(){
   $('#'+to+'_c').css('display','block');
   return false;
  });
+ $('.masterTooltip').hover(function(){
+  var title = $(this).attr('title');
+  $(this).data('tipText', title).removeAttr('title');
+  $('<p class="tooltip"></p>')
+   .text(title)
+   .appendTo('body')
+   .fadeIn('slow');
+ }, function() {
+   $(this).attr('title', $(this).data('tipText'));
+   $('.tooltip').remove();
+ }).mousemove(function(e) {
+   var mousex = e.pageX + 10; //X coordinate
+   var mousey = e.pageY + 16; //Y coordinate
+   $('.tooltip').css({ top: mousey, left: mousex })
+ });
 });
