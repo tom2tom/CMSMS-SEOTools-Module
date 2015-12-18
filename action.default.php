@@ -112,6 +112,7 @@ foreach ($rows as $name=>&$one) {
 			$val = 'UNUSED';
 			break;
 		 case 'title':
+		 case 'meta_twt_title':
 			if (!$val) {
 				$val = '{title} | {$sitename} - {seo_keywords}';
 			}
@@ -124,6 +125,8 @@ foreach ($rows as $name=>&$one) {
 			$val = str_replace(array('{title}','{seo_keywords}'),array($page_name,$title_keywords),$val);
 			break;
 		 case 'meta_std_description':
+		 case 'meta_twt_description':
+		 case 'meta_gplus_description':
 			$val = $description;
 			break;
 		 case 'meta_std_keywords':
@@ -185,6 +188,7 @@ foreach ($rows as $name=>&$one) {
 		 case 'meta_og_url':
 			 $val = $page_url;
 			 break;
+		 case 'meta_gplus_name': //TODO name or title
 		 case 'meta_og_title':
 			if (!$val) {
 				$val = '{title}';
@@ -196,20 +200,15 @@ foreach ($rows as $name=>&$one) {
 				$val = $page_row['ogtype']; //override CHECKME
 			}
 			break;
-		//TODO populate these
 		 case 'meta_og_image':
-			break;
-		 case 'meta_gplus_description':
-			$val = $description;
-			break;
-		 case 'meta_gplus_name':
-			break;
-		 case 'meta_twt_description':
-			$val = $description;
-			break;
-		 case 'meta_twt_site':
-			break;
-		 case 'meta_twt_title':
+		 case 'meta_gplus_image':
+ 			if (!$val) {
+				$val = page_image;
+			}
+		 case 'meta_twt_image':
+ 			if ($val) {
+				$val = $root_url.'/uploads/images/'.$val;
+			}
 			break;
 //		 case 'meta_additional':
 //			break;
