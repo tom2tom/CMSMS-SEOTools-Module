@@ -346,7 +346,8 @@ WHERE(p1.prop_name = ? AND p1.content_id < p2.content_id  AND p1.content != ? AN
 	{
 		$alerts = array();
 		// No standard metadata
-		if (!$db->GetOne('SELECT 1 FROM '.$pre.'module_seotools_group WHERE gname=\'meta_std\' AND active=1')) {
+		$db = cmsms()->GetDb();//CMSMS 1.8+
+		if (!$db->GetOne('SELECT 1 FROM '.cms_db_prefix().'module_seotools_group WHERE gname=\'meta_std\' AND active=1')) {
 			$alert = array();
 			$alert['message'] = $mod->Lang('use_standard_meta');
 			$alert['links'][] = self::getTabLink(4,$mod->Lang('visit_settings'));
