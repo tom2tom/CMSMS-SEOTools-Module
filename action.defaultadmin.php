@@ -6,8 +6,6 @@
 
 # Setup and display admin page, after processing any action-request
 
-//require ('method.setmeta.php');
-
 function vardata_text(&$mod, &$trans, &$meta, &$out, $name, $len, $def = '') {
 	$oneset = new stdClass();
 	$k = $name.'_title';
@@ -844,6 +842,8 @@ $metaset[] = array(
 
 $smarty->assign('metaset',$metaset);
 $smarty->assign('submit1',$this->CreateInputSubmit(null, 'save_meta_settings', $this->Lang('save')));
+$smarty->assign('revert',$this->CreateInputSubmit(null, 'revert_meta_settings',	$this->Lang('revert'),
+	'title="'.$this->Lang('reset_to_default2').'" onclick="return confirm(\''.$this->Lang('confirm').'\');"'));
 
 /* KEYWORD Settings */
 

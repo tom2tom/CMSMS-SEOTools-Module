@@ -109,21 +109,38 @@ if (isset($_POST['save_meta_settings'])) {
 	$this->Redirect($id, 'defaultadmin', '', $args);
 }
 
-if (isset($_POST['save_sitemap_settings'])) {
-	$val = (isset($_POST['create_sitemap'])) ? 1 : 0;
-	$this->SetPreference('create_sitemap', $val);
-	$val = (isset($_POST['push_sitemap'])) ? 1 : 0;
-	$this->SetPreference('push_sitemap', $val);
-	$val = (isset($_POST['create_robots'])) ? 1 : 0;
-	$this->SetPreference('create_robots', $val);
-	$val = (isset($_POST['robot_start'])) ? $_POST['robot_start'] : '';
-	$this->SetPreference('robot_start',$val);
-	$val = (isset($_POST['robot_end'])) ? $_POST['robot_end'] : '';
-	$this->SetPreference('robot_end',$val);
-	$db->Execute('UPDATE '.$pre.'module_seotools_meta SET value=? WHERE mname=\'verification\'',
- 		array($_POST['verification']));
-	$this->Audit(0, $this->Lang('friendlyname'), 'Edited sitemap settings');
-	$this->Redirect($id, 'defaultadmin', '', array('message'=>'settings_updated','tab'=>'sitemapsettings'));
+if (isset($_POST['revert_meta_settings'])) {
+	// get default metadata
+	require ('method.setmeta.php');
+
+	$db->Execute('DELETE FROM '.$pre.'module_seotools_meta');
+
+	$gid = -1; //unmatched
+	$query = 'INSERT INTO '.$pre.'module_seotools_meta
+(group_id,mname,value,output,calc,smarty,vieworder,active)
+VALUES (?,?,?,?,?,?,?,?)';
+	foreach ($defs as $name=>$data) {
+		if ($gid != $data['gid']) {
+			$gid = $data['gid'];
+			$i = 1;
+		}
+		else {
+			$i++;
+		}
+		$db->Execute($query,array(
+			$data['gid'],
+			$name,
+			$data['value'],
+			$data['output'],
+			$data['calc'],
+			$data['smarty'],
+			$i,
+			$data['active']));
+	}
+
+	$this->Audit(0, $this->Lang('friendlyname'), 'Applied default META settings');
+	$this->Redirect($id, 'defaultadmin', '', 
+		array('message'=>'settings_updated','tab'=>'metasettings'));
 }
 
 if (isset($_POST['save_keyword_settings'])) {
@@ -199,6 +216,23 @@ if (isset($_POST['save_keyword_settings'])) {
 
 	$this->Audit(0, $this->Lang('friendlyname'), 'Edited keyword settings');
 	$this->Redirect($id, 'defaultadmin', '', $args);
+}
+
+if (isset($_POST['save_sitemap_settings'])) {
+	$val = (isset($_POST['create_sitemap'])) ? 1 : 0;
+	$this->SetPreference('create_sitemap', $val);
+	$val = (isset($_POST['push_sitemap'])) ? 1 : 0;
+	$this->SetPreference('push_sitemap', $val);
+	$val = (isset($_POST['create_robots'])) ? 1 : 0;
+	$this->SetPreference('create_robots', $val);
+	$val = (isset($_POST['robot_start'])) ? $_POST['robot_start'] : '';
+	$this->SetPreference('robot_start',$val);
+	$val = (isset($_POST['robot_end'])) ? $_POST['robot_end'] : '';
+	$this->SetPreference('robot_end',$val);
+	$db->Execute('UPDATE '.$pre.'module_seotools_meta SET value=? WHERE mname=\'verification\'',
+ 		array($_POST['verification']));
+	$this->Audit(0, $this->Lang('friendlyname'), 'Edited sitemap settings');
+	$this->Redirect($id, 'defaultadmin', '', array('message'=>'settings_updated','tab'=>'sitemapsettings'));
 }
 
 ?>

@@ -18,6 +18,7 @@ $lang['chmod_robots'] = 'Change permissions';
 $lang['chmod_sitemap'] = 'Change permissions';
 $lang['click_to_add_description'] = 'Click here to add a page description';
 $lang['close'] = 'Close';
+$lang['confirm'] = 'Are you sure?';
 $lang['content_type_help'] = 'A recognised format like: html, html5, xhtml. Applied to all frontend pages';
 $lang['content_type_title'] = 'Pages content type';
 $lang['create_a_sitemap'] = 'Automatically create a XML sitemap for Google and other search engines';
@@ -151,7 +152,7 @@ $lang['meta_twt_title_title'] = 'Page title';
 
 $lang['moddescription'] = 'Several tools to help with Search Engine Optimization and check for suboptimal SEO-related things.';
 
-$lang['no_opengraph_admins'] = 'No OpenGraph sdmin is set admin application resp. admin list';
+$lang['no_opengraph_admins'] = 'No OpenGraph admin is set admin application resp. admin list';
 $lang['no_opengraph_image'] = 'OpenGraph default image is not set';
 $lang['no_opengraph_sitename'] = 'OpenGraph site name is not set';
 $lang['no_opengraph_type'] = 'OpenGraph default page type is not set';
@@ -178,7 +179,9 @@ $lang['push_sitemap_title'] = 'Automatically push each newly-created sitemap to 
 $lang['really_uninstall'] = 'Do you really want to uninstall SEO Tools?';
 $lang['regenerate'] = 'Regenerate';
 $lang['reset'] = 'reset';
-$lang['reset_to_default'] = 'Reset this to the default value';
+$lang['reset_to_default'] = 'Reset this to its default value';
+$lang['reset_to_default2'] = 'Reset to the default values';
+$lang['revert'] = 'Revert';
 $lang['robot_end_title'] = 'Optional extra content to insert at the end of robots.txt';
 $lang['robot_regenerated'] = 'The robots.txt file has been successfully regenerated.';
 $lang['robot_start_title'] = 'Optional extra content to insert near the start of robots.txt';
