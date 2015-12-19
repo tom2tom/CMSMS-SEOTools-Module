@@ -138,8 +138,11 @@ VALUES (?,?,?,?,?,?,?,?)';
 			$data['active']));
 	}
 
+	$db->Execute('UPDATE '.$pre.'module_seotools_group SET active=0');
+	$db->Execute('UPDATE '.$pre.'module_seotools_group SET active=1 WHERE gname IN (\'before\',\'after\',\'meta_std\')');
+
 	$this->Audit(0, $this->Lang('friendlyname'), 'Applied default META settings');
-	$this->Redirect($id, 'defaultadmin', '', 
+	$this->Redirect($id, 'defaultadmin', '',
 		array('message'=>'settings_updated','tab'=>'metasettings'));
 }
 
