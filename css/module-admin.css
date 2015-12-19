@@ -1,22 +1,4 @@
 table.pagetable { padding: 3px; }
-p.pagetext { clear: both; }
+p.pagetext { margin-top:0.5em; margin-bottom:0.5em; }
 a img { border-style: none !important; vertical-align:middle; }
 input.seocb { width:20px; }
-
-.tooltip {
- display: none;
- position: absolute;
- min-width: 100px;
- max-width: 50%;
- z-index: 20;
- padding: 5px;
- text-align: left;
- font-size: 1.2em;
- line-height: 1;
- color: #000;
- border: 2px solid #bfbfbf;
- background-color: #efefef;
- -webkit-border-radius: 5px;
- -moz-border-radius: 5px;
- border-radius: 5px;
-}
