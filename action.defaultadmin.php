@@ -8,6 +8,88 @@
 
 //require ('method.setmeta.php');
 
+function vardata_text(&$mod, &$trans, &$meta, &$out, $name, $len, $def = '') {
+	$oneset = new stdClass();
+	$k = $name.'_title';
+	$oneset->title = (array_key_exists($k,$trans)) ? $trans[$k] : $name;
+	$k = $name.'_help';
+	$oneset->help = (array_key_exists($k,$trans)) ? htmlentities($trans[$k]) : null;
+	$val = (!empty($meta[$name])) ? $meta[$name]['value']:$def;
+	$oneset->input = $mod->CreateInputText(null, $name, $val, $len, $len);
+	$out[$name] = $oneset;
+}
+
+function vardata_textarea(&$mod, &$trans, &$meta, &$out, $name, $rows, $def = '') {
+	$oneset = new stdClass();
+	$k = $name.'_title';
+	$oneset->title = (array_key_exists($k,$trans)) ? $trans[$k] : $name;
+	$k = $name.'_help';
+	$oneset->help = (array_key_exists($k,$trans)) ? htmlentities($trans[$k]) : null;
+	$val = (!empty($meta[$name])) ? $meta[$name]['value']:$def;
+	$oneset->input = $mod->CreateTextArea(false, null, $val, $name,
+		'', '', '', '', 60, $rows, '', '', 'style="height:'.($rows+1).'em;"');
+	$out[$name] = $oneset;
+}
+
+function vardata_check(&$mod, &$trans, &$meta, &$out, $name, $def = 0) {
+	$oneset = new stdClass();
+	$k = $name.'_title';
+	$oneset->title = (array_key_exists($k,$trans)) ? $trans[$k] : $name;
+	$k = $name.'_help';
+	$oneset->help = (array_key_exists($k,$trans)) ? htmlentities($trans[$k]) : null;
+	$val = (!empty($meta[$name])) ? (int)$meta[$name]['value']:$def;
+	$oneset->input = $mod->CreateInputCheckbox(null, $name, 1, $val);
+	$oneset->inline = true;
+	$out[$name] = $oneset;
+}
+
+function vardata_drop(&$mod, &$trans, &$meta, &$out, $name, $choices, $def = '') {
+	$oneset = new stdClass();
+	$k = $name.'_title';
+	$oneset->title = (array_key_exists($k,$trans)) ? $trans[$k] : $name;
+	$k = $name.'_help';
+	$oneset->help = (array_key_exists($k,$trans)) ? htmlentities($trans[$k]) : null;
+	$val = (!empty($meta[$name])) ? $meta[$name]['value']:$def;
+	$oneset->input = $mod->CreateInputDropdown(null, $name, $choices, $def, -1);
+	$out[$name] = $oneset;
+}
+
+function varpref_text(&$mod, &$trans, &$out, $name, $len, $def = '') {
+	$oneset = new stdClass();
+	$k = $name.'_title';
+	$oneset->title = (array_key_exists($k,$trans)) ? $trans[$k] : $name;
+	$k = $name.'_help';
+	$oneset->help = (array_key_exists($k,$trans)) ? htmlentities($trans[$k]) : null;
+	$val = $mod->GetPreference($name, $def);
+	$oneset->input = $mod->CreateInputText(null, $name, $val, $len, $len);
+	$out[$name] = $oneset;
+}
+
+function varpref_textarea(&$mod, &$trans, &$out, $name, $rows, $def = '') {
+	$oneset = new stdClass();
+	$k = $name.'_title';
+	$oneset->title = (array_key_exists($k,$trans)) ? $trans[$k] : $name;
+	$k = $name.'_help';
+	$oneset->help = (array_key_exists($k,$trans)) ? htmlentities($trans[$k]) : null;
+	$val = $mod->GetPreference($name, $def);
+	$oneset->input = $mod->CreateTextArea(false, null, $val, $name,
+		'', '', '', '', 60, $rows, '', '', 'style="height:'.($rows+1).'em;"');
+	$out[$name] = $oneset;
+}
+
+function varpref_check(&$mod, &$trans, &$out, $name, $def = 0) {
+	$oneset = new stdClass();
+	$k = $name.'_title';
+	$oneset->title = (array_key_exists($k,$trans)) ? $trans[$k] : $name;
+	$k = $name.'_help';
+	$oneset->help = (array_key_exists($k,$trans)) ? htmlentities($trans[$k]) : null;
+	$val = (int)$mod->GetPreference($name, $def);
+	$oneset->input = $mod->CreateInputCheckbox(null, $name, 1, $val);
+	$oneset->inline = true;
+	$out[$name] = $oneset;
+}
+
+
 if (!$this->CheckAccess()) {
 	return $this->DisplayErrorPage($this->Lang('accessdenied'));
 }
@@ -621,90 +703,46 @@ $trans = $this->langhash[$var];
 
 $smarty->assign('startform_settings',$this->CreateFormStart($id, 'changesettings'));
 
+$metaset = array();
+
 $ungrouped = array();
 
-$oneset = new stdClass();
-$name = 'content_type';
-$k = $name.'_title';
-$oneset->title = (array_key_exists($k,$trans)) ? $trans[$k] : $name;
-$val = (!empty($meta[$name])) ? $meta[$name]['value']:'html';
-$oneset->input = $this->CreateInputText(null, $name, $val, 10);
-$k = $name.'_help';
-$oneset->help = (array_key_exists($k,$trans)) ? htmlentities($trans[$k]) : null;
-$ungrouped[$name] = $oneset;
+vardata_text($this, $trans, $meta, $ungrouped, 'content_type', 10, 'html');
 
-$smarty->assign('ungrouped', $ungrouped);
+$metaset[] = array(
+	'',
+	$ungrouped
+);
 
-$smarty->assign('start_page_set',$this->CreateFieldsetStart(null, 'title_description', $this->Lang('title_title_description')));
 $pagevals = array();
 
-$oneset = new stdClass();
-$name = 'title';
-$k = $name.'_title';
-$oneset->title = (array_key_exists($k,$trans)) ? $trans[$k] : $name;
-$val = (!empty($meta[$name])) ? $meta[$name]['value']:'{title} | {$sitename} - {$title_keywords}';
-$oneset->input = $this->CreateInputText(null, 'title', $val, 60);
-$k = $name.'_help';
-$oneset->help = (array_key_exists($k,$trans)) ? htmlentities($trans[$k]) : null;
-$pagevals[$name] = $oneset;
+vardata_text($this, $trans, $meta, $pagevals, 'title', 60, '{title} | {$sitename} - {$title_keywords}');
+vardata_text($this, $trans, $meta, $pagevals, 'meta_std_title', 60, '{title} | {$sitename}');
 
-$oneset = new stdClass();
-$name = 'meta_std_title';
-$k = $name.'_title';
-$oneset->title = (array_key_exists($k,$trans)) ? $trans[$k] : $name;
-$val = (!empty($meta[$name])) ? $meta[$name]['value']:'{title} | {$sitename}';
-$oneset->input = $this->CreateInputText(null, $name, $val, 60);
-$k = $name.'_help';
-$oneset->help = (array_key_exists($k,$trans)) ? htmlentities($trans[$k]) : null;
-$pagevals[$name] = $oneset;
+varpref_text($this, $trans, $pagevals, 'description_block', 60, 'metadescription');
+varpref_check($this, $trans, $pagevals, 'description_auto_generate');
+varpref_textarea($this, $trans, $pagevals, 'description_auto', 2, 'This page covers the topics {keywords}');
 
-$oneset = new stdClass();
-$name = 'description_block';
-$k = $name.'_title';
-$oneset->title = (array_key_exists($k,$trans)) ? $trans[$k] : $name;
-$oneset->input = $this->CreateInputText(null, $name, $this->GetPreference($name,''), 60);
-$k = $name.'_help';
-$oneset->help = (array_key_exists($k,$trans)) ? htmlentities($trans[$k]) : null;
-$pagevals[$name] = $oneset;
+$metaset[] = array(
+	$this->CreateFieldsetStart(null, 'title_description', $this->Lang('title_title_description')),
+	$pagevals
+);
 
-$oneset = new stdClass();
-$name = 'description_auto_generate';
-$k = $name.'_title';
-$oneset->title = (array_key_exists($k,$trans)) ? $trans[$k] : $name;
-$oneset->inline = 1;
-$oneset->input = $this->CreateInputCheckbox(null, $name, 1, $this->GetPreference($name,0));
-$k = $name.'_help';
-$oneset->help = (array_key_exists($k,$trans)) ? htmlentities($trans[$k]) : null;
-$pagevals[$name] = $oneset;
-
-$oneset = new stdClass();
-$name = 'description_auto';
-$k = $name.'_title';
-$oneset->title = (array_key_exists($k,$trans)) ? $trans[$k] : $name;
-$oneset->input = $this->CreateInputText(null, $name, $this->GetPreference($name,'This page covers the topics {keywords}'), 40);
-$k = $name.'_help';
-$oneset->help = (array_key_exists($k,$trans)) ? htmlentities($trans[$k]) : null;
-$pagevals[$name] = $oneset;
-
-$smarty->assign('pageset', $pagevals);
 
 /* META Types */
 
-$smarty->assign('start_meta_set',$this->CreateFieldsetStart(null, 'meta_type', $this->Lang('title_meta_type')));
 $metatypes = array();
+
 $groups = $db->GetAssoc('SELECT gname,active FROM '.$pre.
 	'module_seotools_group WHERE gname != \'before\' AND gname != \'after\' ORDER BY vieworder');
 foreach ($groups as $name=>$act) {
-	$oneset = new stdClass();
-	$k = $name.'_title';
-	$oneset->title = (array_key_exists($k,$trans)) ? $trans[$k] : $name;
-	$oneset->input = $this->CreateInputCheckbox(null, $name, 1, $act);
-	$oneset->inline = 1;
-	$k = $name.'_help';
-	$oneset->help = (array_key_exists($k,$trans)) ? htmlentities($trans[$k]) : null;
-	$metatypes[] = $oneset;
+	vardata_check($this, $trans, $meta, $metatypes, $name, $act);
 }
-$smarty->assign('metatypes', $metatypes);
+
+$metaset[] = array(
+	$this->CreateFieldsetStart(null, 'meta_type', $this->Lang('title_meta_type')),
+	$metatypes
+);
 
 $img_files = array('('.$this->Lang('none').')'=>'');
 // Get image-files in uploads dir (wherever that actually is)
@@ -734,250 +772,41 @@ if ($dp) {
 
 /* META Values */
 
-$smarty->assign('start_deflt_set',$this->CreateFieldsetStart(null, 'meta_defaults', $this->Lang('title_meta_defaults')));
 $metavals = array();
 
-$oneset = new stdClass();
-$name = 'meta_std_publisher';
-$k = $name.'_title';
-$oneset->title = (array_key_exists($k,$trans)) ? $trans[$k] : $name;
-$val = (!empty($meta[$name])) ? $meta[$name]['value']:'';
-$oneset->input = $this->CreateInputText(null, $name, $val, 32);
-$k = $name.'_help';
-$oneset->help = (array_key_exists($k,$trans)) ? htmlentities($trans[$k]) : null;
-$metavals[$name] = $oneset;
-
-$oneset = new stdClass();
-$name = 'meta_std_contributor';
-$k = $name.'_title';
-$oneset->title = (array_key_exists($k,$trans)) ? $trans[$k] : $name;
-$val = (!empty($meta[$name])) ? $meta[$name]['value']:'';
-$oneset->input = $this->CreateInputText(null, $name, $val, 32);
-$k = $name.'_help';
-$oneset->help = (array_key_exists($k,$trans)) ? htmlentities($trans[$k]) : null;
-$metavals[$name] = $oneset;
-
-$oneset = new stdClass();
-$name = 'meta_std_copyright';
-$k = $name.'_title';
-$oneset->title = (array_key_exists($k,$trans)) ? $trans[$k] : $name;
-$val = (!empty($meta[$name])) ? $meta[$name]['value']:'(C) '.date('Y').'. All rights reserved.';
-$oneset->input = $this->CreateInputText(null, $name, $val, 32);
-$k = $name.'_help';
-$oneset->help = (array_key_exists($k,$trans)) ? htmlentities($trans[$k]) : null;
-$metavals[$name] = $oneset;
-
-$oneset = new stdClass();
+vardata_text($this, $trans, $meta, $metavals, 'meta_std_publisher', 32);
+vardata_text($this, $trans, $meta, $metavals, 'meta_std_contributor', 32);
+vardata_text($this, $trans, $meta, $metavals, 'meta_std_copyright', 32, '(C) '.date('Y').'. All rights reserved.');
+vardata_text($this, $trans, $meta, $metavals, 'meta_std_location', 32);
+$oneset = &$metavals['meta_std_location'];
 $oneset->head = $this->Lang('meta_std_location_description');
-$name = 'meta_std_location';
-$k = $name.'_title';
-$oneset->title = (array_key_exists($k,$trans)) ? $trans[$k] : $name;
-$val = (!empty($meta[$name])) ? $meta[$name]['value']:'';
-$oneset->input = $this->CreateInputText(null, $name, $val, 32);
-$k = $name.'_help';
-$oneset->help = (array_key_exists($k,$trans)) ? htmlentities($trans[$k]) : null;
-$metavals[$name] = $oneset;
-
-$oneset = new stdClass();
-$name = 'meta_std_region';
-$k = $name.'_title';
-$oneset->title = (array_key_exists($k,$trans)) ? $trans[$k] : $name;
-$val = (!empty($meta[$name])) ? $meta[$name]['value']:'';
-$oneset->input = $this->CreateInputText(null, $name, $val, 5);
-$k = $name.'_help';
-$oneset->help = (array_key_exists($k,$trans)) ? htmlentities($trans[$k]) : null;
-$metavals[$name] = $oneset;
-
-$oneset = new stdClass();
-$name = 'meta_std_latitude';
-$k = $name.'_title';
-$oneset->title = (array_key_exists($k,$trans)) ? $trans[$k] : $name;
-$val = (!empty($meta[$name])) ? $meta[$name]['value']:'';
-$oneset->input = $this->CreateInputText(null, $name, $val, 15);
-$k = $name.'_help';
-$oneset->help = (array_key_exists($k,$trans)) ? htmlentities($trans[$k]) : null;
-$metavals[$name] = $oneset;
-
-$oneset = new stdClass();
-$name = 'meta_std_longitude';
-$k = $name.'_title';
-$oneset->title = (array_key_exists($k,$trans)) ? $trans[$k] : $name;
-$val = (!empty($meta[$name])) ? $meta[$name]['value']:'';
-$oneset->input = $this->CreateInputText(null, $name, $val, 15);
-$k = $name.'_help';
-$oneset->help = (array_key_exists($k,$trans)) ? htmlentities($trans[$k]) : null;
-$metavals[$name] = $oneset;
-
-$oneset = new stdClass();
+vardata_text($this, $trans, $meta, $metavals, 'meta_std_region', 6);
+vardata_text($this, $trans, $meta, $metavals, 'meta_std_latitude', 15);
+vardata_text($this, $trans, $meta, $metavals, 'meta_std_longitude', 15);
+vardata_text($this, $trans, $meta, $metavals, 'meta_og_title', 60, '{title}');
+$oneset = &$metavals['meta_og_title'];
 $oneset->head = $this->Lang('meta_og_description');
-$name = 'meta_og_title';
-$k = $name.'_title';
-$oneset->title = (array_key_exists($k,$trans)) ? $trans[$k] : $name;
-$val = (!empty($meta[$name])) ? $meta[$name]['value']:'{title}';
-$oneset->input = $this->CreateInputText(null, $name, $val, 32);
-$k = $name.'_help';
-$oneset->help = (array_key_exists($k,$trans)) ? htmlentities($trans[$k]) : null;
-$metavals[$name] = $oneset;
-
-$oneset = new stdClass();
-$name = 'meta_og_type';
-$k = $name.'_title';
-$oneset->title = (array_key_exists($k,$trans)) ? $trans[$k] : $name;
-$val = (!empty($meta[$name])) ? $meta[$name]['value']:'';
-$oneset->input = $this->CreateInputText(null, $name, $val, 32);
-$k = $name.'_help';
-$oneset->help = (array_key_exists($k,$trans)) ? htmlentities($trans[$k]) : null;
-$metavals[$name] = $oneset;
-
-$oneset = new stdClass();
-$name = 'meta_og_sitename';
-$k = $name.'_title';
-$oneset->title = (array_key_exists($k,$trans)) ? $trans[$k] : $name;
-$val = (!empty($meta[$name])) ? $meta[$name]['value']:'';
-$oneset->input = $this->CreateInputText(null, $name, $val, 25);
-$k = $name.'_help';
-$oneset->help = (array_key_exists($k,$trans)) ? htmlentities($trans[$k]) : null;
-$metavals[$name] = $oneset;
-
-$oneset = new stdClass();
-$name = 'meta_og_image';
-$k = $name.'_title';
-$oneset->title = (array_key_exists($k,$trans)) ? $trans[$k] : $name;
-$val = (!empty($meta[$name])) ? $meta[$name]['value']:-1;
-$oneset->input = $this->CreateInputDropdown(null, $name, $img_files, null, $val);
-$k = $name.'_help';
-$oneset->help = (array_key_exists($k,$trans)) ? htmlentities($trans[$k]) : null;
-$metavals[$name] = $oneset;
-
-$oneset = new stdClass();
-$name = 'meta_og_admins';
-$k = $name.'_title';
-$oneset->title = (array_key_exists($k,$trans)) ? $trans[$k] : $name;
-$val = (!empty($meta[$name])) ? $meta[$name]['value']:'';
-$oneset->input = $this->CreateInputText(null, $name, $val, 48);
-$k = $name.'_help';
-$oneset->help = (array_key_exists($k,$trans)) ? htmlentities($trans[$k]) : null;
-$metavals[$name] = $oneset;
-
-$oneset = new stdClass();
-$name = 'meta_og_application';
-$k = $name.'_title';
-$oneset->title = (array_key_exists($k,$trans)) ? $trans[$k] : $name;
-$val = (!empty($meta[$name])) ? $meta[$name]['value']:'';
-$oneset->input = $this->CreateInputText(null, $name, $val, 32);
-$k = $name.'_help';
-$oneset->help = (array_key_exists($k,$trans)) ? htmlentities($trans[$k]) : null;
-$metavals[$name] = $oneset;
-
+vardata_text($this, $trans, $meta, $metavals, 'meta_og_type', 32);
+vardata_text($this, $trans, $meta, $metavals, 'meta_og_sitename', 25);
+vardata_drop($this, $trans, $meta, $metavals, 'meta_og_image', $img_files);
+vardata_text($this, $trans, $meta, $metavals, 'meta_og_admins', 48);
+vardata_text($this, $trans, $meta, $metavals, 'meta_og_application', 32);
 /* twitter metas derived from others
-$oneset = new stdClass();
-$name = 'meta_twt_title';
-$k = $name.'_title';
-$oneset->title = (array_key_exists($k,$trans)) ? $trans[$k] : $name;
-$val = (!empty($meta[$name])) ? $meta[$name]['value']:'';
-$oneset->input = $this->CreateInputText(null, $name, $val, 32);
-$k = $name.'_help';
-$oneset->help = (array_key_exists($k,$trans)) ? htmlentities($trans[$k]) : null;
-$metavals[$name] = $oneset;
-
-$oneset = new stdClass();
-$name = 'meta_twt_description';
-$k = $name.'_title';
-$oneset->title = (array_key_exists($k,$trans)) ? $trans[$k] : $name;
-$val = (!empty($meta[$name])) ? $meta[$name]['value']:'';
-$oneset->input = $this->CreateInputText(null, $name, $val, 32);
-$k = $name.'_help';
-$oneset->help = (array_key_exists($k,$trans)) ? htmlentities($trans[$k]) : null;
-$metavals[$name] = $oneset;
+vardata_text($this, $trans, $meta, $metavals, 'meta_twt_title', 60, '{title}');
+vardata_textarea($this, $trans, $meta, $metavals, 'meta_twt_description', 6);
 */
-
-$oneset = new stdClass();
+vardata_text($this, $trans, $meta, $metavals, 'meta_twt_card', 20);
+$oneset = &$metavals['meta_twt_card'];
 $oneset->head = $this->Lang('meta_twt_description');
-$name = 'meta_twt_card';
-$k = $name.'_title';
-$oneset->title = (array_key_exists($k,$trans)) ? $trans[$k] : $name;
-$val = (!empty($meta[$name])) ? $meta[$name]['value']:'';
-$oneset->input = $this->CreateInputText(null, $name, $val, 24);
-$k = $name.'_help';
-$oneset->help = (array_key_exists($k,$trans)) ? htmlentities($trans[$k]) : null;
-$metavals[$name] = $oneset;
-
-$oneset = new stdClass();
-$name = 'meta_twt_image';
-$k = $name.'_title';
-$oneset->title = (array_key_exists($k,$trans)) ? $trans[$k] : $name;
-$val = (!empty($meta[$name])) ? $meta[$name]['value']:'';
-$oneset->input = $this->CreateInputDropdown(null, $name, $img_files, null, $val);
-$k = $name.'_help';
-$oneset->help = (array_key_exists($k,$trans)) ? htmlentities($trans[$k]) : null;
-$metavals[$name] = $oneset;
-
-$oneset = new stdClass();
-$name = 'meta_twt_site';
-$k = $name.'_title';
-$oneset->title = (array_key_exists($k,$trans)) ? $trans[$k] : $name;
-$val = (!empty($meta[$name])) ? $meta[$name]['value']:'';
-$oneset->input = $this->CreateInputText(null, $name, $val, 18);
-$k = $name.'_help';
-$oneset->help = (array_key_exists($k,$trans)) ? htmlentities($trans[$k]) : null;
-$metavals[$name] = $oneset;
-
-$oneset = new stdClass();
-$name = 'meta_twt_creator';
-$k = $name.'_title';
-$oneset->title = (array_key_exists($k,$trans)) ? $trans[$k] : $name;
-$val = (!empty($meta[$name])) ? $meta[$name]['value']:'';
-$oneset->input = $this->CreateInputText(null, $name, $val, 18);
-$k = $name.'_help';
-$oneset->help = (array_key_exists($k,$trans)) ? htmlentities($trans[$k]) : null;
-$metavals[$name] = $oneset;
-
+vardata_drop($this, $trans, $meta, $metavals, 'meta_twt_image', $img_files);
+vardata_text($this, $trans, $meta, $metavals, 'meta_twt_site', 18);
+vardata_text($this, $trans, $meta, $metavals, 'meta_twt_creator', 18);
 /* google+ metas derived from others
-$oneset = new stdClass();
+vardata_text($this, $trans, $meta, $metavals, 'meta_gplus_name', 60, '{title}');
+$oneset = &$metavals['meta_gplus_name'];
 $oneset->head = $this->Lang('meta_gplus_description');
-$name = 'meta_gplus_name';
-$k = $name.'_title';
-$oneset->title = (array_key_exists($k,$trans)) ? $trans[$k] : $name;
-$val = (!empty($meta[$name])) ? $meta[$name]['value']:'';
-$oneset->input = $this->CreateInputText(null, $name, $val, 32);
-$k = $name.'_help';
-$oneset->help = (array_key_exists($k,$trans)) ? htmlentities($trans[$k]) : null;
-$metavals[$name] = $oneset;
-
-$oneset = new stdClass();
-$name = 'meta_gplus_description';
-$k = $name.'_title';
-$oneset->title = (array_key_exists($k,$trans)) ? $trans[$k] : $name;
-$val = (!empty($meta[$name])) ? $meta[$name]['value']:'';
-$oneset->input = $this->CreateInputText(null, $name, $val, 32);
-$k = $name.'_help';
-$oneset->help = (array_key_exists($k,$trans)) ? htmlentities($trans[$k]) : null;
-$metavals[$name] = $oneset;
-
-$oneset = new stdClass();
-$name = 'meta_gplus_image';
-$k = $name.'_title';
-$oneset->title = (array_key_exists($k,$trans)) ? $trans[$k] : $name;
-$val = (!empty($meta[$name])) ? $meta[$name]['value']:'';
-$oneset->input = $this->CreateInputDropdown(null, $name, $img_files, null, $val);
-$k = $name.'_help';
-$oneset->help = (array_key_exists($k,$trans)) ? htmlentities($trans[$k]) : null;
-$metavals[$name] = $oneset;
-*/
-/*
-<!-- Schema.org markup for Google+ -->
-<meta itemprop="name" content="The Name or Title Here">
-<meta itemprop="description" content="This is the page description">
-<meta itemprop="image" content="http://www.example.com/image.jpg">
-
-<!-- Twitter Card data -->
-<meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:site" content="@publisher_handle">
-<meta name="twitter:title" content="Page Title">
-<meta name="twitter:description" content="Page description less than 200 characters">
-<meta name="twitter:creator" content="@author_handle">
-<!-- Twitter summary card with large image must be at least 280x150px -->
-<meta name="twitter:image:src" content="http://www.example.com/image.html">
+vardata_textarea($this, $trans, $meta, $metavals, 'meta_gplus_description', 6);
+vardata_drop($this, $trans, $meta, $metavals, 'meta_gplus_image', $img_files);
 */
 $j = 0;
 foreach ($meta as $name=>&$data) {
@@ -986,199 +815,95 @@ foreach ($meta as $name=>&$data) {
 		   || array_key_exists($name,$pagevals)
 		   || array_key_exists($name,$metavals)
 		   || array_key_exists($name,$ungrouped))) {
-			$oneset = new stdClass();
+			vardata_text($this, $trans, $meta, $metavals, $name, 40);
 			if ($j == 0) {
+				$oneset = &$metavals[$name];
 				$oneset->head = $this->Lang('meta_new_description');
 				$j = 1;
 			}
-			$k = $name.'_title';
-			$oneset->title = (array_key_exists($k,$trans)) ? $trans[$k] : $name;
-			$oneset->input = $this->CreateInputText(null, $name, $data['value'], 32);
-			$k = $name.'_help';
-			$oneset->help = (array_key_exists($k,$trans)) ? htmlentities($trans[$k]) : null;
-			$metavals[$name] = $oneset;
 		}
 	}
 }
 unset($data);
 
-$smarty->assign('metadeflts', $metavals);
+$metaset[] = array(
+	$this->CreateFieldsetStart(null, 'meta_values', $this->Lang('title_meta_values')),
+	$metavals
+);
 
 /* Additional Meta Tags */
 
-$smarty->assign('start_extra_set',$this->CreateFieldsetStart(null, 'meta_additional', $this->Lang('title_meta_additional')));
-
-//extra
 $extraset = array();
-$oneset = new stdClass();
-$name = 'meta_additional';
-$k = $name.'_title';
-$oneset->title = (array_key_exists($k,$trans)) ? $trans[$k] : $name;
-$val = (!empty($meta[$name])) ? $meta[$name]['value']:'';
-$oneset->input = $this->CreateTextArea(false, null, $val, $name,
-	'', '', '', '', 60, 5, '', '', 'style="height:10em;"');
-$k = $name.'_help';
-$oneset->help = (array_key_exists($k,$trans)) ? htmlentities($trans[$k]) : null;
 
-$extraset[] = $oneset;
+vardata_textarea($this, $trans, $meta, $extraset, 'meta_additional', 4);
 
-$smarty->assign('extraset', $extraset);
+$metaset[] = array(
+	$this->CreateFieldsetStart(null, 'meta_additional', $this->Lang('title_meta_additional')),
+	$extraset
+);
 
+$smarty->assign('metaset',$metaset);
 $smarty->assign('submit1',$this->CreateInputSubmit(null, 'save_meta_settings', $this->Lang('save')));
 
 /* KEYWORD Settings */
 
-$smarty->assign('start_ksettings_set',$this->CreateFieldsetStart(null, 'keyword_weight_description', $this->Lang('title_keyword_weight')));
+$keywordset = array();
+
 $keyset = array();
-//wordsblock_name
-$oneset = new stdClass();
-$oneset->title = $this->Lang('keyword_block_title');
-$oneset->input = $this->CreateInputText(null, 'keyword_block', $this->GetPreference('keyword_block',''), 60);
-$oneset->help = htmlentities($this->Lang('keyword_block_help'));
-$keyset[] = $oneset;
-//kw_sep
-$oneset = new stdClass();
-$oneset->title = $this->Lang('keyword_separator_title');
-$oneset->input = $this->CreateInputText(null, 'keyword_separator', $sep, 1);
-$oneset->help = htmlentities($this->Lang('keyword_separator_help'));
-$keyset[] = $oneset;
-//min_length
-$oneset = new stdClass();
-$oneset->title = $this->Lang('keyword_minlength_title');
-$oneset->input = $this->CreateInputText(null, 'keyword_minlength', $this->GetPreference('keyword_minlength',6), 2);
-$oneset->help = htmlentities($this->Lang('keyword_minlength_help'));
-$keyset[] = $oneset;
-//title_weight
-$oneset = new stdClass();
-$oneset->title = $this->Lang('keyword_title_weight_title');
-$oneset->input = $this->CreateInputText(null, 'keyword_title_weight', $this->GetPreference('keyword_title_weight',6), 2);
-$oneset->help = htmlentities($this->Lang('keyword_title_weight_help'));
-$keyset[] = $oneset;
-//desc_weight
-$oneset = new stdClass();
-$oneset->title = $this->Lang('keyword_description_weight_title');
-$oneset->input = $this->CreateInputText(null, 'keyword_description_weight', $this->GetPreference('keyword_description_weight',4), 2);
-$oneset->help = htmlentities($this->Lang('keyword_description_weight_help'));
-$keyset[] = $oneset;
-//head_weight
-$oneset = new stdClass();
-$oneset->title = $this->Lang('keyword_headline_weight_title');
-$oneset->input = $this->CreateInputText(null, 'keyword_headline_weight', $this->GetPreference('keyword_headline_weight',2), 2);
-$oneset->help = htmlentities($this->Lang('keyword_headline_weight_help'));
-$keyset[] = $oneset;
-//cont_weight
-$oneset = new stdClass();
-$oneset->title = $this->Lang('keyword_content_weight_title');
-$oneset->input = $this->CreateInputText(null, 'keyword_content_weight', $this->GetPreference('keyword_content_weight',1), 2);
-$oneset->help = htmlentities($this->Lang('keyword_content_weight_help'));
-$keyset[] = $oneset;
-//min_weight
-$oneset = new stdClass();
-$oneset->title = $this->Lang('keyword_minimum_weight_title');
-$oneset->input = $this->CreateInputText(null, 'keyword_minimum_weight', $this->GetPreference('keyword_minimum_weight',7), 2);
-$oneset->help = htmlentities($this->Lang('keyword_minimum_weight_help'));
-$keyset[] = $oneset;
 
-$smarty->assign('keyset', $keyset);
+varpref_text($this, $trans, $keyset, 'keyword_block', 60, 'metakeywords');
+varpref_text($this, $trans, $keyset, 'keyword_separator', 1, ',');
+varpref_text($this, $trans, $keyset, 'keyword_minlength', 2, '6');
+varpref_text($this, $trans, $keyset, 'keyword_minimum_weight', 2, '7');
+varpref_text($this, $trans, $keyset, 'keyword_title_weight', 2, '6');
+varpref_text($this, $trans, $keyset, 'keyword_description_weight', 2, '4');
+varpref_text($this, $trans, $keyset, 'keyword_headline_weight', 2, '2');
+varpref_text($this, $trans, $keyset, 'keyword_content_weight', 2, '1');
 
-$smarty->assign('start_klist_set',$this->CreateFieldsetStart(null, 'keyword_exclude_description', $this->Lang('title_keyword_exclude')));
+$keywordset[] = array(
+	$this->CreateFieldsetStart(null, 'keyword_gener_description', $this->Lang('title_keyword_gener')),
+	$keyset
+);
+
 $listset = array();
-//incl_words
-$oneset = new stdClass();
-$oneset->title = $this->Lang('keyword_default_title');
-$oneset->input = $this->CreateTextArea(false, null, $this->GetPreference('keyword_default',''),
-	'keyword_default', '', '', '', '', 60, 5, '' ,'', 'style="height:5em;"');
-$oneset->help = htmlentities($this->Lang('keyword_default_help'));
-$listset[] = $oneset;
-//excl_words
-$oneset = new stdClass();
-$oneset->title = $this->Lang('keyword_exclude_title');
-$oneset->input = $this->CreateTextArea(false, null, $this->GetPreference('keyword_exclude',''),
-	'keyword_exclude', '', '', '', '', 60, 5,'','','style="height:5em;"');
-$oneset->help = htmlentities($this->Lang('keyword_exclude_help'));
-$listset[] = $oneset;
 
-$smarty->assign('listset', $listset);
+varpref_textarea($this, $trans, $listset, 'keyword_default', 3);
+varpref_textarea($this, $trans, $listset, 'keyword_exclude', 5);
 
+$keywordset[] = array(
+	$this->CreateFieldsetStart(null, 'keyword_list_description', $this->Lang('title_keyword_lists')),
+	$listset
+);
+
+$smarty->assign('keywordset',$keywordset);
 $smarty->assign('keyword_help',$this->Lang('help_keyword_generator'));
-
 $smarty->assign('submit2',$this->CreateInputSubmit(null, 'save_keyword_settings', $this->Lang('save')));
 
 /* SITEMAP Settings */
 
-$smarty->assign('start_map_set',$this->CreateFieldsetStart(null, 'sitemap_description', $this->Lang('title_sitemap_description')));
+$sitemapset = array();
+
 $fileset = array();
 
-$oneset = new stdClass();
-$name = 'create_sitemap';
-$k = $name.'_title';
-$oneset->title = (array_key_exists($k,$trans)) ? $trans[$k] : $name;
-$oneset->title .= ' *';
-$oneset->inline = 1;
-$oneset->input = $this->CreateInputCheckbox(null, 'create_sitemap', 1, $this->GetPreference('create_sitemap',0));
-$k = $name.'_help';
-$oneset->help = (array_key_exists($k,$trans)) ? htmlentities($trans[$k]) : null;
-$fileset[] = $oneset;
-//push_map
-$oneset = new stdClass();
-$name = 'push_sitemap';
-$k = $name.'_title';
-$oneset->title = (array_key_exists($k,$trans)) ? $trans[$k] : $name;
-if (ini_get('allow_url_fopen') || function_exists('curl_version')) {
-	$oneset->inline = 1;
-	$i = $this->CreateInputCheckbox(null, $name, 1, $this->GetPreference($name,0));
+varpref_check($this, $trans, $fileset, 'create_sitemap');
+varpref_check($this, $trans, $fileset, 'push_sitemap', $this->GetPreference('create_sitemap',0));
+if (!(ini_get('allow_url_fopen') || function_exists('curl_version'))) {
+	$oneset = &$fileset['push_sitemap'];
+	$oneset->input = $this->Lang('no_pusher');
 }
-else {
-	$i = $this->Lang('no_pusher');
-}
-$oneset->input = $i;
-$k = $name.'_help';
-$oneset->help = (array_key_exists($k,$trans)) ? htmlentities($trans[$k]) : null;
-$fileset[] = $oneset;
 
-$oneset = new stdClass();
-$name = 'verification';
-$k = $name.'_title';
-$oneset->title = (array_key_exists($k,$trans)) ? $trans[$k] : $name;
-$val = (!empty($meta[$name])) ? $meta[$name]['value']:'';
-$oneset->input = $this->CreateInputText(null, $name, $val, 40);
-$k = $name.'_help';
-$oneset->help = (array_key_exists($k,$trans)) ? htmlentities($trans[$k]) : null;
-$fileset[] = $oneset;
+vardata_text($this, $trans, $meta, $fileset, 'verification', 40); //NOTE tabled value
 
-$oneset = new stdClass();
-$name = 'create_robots';
-$k = $name.'_title';
-$oneset->title = (array_key_exists($k,$trans)) ? $trans[$k] : $name;
-$oneset->title .= ' *';
-$oneset->inline = 1;
-$oneset->input = $this->CreateInputCheckbox(null, $name, 1, $this->GetPreference($name,0));
-$k = $name.'_help';
-$oneset->help = (array_key_exists($k,$trans)) ? htmlentities($trans[$k]) : null;
-$fileset[] = $oneset;
+varpref_check($this, $trans, $fileset, 'create_robots');
+varpref_textarea($this, $trans, $fileset, 'robot_start', 5);
+varpref_textarea($this, $trans, $fileset, 'robot_end', 5);
 
-$oneset = new stdClass();
-$name = 'robot_start';
-$k = $name.'_title';
-$oneset->title = (array_key_exists($k,$trans)) ? $trans[$k] : $name;
-$oneset->input = $this->CreateTextArea(false, null, $this->GetPreference($name,''),
- 'robot_start', '', '', '', '', 50, 5, '', '', 'style="height:5em;width:50em;"'); //needs inline styling
-$k = $name.'_help';
-$oneset->help = (array_key_exists($k,$trans)) ? htmlentities($trans[$k]) : null;
-$fileset[] = $oneset;
+$sitemapset[] = array(
+	$this->CreateFieldsetStart(null, 'sitemap_description', $this->Lang('title_sitemap_description')),
+	$fileset
+);
 
-$oneset = new stdClass();
-$name = 'robot_end';
-$k = $name.'_title';
-$oneset->title = (array_key_exists($k,$trans)) ? $trans[$k] : $name;
-$oneset->input = $this->CreateTextArea(false, null, $this->GetPreference($name,''),
- 'robot_end', '', '', '', '', 50, 5, '', '', 'style="height:5em;width:50em;"');
-$k = $name.'_help';
-$oneset->help = (array_key_exists($k,$trans)) ? htmlentities($trans[$k]) : null;
-$fileset[] = $oneset;
-
-$smarty->assign('fileset', $fileset);
-
+$smarty->assign('sitemapset',$sitemapset);
 $smarty->assign('submit3',$this->CreateInputSubmit(null, 'save_sitemap_settings', $this->Lang('save')));
 $smarty->assign('display',$this->CreateInputSubmit(null, 'display_robots_file', $this->Lang('display'),
  'title="'.$this->Lang('robots_display').'"'));

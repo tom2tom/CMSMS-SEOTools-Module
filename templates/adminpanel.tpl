@@ -129,65 +129,20 @@
 
 {$start_meta_tab}
 {$startform_settings}
-<div class="pageoverflow">
- {foreach from=$ungrouped item=entry}
-{if empty($entry->inline)}
-<p class="pagetext" style="margin:0.5em 0 0.5em 5%;">{$entry->title}:</p>
-<p {if !empty($entry->help)}class="pageinput masterTooltip" title="{$entry->help}"{else}class="pageinput"{/if}>{$entry->input}</p>
-{else}
-<p {if !empty($entry->help)}class="pagetext masterTooltip" title="{$entry->help}"{else}class="pagetext"{/if} style="margin:0.5em 0 0.5em 5%;">{$entry->title}:&nbsp;&nbsp;{$entry->input}</p>
-{/if}
- {/foreach}
-</div>
-{$start_page_set}
+{foreach from=$metaset item=row}
+{if $row[0]}{$row[0]}{/if}{*start set*}
 <div class="pageoverflow" style="margin-top:0;">
- {foreach from=$pageset item=entry}
+ {foreach from=$row[1] item=entry}
 {if empty($entry->inline)}
 <p class="pagetext" style="margin:0.5em 0 0.5em 5%;">{$entry->title}:</p>
-<p {if !empty($entry->help)}class="pageinput masterTooltip" title="{$entry->help}"{else}class="pageinput"{/if}>{$entry->input}</p>
+<p class="pageinput"{if !empty($entry->help)} title="{$entry->help}"{/if}>{$entry->input}</p>
 {else}
-<p {if !empty($entry->help)}class="pagetext masterTooltip" title="{$entry->help}"{else}class="pagetext"{/if} style="margin:0.5em 0 0.5em 5%;">{$entry->title}:&nbsp;&nbsp;{$entry->input}</p>
+<p class="pagetext" style="margin:0.5em 0 0.5em 5%;"{if !empty($entry->help)} title="{$entry->help}"{/if}>{$entry->title}:&nbsp;&nbsp;{$entry->input}</p>
 {/if}
  {/foreach}
 </div>
-{$end_set}
-{$start_meta_set}
- <div class="pageoverflow" style="margin-top:0;">
- {foreach from=$metatypes item=entry}
-{if empty($entry->inline)}
-<p class="pagetext" style="margin:0.5em 0 0.5em 5%;">{$entry->title}:</p>
-<p {if !empty($entry->help)}class="pageinput masterTooltip" title="{$entry->help}"{else}class="pageinput"{/if}>{$entry->input}</p>
-{else}
-<p {if !empty($entry->help)}class="pagetext masterTooltip" title="{$entry->help}"{else}class="pagetext"{/if} style="margin:0.5em 0 0.5em 5%;">{$entry->title}:&nbsp;&nbsp;{$entry->input}</p>
-{/if}
- {/foreach}
- </div>
-{$end_set}
-{$start_deflt_set}
- <div class="pageoverflow" style="margin-top:0;">
- {foreach from=$metadeflts item=entry}
-{if !empty($entry->head)}<h4 class="pageinput" style="margin-top:15px;">{$entry->head}:</h4>{/if} 
-{if empty($entry->inline)}
-<p class="pagetext" style="margin:0.5em 0 0.5em 5%;">{$entry->title}:</p>
-<p {if !empty($entry->help)}class="pageinput masterTooltip" title="{$entry->help}"{else}class="pageinput"{/if}>{$entry->input}</p>
-{else}
-<p {if !empty($entry->help)}class="pagetext masterTooltip" title="{$entry->help}"{else}class="pagetext"{/if} style="margin:0.5em 0 0.5em 5%;">{$entry->title}:&nbsp;&nbsp;{$entry->input}</p>
-{/if}
- {/foreach}
- </div>
-{$end_set}
-{$start_extra_set}
- <div class="pageoverflow" style="margin-top:0;">
- {foreach from=$extraset item=entry}
-{if empty($entry->inline)}
-<p class="pagetext" style="margin:0.5em 0 0.5em 5%;">{$entry->title}:</p>
-<p {if !empty($entry->help)}class="pageinput masterTooltip" title="{$entry->help}"{else}class="pageinput"{/if}>{$entry->input}</p>
-{else}
-<p {if !empty($entry->help)}class="pagetext masterTooltip" title="{$entry->help}"{else}class="pagetext"{/if} style="margin:0.5em 0 0.5em 5%;">{$entry->title}:&nbsp;&nbsp;{$entry->input}</p>
-{/if}
- {/foreach}
- </div>
-{$end_set}
+{if $row[0]}{$end_set}{/if}
+{/foreach}
 <br />
 <p class="pageinput">{$submit1}&nbsp;{$cancel}</p>
 {$end_form}
@@ -197,30 +152,20 @@
 <strong>{$keyword_help}</strong>
 <br />
 {$startform_settings}
-{$start_ksettings_set}
- <div class="pageoverflow" style="margin-top:0;">
- {foreach from=$keyset item=entry}
+{foreach from=$keywordset item=row}
+{$row[0]}{*start set*}
+<div class="pageoverflow" style="margin-top:0;">
+ {foreach from=$row[1] item=entry}
 {if empty($entry->inline)}
 <p class="pagetext" style="margin:0.5em 0 0.5em 5%;">{$entry->title}:</p>
-<p {if !empty($entry->help)}class="pageinput masterTooltip" title="{$entry->help}"{else}class="pageinput"{/if}>{$entry->input}</p>
+<p class="pageinput"{if !empty($entry->help)} title="{$entry->help}"{/if}>{$entry->input}</p>
 {else}
-<p {if !empty($entry->help)}class="pagetext masterTooltip" title="{$entry->help}"{else}class="pagetext"{/if} style="margin:0.5em 0 0.5em 5%;">{$entry->title}:&nbsp;&nbsp;{$entry->input}</p>
+<p class="pagetext" style="margin:0.5em 0 0.5em 5%;"{if !empty($entry->help)} title="{$entry->help}"{/if}>{$entry->title}:&nbsp;&nbsp;{$entry->input}</p>
 {/if}
  {/foreach}
- </div>
+</div>
 {$end_set}
-{$start_klist_set}
- <div class="pageoverflow" style="margin-top:0;">
- {foreach from=$listset item=entry}
-{if empty($entry->inline)}
-<p class="pagetext" style="margin:0.5em 0 0.5em 5%;">{$entry->title}:</p>
-<p {if !empty($entry->help)}class="pageinput masterTooltip" title="{$entry->help}"{else}class="pageinput"{/if}>{$entry->input}</p>
-{else}
-<p {if !empty($entry->help)}class="pagetext masterTooltip" title="{$entry->help}"{else}class="pagetext"{/if} style="margin:0.5em 0 0.5em 5%;">{$entry->title}:&nbsp;&nbsp;{$entry->input}</p>
-{/if}
- {/foreach}
- </div>
-{$end_set}
+{/foreach}
 <br />
 <p class="pageinput">{$submit2}&nbsp;{$cancel}</p>
 {$end_form}
@@ -228,20 +173,24 @@
 
 {$start_sitemap_tab}
 {$startform_settings}
-{$start_map_set}
- <div class="pageoverflow" style="margin-top:0;">
- {foreach from=$fileset item=entry}
+{foreach from=$sitemapset item=row name=bundle}
+{$row[0]}{*start set*}
+<div class="pageoverflow" style="margin-top:0;">
+ {foreach from=$row[1] item=entry}
 {if empty($entry->inline)}
 <p class="pagetext" style="margin:0.5em 0 0.5em 5%;">{$entry->title}:</p>
-<p {if !empty($entry->help)}class="pageinput masterTooltip" title="{$entry->help}"{else}class="pageinput"{/if}>{$entry->input}</p>
+<p class="pageinput"{if !empty($entry->help)} title="{$entry->help}"{/if}>{$entry->input}</p>
 {else}
-<p {if !empty($entry->help)}class="pagetext masterTooltip" title="{$entry->help}"{else}class="pagetext"{/if} style="margin:0.5em 0 0.5em 5%;">{$entry->title}:&nbsp;&nbsp;{$entry->input}</p>
+<p class="pagetext" style="margin:0.5em 0 0.5em 5%;"{if !empty($entry->help)} title="{$entry->help}"{/if}>{$entry->title}:&nbsp;&nbsp;{$entry->input}</p>
 {/if}
  {/foreach}
-  <br />
-  <p class="pageinput">{$submit3}&nbsp;{$cancel}&nbsp;{$display}</p>
- </div>
+{if $smarty.foreach.bundle.last}
+<br />
+<p class="pageinput">{$submit3}&nbsp;{$cancel}&nbsp;{$display}</p>
+{/if}
+</div>
 {$end_set}
+{/foreach}
 {if isset($regenerate)}
  {$start_regen_set}
   <div class="pageoverflow" style="margin-top:0;">
