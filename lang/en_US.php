@@ -29,7 +29,7 @@ $lang['decrease_priority'] = 'Decrease priority by 10%';
 $lang['default'] = 'default';
 $lang['description'] = 'Description';
 $lang['description_auto_generate_title'] = 'Automatically generate a page description where none is provided';
-$lang['description_auto_help'] = 'The {keywords} tag must be included here';
+$lang['description_auto_help'] = 'The <code>{keywords}</code> tag <strong>must be included</strong> here';
 $lang['description_auto_title'] = 'Text for auto-generated descriptions';
 $lang['description_block_help'] = 'The name of each page\'s description content-block. Please read the module help for an explanation';
 $lang['description_block_title'] = 'Name of page description content-block';
@@ -57,7 +57,7 @@ $lang['help_new_keywords'] = 'Series of word(s) and/or group(s) of words. Use th
 $lang['help_new_ogtype'] = 'Leave blank to revert to the default setting';
 $lang['help_opengraph'] = 'Look <a href="http://developers.facebook.com/docs/opengraph#types" onclick="window.open(this.href,\'_blank\');return false;">here</a> for a list of allowed values';
 $lang['help_showbase'] = 'Set this parameter to <code>false</code> to suppress the output of the base href tag.';
-$lang['help_sitemap_robots'] = '*) To generate a sitemap- and/or robots-file, the root directory of this CMSMS installation must be writeable by the web server. If you are refreshing an existing sitemap.xml and/or robots.txt file, those file(s) must be writeable by the web server.';
+$lang['help_sitemap_robots'] = '*) To generate a sitemap- and/or robots-file, the root directory of this CMSMS installation <strong>must be writeable</strong> by the web server. If you are refreshing an existing sitemap.xml and/or robots.txt file, those file(s) <strong>must be writeable by the web server.';
 $lang['help_unignore'] = 'Do not ignore selected items';
 $lang['help_unindex'] = 'Exclude selected items from indexing';
 
@@ -105,10 +105,9 @@ $lang['meta_og_image_title'] = 'OpenGraph default image';
 $lang['meta_og_sitename_help'] = 'A short version of this site\'s name, e.g. "Your Company", max. 25 chars';
 $lang['meta_og_sitename_title'] = 'OpenGraph site name';
 $lang['meta_og_title'] = 'Generate OpenGraph meta tags (e.g. for Facebook like-button)';
-$lang['meta_og_title_help'] = 'The tag {title} and/or any smarty tag(s) may be used here, e.g. to replace with the actual page title';
+$lang['meta_og_title_help'] = 'The tag <code>{title}</code> and/or any smarty tag(s) may be used here, e.g. to replace with the actual page title';
 $lang['meta_og_title_title'] = 'OpenGraph page title';
-//$lang['meta_og_type_help'] = 'The default page type for OpenGraph, can be overridden for each page. Look <a href="http://developers.facebook.com/docs/opengraph#types" onclick="window.open(this.href,\'_blank\');return false;">here</a> for a list of allowed values';
-$lang['meta_og_type_help'] = 'The default page type for OpenGraph, can be overridden for each page. Allowed types are listed at http://developers.facebook.com/docs/opengraph#types';
+$lang['meta_og_type_help'] = 'The default page type for OpenGraph, can be overridden for each page. Look <a href="http://developers.facebook.com/docs/opengraph#types" onclick="window.open(this.href,\'_blank\');return false;">here</a> for a list of allowed values';
 $lang['meta_og_type_title'] = 'OpenGraph default page type';
 $lang['meta_std_contributor_help'] = 'Usually, this would be you or any other content author';
 $lang['meta_std_contributor_title'] = 'Site contributor';
@@ -126,7 +125,7 @@ $lang['meta_std_publisher_title'] = 'Site publisher';
 $lang['meta_std_region_help'] = 'Enter something like "US-IL" for an entity located in Illinois, US';
 $lang['meta_std_region_title'] = 'Region of site entity';
 $lang['meta_std_title'] = 'Generate standard meta tags';
-$lang['meta_std_title_help'] = 'The page title to be used in the Meta title tags. Tags {title}, {seo_keywords} and/or any smarty tag(s) and UDT(s) can be used here';
+$lang['meta_std_title_help'] = 'The page title to be used in the Meta title tags. Tags <code>{title}</code>, <code>{seo_keywords}</code> and/or any smarty tag(s) and UDT(s) can be used here';
 $lang['meta_std_title_title'] = 'Page meta title';
 $lang['meta_twt_description'] = 'If you are creating Twitter meta tags, please fill in the following values';
 $lang['meta_twt_title'] = 'Generate Twitter meta tags';
@@ -143,7 +142,7 @@ $lang['meta_twt_creator_help'] = 'Include leading \'@\'';
 $lang['meta_twt_creator_title'] = 'Page author\'s twitter-handle';
 $lang['meta_twt_description_help'] = 'Less than 200 characters';
 $lang['meta_twt_description_title'] = 'Page description';
-$lang['meta_twt_image_help'] = 'Large image must be at least 280x150px';
+$lang['meta_twt_image_help'] = 'A large image <strong>must</strong> be at least 280x150px';
 $lang['meta_twt_image_title'] = 'Summary card image';
 $lang['meta_twt_site_help'] = 'Include leading \'@\'';
 $lang['meta_twt_site_title'] = 'Site publisher\'s twitter-handle';
@@ -205,7 +204,7 @@ $lang['title_alerts_important'] = 'To be fixed as soon as possible';
 $lang['title_alerts_notices'] = 'Changes to be considered';
 $lang['title_alerts_urgent'] = 'To be fixed immediately';
 $lang['title_descriptions'] = 'Page settings';
-$lang['title_help'] = 'The page title to be displayed in the browser\'s title bar. Tags {title}, {seo_keywords} and/or any smarty tag(s) and UDT(s) may be used here';
+$lang['title_help'] = 'The page title to be displayed in the browser\'s title bar. Tags <code>{title}</code>, <code>{seo_keywords}</code> and/or any smarty tag(s) and UDT(s) may be used here';
 $lang['title_ignored'] = 'Ignored';
 $lang['title_important'] = 'Important fixes';
 $lang['title_index'] = 'Indexable';
@@ -273,20 +272,20 @@ Alternatively, if you add and populate the content blocks as described below, yo
 <li>Insert at the bottom (after the closing &lt;/body&gt; element), a tag to create a block
 for entering a page description, like the following:<br />
 <code>{content assign='meta_description' block='metadescription' label='Your block label' wysiwyg=false}</code><br />
-The content block name is your choice, and it must be recorded as one of the SEOTools module preferences.
+The content block name is your choice, and it <strong>must be recorded</strong> as one of the SEOTools module preferences.
 <br />
 As an alternative to this content block, you can enable the SEO Tools option
 'Automatically generate descriptions where none is given'. This is not as good, but better than nothing.</li>
 <li>After that, optionally insert another tag to create a block for entering page keywords,
 like the following:<br />
 <code>{content assign='meta_keyworkds' block='metakeywords' label='Your next block label' wysiwyg=false oneline=true size=70}</code><br />
-Again, the content block name is your choice, and it must be recorded as one of the SEOTools module preferences.<br />
+Again, the content block name is your choice, and it <strong>must be recorded</strong> as one of the SEOTools module preferences.<br />
 This content block can be omitted, in which case keywords will be generated from page title, description and content.</li>
 </ol><br />
 <p>Next, visit the module's settings tabs to record page title & meta information,
 sitemap & crawler settings and keyword settings for the site.<br /><br />
 Under 'Name of page description content-block' and 'Name of page keywords content-block'
-you must enter the name of the content-blocks added to site pages/templates
+you <strong>must</strong> enter the name of the content-blocks added to site pages/templates
 ('metadescription' and 'metakeywords' in the above example).<br /><br />
 You should also consider signing up the site with Google Webmaster tools.
 Having done so, paste the Google verification code (a long string of characters and numbers)
@@ -325,9 +324,9 @@ in any page or template, as follows:</p>
 <ul>
 <li><code>{\$seo_keywords}</code> : prints a string comprised of all page-specific and default keywords
 or groups of keywords, using the module's default separator</li>
-<li><code>{\$default_keywords}</code> : as for {\$seo_keywords}, without page-specific keywords</li>
-<li><code>{\$page_keywords}</code> : as for {\$seo_keywords}, without default keywords</li>
-<li><code>{\$title_keywords}</code> : as for {\$seo_keywords}, except the separator is always a space-character</li>
+<li><code>{\$default_keywords}</code> : as for <code>{\$seo_keywords}</code>, without page-specific keywords</li>
+<li><code>{\$page_keywords}</code> : as for <code>{\$seo_keywords}</code>, without default keywords</li>
+<li><code>{\$title_keywords}</code> : as for <code>{\$seo_keywords}</code>, except the separator is always a space-character</li>
 </ul>
 <h3>Support</h3>
 <p>This software is provided as-is. Please read the text of the license (see below)
