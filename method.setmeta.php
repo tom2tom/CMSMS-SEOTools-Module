@@ -47,7 +47,15 @@ $defs = array(
 'meta_gplus_description'=>array('gid'=>6,'value'=>'UNUSED','output'=>'<meta itemprop="description" content="%s" />','calc'=>1,'smarty'=>1,'active'=>1),
 'meta_gplus_image'=>array      ('gid'=>6,'value'=>'UNUSED','output'=>'<meta itemprop="image" content="%s" />','calc'=>1,'smarty'=>0,'active'=>1),
 
-'meta_additional'=>array  ('gid'=>7,'value'=>'','output'=>'UNUSED','calc'=>1,'smarty'=>1,'active'=>1),
+//replicated from CMSMS global metadata
+$val = <<<EOS
+<meta name="generator" content="CMS Made Simple - Copyright (C) 2004-2015 Ted Kulp. All rights reserved." />
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<link rel="icon" href="favicon.ico" type="image/x-icon" />
+<link rel="shortcut icon" href="favicon.ico" type="image/x-icon" />
+
+EOS;
+'meta_additional'=>array  ('gid'=>7,'value'=>$val,'output'=>'UNUSED','calc'=>1,'smarty'=>1,'active'=>1),
 );
 
 $val = $this->GetPreference('content_type','XYZ-99');
