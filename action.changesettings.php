@@ -4,8 +4,6 @@
 # Copyright (C) 2014-2015 Tom Phane <tpgww@onepost.net>
 # Refer to licence and other details at the top of file SEOTools.module.php
 
-# Regenerate sitemap.xml and/or robots.txt, according to preferences
-
 if (!$this->CheckAccess('Edit SEO Settings'))
 	return $this->DisplayErrorPage($this->Lang('accessdenied'));
 
@@ -16,6 +14,7 @@ if (isset($_POST['display_robots_file']))
 	$this->Redirect($id, 'robot');
 
 if (isset($_POST['do_regenerate'])) {
+	// Regenerate sitemap.xml and/or robots.txt, according to preferences
 	if ($this->GetPreference('create_robots',0)) {
 		$funcs = new SEO_robot();
 		$botok = $funcs->createRobotsTXT($this);
@@ -79,20 +78,19 @@ if (isset($_POST['save_meta_settings'])) {
 		 case 'description_block':
 			$old = $this->GetPreference('description_block','');
 			if ($val && $val != $old) {
+				$this->SetPreference('description_block',$val);
 				$val = str_replace(' ','_',$val);
 				$rst = $db->Execute('SELECT content_id FROM '.$pre.'content_props WHERE prop_name=?',
 					array($val));
 				if ($rst && !$rst->EOF) {
-					$args['message'] = 'TODO'; //lang key to warn user about no change
-					$args['warning'] = 1;
+					$args['message'] = 'content_block_exists';
 				}
 				else {
 					$old = str_replace(' ','_',$old);
 					// conform tabled properties
 					$db->Execute('UPDATE '.$pre.'content_props SET prop_name=? WHERE prop_name=?',
 						array($val,$old));
-					$this->SetPreference('description_block',$_POST['description_block']);
-					$args['message'] = 'TODO'; //TODO lang key to tell user about conforming block-name in all templates and pages
+					$args['message'] = 'content_block_check';
 				}
 				if ($rst) $rst->Close();
 			}
@@ -153,20 +151,19 @@ if (isset($_POST['save_keyword_settings'])) {
 	$val = $this->GetPreference('keyword_block','');
 	$new = $_POST['keyword_block'];
 	if ($new && $new != $val) {
+		$this->SetPreference('keyword_block',$new);
 		$new = str_replace(' ','_',$new);
 		$rst = $db->Execute('SELECT content_id FROM '.$pre.'content_props WHERE prop_name=?',
 			array($new));
 		if ($rst && !$rst->EOF) {
-			$args['message'] = 'TODO'; //lang key to warn user about no change
-			$args['warning'] = 1;
+			$args['message'] = 'content_block_exists';
 		}
 		else {
 			$old = str_replace(' ','_',$val);
 			// conform tabled properties
 			$db->Execute('UPDATE '.$pre.'content_props SET prop_name=? WHERE prop_name=?',
 				array($new,$old));
-			$this->SetPreference('keyword_block',$_POST['keyword_block']);
-			$args['message'] = 'TODO'; //lang key to tell user about conforming block-name in all templates and pages
+			$args['message'] = 'content_block_check';
 			$old = $new; //maybe needed for separator-updates
 		}
 		if ($rst) $rst->Close();
@@ -232,8 +229,10 @@ if (isset($_POST['save_sitemap_settings'])) {
 	$this->SetPreference('robot_start',$val);
 	$val = (isset($_POST['robot_end'])) ? $_POST['robot_end'] : '';
 	$this->SetPreference('robot_end',$val);
+
 	$db->Execute('UPDATE '.$pre.'module_seotools_meta SET value=? WHERE mname=\'verification\'',
  		array($_POST['verification']));
+
 	$this->Audit(0, $this->Lang('friendlyname'), 'Edited sitemap settings');
 	$this->Redirect($id, 'defaultadmin', '', array('message'=>'settings_updated','tab'=>'sitemapsettings'));
 }
