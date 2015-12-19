@@ -5,13 +5,36 @@
 # Refer to licence and other details at the top of file SEOTools.module.php
 
 $sitename = get_site_preference('sitename','CMSMS Site');
-
+$yr = date('Y');
+//replicated from CMSMS global metadata
+$additional = <<<EOS
+<meta name="generator" content="CMS Made Simple - Copyright (C) 2004-{$yr} Ted Kulp. All rights reserved." />
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<link rel="icon" href="favicon.ico" type="image/x-icon" />
+<link rel="shortcut icon" href="favicon.ico" type="image/x-icon" />
+EOS;
+/*
+content_type: unique identifier, also 'prefix' for lang keys like $content_type.'_title' and $content_type.'_help'
+gid: group enum 1..7 representing before, meta_std, meta_dc, meta_og, meta_twt, meta_gplus, after
+value: the specific data, or 'UNUSED' in which case this item will not appear in
+ the admin UI, but it may still be output after some runtime interpretation
+output: usually a 'template' for sprintf() (which is called as the 3rd/last phase
+ of preparation for output) so includes a single %s, or is 'UNUSED' if no such
+ conversion is needed
+calc: boolean whether this item needs custom-processing in action.default as the
+ 1st phase of preparation for output (any such processing must be hard-coded there)
+smarty: boolean whether the item is to be processed via smarty (2nd phase, after
+ calc. if any)
+active: boolean whether this item is to be output (provided that the group this
+ item belongs to is also active - groups 'before' and 'after' are always active)
+*/
 $defs = array(
+//group 'before'
 'content_type'=>array('gid'=>1,'value'=>'html','output'=>'UNUSED','calc'=>1,'smarty'=>0,'active'=>1),
-'title'=>array       ('gid'=>1,'value'=>'{title} | '.$sitename.' - {$title_keywords}','output'=>"<title>%s</title>",'calc'=>1,'smarty'=>1,'active'=>1),
+'title'=>array       ('gid'=>1,'value'=>'{title} | '.$sitename.' - {$title_keywords}','output'=>'<title>%s</title>','calc'=>1,'smarty'=>1,'active'=>1),
 'verification'=>array('gid'=>1,'value'=>'','output'=>'<meta name="google-site-verification" content="%s" />','calc'=>0,'smarty'=>0,'active'=>1),
 'indexable'=>array   ('gid'=>1,'value'=>'UNUSED','output'=>'UNUSED','calc'=>1,'smarty'=>0,'active'=>1), //fake, just for runtime calc
-
+//group meta_std Standard (enabled by default) some of these values are 'borrowed' for other groups
 'meta_std_title'=>array      ('gid'=>2,'value'=>'{title} | '.$sitename,'output'=>'<meta name="title" content="%s" />','calc'=>1,'smarty'=>1,'active'=>1),
 'meta_std_description'=>array('gid'=>2,'value'=>'UNUSED','output'=>'<meta name="description" content="%s" />','calc'=>1,'smarty'=>1,'active'=>1),
 'meta_std_keywords'=>array   ('gid'=>2,'value'=>'UNUSED','output'=>'<meta name="keywords" content="%s" />','calc'=>1,'smarty'=>0,'active'=>1),
@@ -25,9 +48,9 @@ $defs = array(
 'meta_std_location'=>array   ('gid'=>2,'value'=>'','output'=>'<meta name="geo.placename" content="%s" />','calc'=>0,'smarty'=>0,'active'=>1),
 'meta_std_latitude'=>array   ('gid'=>2,'value'=>'','output'=>'UNUSED','calc'=>1,'smarty'=>0,'active'=>1),
 'meta_std_longitude'=>array  ('gid'=>2,'value'=>'','output'=>'UNUSED','calc'=>1,'smarty'=>0,'active'=>1),
-
-'meta_dc'=>array     ('gid'=>3,'value'=>'UNUSED','output'=>'UNUSED','calc'=>1,'smarty'=>0,'active'=>1), //just for runtime calc
-
+//group meta_dc Dublin Core (just for runtime calc)
+'meta_dc'=>array     ('gid'=>3,'value'=>'UNUSED','output'=>'UNUSED','calc'=>1,'smarty'=>0,'active'=>1),
+//group meta_og OpenGraph
 'meta_og_url'=>array        ('gid'=>4,'value'=>'UNUSED','output'=>'<meta property="og:url" content="%s" />','calc'=>1,'smarty'=>0,'active'=>1),
 'meta_og_sitename'=>array   ('gid'=>4,'value'=>$sitename,'output'=>'<meta property="og:sitemame" content="%s" />','calc'=>0,'smarty'=>1,'active'=>1),
 'meta_og_title'=>array      ('gid'=>4,'value'=>'{title}','output'=>'<meta property="og:title" content="%s" />','calc'=>1,'smarty'=>1,'active'=>1),
@@ -35,90 +58,19 @@ $defs = array(
 'meta_og_image'=>array      ('gid'=>4,'value'=>'','output'=>'<meta property="og:image" content="%s" />','calc'=>1,'smarty'=>0,'active'=>1),
 'meta_og_application'=>array('gid'=>4,'value'=>'','output'=>'<meta property="fb:app_id" content="%s" />','calc'=>0,'smarty'=>0,'active'=>1),
 'meta_og_admins'=>array     ('gid'=>4,'value'=>'','output'=>'<meta property="fb:admins" content="%s" />','calc'=>0,'smarty'=>0,'active'=>1),
-
+//group meta_twt Twitter
 'meta_twt_title'=>array      ('gid'=>5,'value'=>'UNUSED','output'=>'<meta name="twitter:title" content="%s" />','calc'=>1,'smarty'=>1,'active'=>1),
 'meta_twt_description'=>array('gid'=>5,'value'=>'UNUSED','output'=>'<meta name="twitter:description" content="%s" />','calc'=>1,'smarty'=>1,'active'=>1),
 'meta_twt_site'=>array       ('gid'=>5,'value'=>'','output'=>'<meta name="twitter:site" content="%s" />','calc'=>0,'smarty'=>0,'active'=>1), //handle, not url
 'meta_twt_creator'=>array    ('gid'=>5,'value'=>'','output'=>'<meta name="twitter:creator" content="%s" />','calc'=>0,'smarty'=>0,'active'=>1),
 'meta_twt_card'=>array       ('gid'=>5,'value'=>'','output'=>'<meta name="twitter:card" content="%s" />','calc'=>0,'smarty'=>0,'active'=>1),
 'meta_twt_image'=>array      ('gid'=>5,'value'=>'','output'=>'<meta name="twitter:image:src" content="%s" />','calc'=>1,'smarty'=>0,'active'=>1),
-
+//group meta_gplus Google+
 'meta_gplus_name'=>array       ('gid'=>6,'value'=>'UNUSED','output'=>'<meta itemprop="name" content="%s" />','calc'=>1,'smarty'=>1,'active'=>1), //name or title
 'meta_gplus_description'=>array('gid'=>6,'value'=>'UNUSED','output'=>'<meta itemprop="description" content="%s" />','calc'=>1,'smarty'=>1,'active'=>1),
 'meta_gplus_image'=>array      ('gid'=>6,'value'=>'UNUSED','output'=>'<meta itemprop="image" content="%s" />','calc'=>1,'smarty'=>0,'active'=>1),
-
-//replicated from CMSMS global metadata
-$val = <<<EOS
-<meta name="generator" content="CMS Made Simple - Copyright (C) 2004-2015 Ted Kulp. All rights reserved." />
-<meta http-equiv="X-UA-Compatible" content="IE=edge" />
-<link rel="icon" href="favicon.ico" type="image/x-icon" />
-<link rel="shortcut icon" href="favicon.ico" type="image/x-icon" />
-
-EOS;
-'meta_additional'=>array  ('gid'=>7,'value'=>$val,'output'=>'UNUSED','calc'=>1,'smarty'=>1,'active'=>1),
+//group 'after'
+'meta_additional'=>array  ('gid'=>7,'value'=>$additional,'output'=>'UNUSED','calc'=>1,'smarty'=>1,'active'=>1),
 );
-
-$val = $this->GetPreference('content_type','XYZ-99');
-if ($val != 'XYZ-99') {
-
-$pre = cms_db_prefix();
-$sql = 'UPDATE '.$pre.'module_seotools_group SET active=? WHERE gname=?';
-	foreach (array(
-'meta_standard'=>'meta_std',
-'meta_dublincore'=>'meta_dc',
-'meta_opengraph'=>'meta_og'
-	) as $old=>$new) {
-		$val = $this->GetPreference($old);
-		$db->Execute($sql, array((int)$val,$new));
-//DEBUG	$this->RemovePreference($old)
-	}
-
-	foreach (array(
-'content_type'=>'content_type',
-'additional_meta_tags'=>'meta_additional',
-'meta_contributor'=>'meta_std_contributor',
-'meta_copyright'=>'meta_std_copyright',
-'meta_latitude'=>'meta_std_latitude',
-'meta_location'=>'meta_std_location',
-'meta_longitude'=>'meta_std_longitude',
-'meta_opengraph_image'=>'meta_og_image',
-'meta_opengraph_sitename'=>'meta_og_sitename',
-'meta_opengraph_title'=>'meta_og_title',
-'meta_opengraph_type'=>'meta_og_type',
-'meta_publisher'=>'meta_std_publisher',
-'meta_region'=>'meta_std_region',
-'meta_title'=>'meta_std_title',
-'verification'=>'verification'
-	) as $old=>$new) {
-		$val = $this->GetPreference($old);
-		$defs[$new]['value'] = $val;
-//DEBUG	$this->RemovePreference($old)
-	}
-}
-
-$gid = -1; //unmatched
-
-$sql = 'INSERT INTO '.$pre.'module_seotools_meta
-(group_id,mname,value,output,calc,smarty,vieworder,active)
-VALUES (?,?,?,?,?,?,?,?)';
-
-foreach ($defs as $name=>$data) {
-	if ($gid != $data['gid']) {
-		$gid = $data['gid'];
-		$i = 1;
-	}
-	else {
-		$i++;
-	}
-	$db->Execute($sql,array(
-		$data['gid'],
-		$name,
-		$data['value'],
-		$data['output'],
-		$data['calc'],
-		$data['smarty'],
-		$i,
-		$data['active']));
-}
 
 ?>

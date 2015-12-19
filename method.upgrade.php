@@ -94,14 +94,26 @@ active I(1) NOTNULL DEFAULT 1
 		$sqlarray = $dict->CreateTableSQL($pre.'module_seotools_group',$flds,$taboptarray);
 		$result = ($sqlarray) ? ($dict->ExecuteSQLArray($sqlarray,false) == 2) : false;
 		if (!$result) return false;
+
+		$data = array();
+		// conform to current values
+		foreach (array(
+			'meta_standard'=>'meta_std',
+			'meta_dublincore'=>'meta_dc',
+			'meta_opengraph'=>'meta_og'
+		) as $old=>$new) {
+			$data[$new] = ($this->GetPreference($old)) ? 1:0;
+			$this->RemovePreference($old)
+		}
+
 		// add default groups
 		$sql = 'INSERT INTO '.$pre.'module_seotools_group (gname,vieworder,active) VALUES (?,?,?)';
 		$i = 1;
 		foreach (array(
 			'before'=>1, //1
-			'meta_std'=>1, //2
-			'meta_dc'=>0, //3
-			'meta_og'=>0, //4
+			'meta_std'=>$data['meta_std'], //2
+			'meta_dc'=>$data['meta_dc'], //3
+			'meta_og'=>$data['meta_og'], //4
 			'meta_twt'=>0, //5
 			'meta_gplus'=>0, //6
 			'after'=>1 //7
@@ -127,8 +139,57 @@ active I(1) NOTNULL DEFAULT 1
 		// extra index
 		$sqlarray = $dict->CreateIndexSQL('idx_seogrps', $pre.'module_seotools_meta', 'group_id');
 		$dict->ExecuteSQLArray($sqlarray);
-		// add default meta, and delete redundant prefs
+
+		// get default metadata
 		require ('method.setmeta.php');
+
+		foreach (array(
+			'content_type'=>'content_type',
+			'additional_meta_tags'=>'meta_additional',
+			'meta_contributor'=>'meta_std_contributor',
+			'meta_copyright'=>'meta_std_copyright',
+			'meta_latitude'=>'meta_std_latitude',
+			'meta_location'=>'meta_std_location',
+			'meta_longitude'=>'meta_std_longitude',
+			'meta_opengraph_image'=>'meta_og_image',
+			'meta_opengraph_sitename'=>'meta_og_sitename',
+			'meta_opengraph_title'=>'meta_og_title',
+			'meta_opengraph_type'=>'meta_og_type',
+			'meta_publisher'=>'meta_std_publisher',
+			'meta_region'=>'meta_std_region',
+			'meta_title'=>'meta_std_title',
+			'verification'=>'verification'
+		) as $old=>$new) {
+			if ($defs[$new]['value'] != 'UNUSED') {
+				$val = $this->GetPreference($old);
+				$defs[$new]['value'] = $val;
+			}
+			$this->RemovePreference($old)
+		}
+
+		$gid = -1; //unmatched
+		$sql = 'INSERT INTO '.$pre.'module_seotools_meta
+(group_id,mname,value,output,calc,smarty,vieworder,active)
+VALUES (?,?,?,?,?,?,?,?)';
+
+		foreach ($defs as $name=>$data) {
+			if ($gid != $data['gid']) {
+				$gid = $data['gid'];
+				$i = 1;
+			}
+			else {
+				$i++;
+			}
+			$db->Execute($sql,array(
+				$data['gid'],
+				$name,
+				$data['value'],
+				$data['output'],
+				$data['calc'],
+				$data['smarty'],
+				$i,
+				$data['active']));
+		}
 
 }
 

@@ -72,7 +72,30 @@ $sqlarray = $dict->CreateIndexSQL('idx_seogrps', $pre.'module_seotools_meta', 'g
 $dict->ExecuteSQLArray($sqlarray);	
 
 // table default metadata
-require ('method.setmeta.php'); 
+require ('method.setmeta.php');
+
+$gid = -1; //unmatched
+$sql = 'INSERT INTO '.$pre.'module_seotools_meta
+(group_id,mname,value,output,calc,smarty,vieworder,active)
+VALUES (?,?,?,?,?,?,?,?)';
+foreach ($defs as $name=>$data) {
+	if ($gid != $data['gid']) {
+		$gid = $data['gid'];
+		$i = 1;
+	}
+	else {
+		$i++;
+	}
+	$db->Execute($sql,array(
+		$data['gid'],
+		$name,
+		$data['value'],
+		$data['output'],
+		$data['calc'],
+		$data['smarty'],
+		$i,
+		$data['active']));
+}
 
 // permissions
 $this->CreatePermission('Edit SEO Settings',$this->Lang('perm_editsettings'));
