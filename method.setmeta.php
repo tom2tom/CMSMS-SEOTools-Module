@@ -30,8 +30,8 @@ active: boolean whether this item is to be output (provided that the group this
 */
 $defs = array(
 //group 'before'
-'content_type'=>array('gid'=>1,'value'=>'html','output'=>'UNUSED','calc'=>1,'smarty'=>0,'active'=>1),
 'title'=>array       ('gid'=>1,'value'=>'{title} | '.$sitename.' - {$title_keywords}','output'=>'<title>%s</title>','calc'=>1,'smarty'=>1,'active'=>1),
+'content_type'=>array('gid'=>1,'value'=>'xhtml','output'=>'UNUSED','calc'=>1,'smarty'=>0,'active'=>1),
 'verification'=>array('gid'=>1,'value'=>'','output'=>'<meta name="google-site-verification" content="%s" />','calc'=>0,'smarty'=>0,'active'=>1),
 'indexable'=>array   ('gid'=>1,'value'=>'UNUSED','output'=>'UNUSED','calc'=>1,'smarty'=>0,'active'=>1), //fake, just for runtime calc
 //group meta_std Standard (enabled by default) some of these values are 'borrowed' for other groups
