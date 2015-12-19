@@ -103,7 +103,7 @@ active I(1) NOTNULL DEFAULT 1
 			'meta_opengraph'=>'meta_og'
 		) as $old=>$new) {
 			$data[$new] = ($this->GetPreference($old)) ? 1:0;
-			$this->RemovePreference($old)
+			$this->RemovePreference($old);
 		}
 
 		// add default groups
@@ -164,7 +164,7 @@ active I(1) NOTNULL DEFAULT 1
 				$val = $this->GetPreference($old);
 				$defs[$new]['value'] = $val;
 			}
-			$this->RemovePreference($old)
+			$this->RemovePreference($old);
 		}
 
 		$gid = -1; //unmatched

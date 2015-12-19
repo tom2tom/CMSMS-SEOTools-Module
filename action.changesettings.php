@@ -100,7 +100,7 @@ if (isset($_POST['save_meta_settings'])) {
 		 default:
 			//TODO manage injection-risk here
 			//TODO handle runtime booleans for [in]active
-		 	$db->Execute($query,array($val,1,$mname));
+		 	$db->Execute($query,array($val,1,$name));
 			break;
 		}
 	}
