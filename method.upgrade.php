@@ -102,7 +102,8 @@ active I(1) NOTNULL DEFAULT 1
 			'meta_dublincore'=>'meta_dc',
 			'meta_opengraph'=>'meta_og'
 		) as $old=>$new) {
-			$data[$new] = ($this->GetPreference($old)) ? 1:0;
+			$val = $this->GetPreference($old, '_~^');
+			$data[$new] = ($val && ($val != '_~^')) ? 1:0;
 			$this->RemovePreference($old);
 		}
 
@@ -161,8 +162,10 @@ active I(1) NOTNULL DEFAULT 1
 			'verification'=>'verification'
 		) as $old=>$new) {
 			if ($defs[$new]['value'] != 'UNUSED') {
-				$val = $this->GetPreference($old);
-				$defs[$new]['value'] = $val;
+				$val = $this->GetPreference($old, '_~^');
+				if ($val != '_~^') {
+					$defs[$new]['value'] = $val;
+				}
 			}
 			$this->RemovePreference($old);
 		}
