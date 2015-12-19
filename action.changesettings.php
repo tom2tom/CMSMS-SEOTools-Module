@@ -53,24 +53,22 @@ if (isset($_POST['do_regenerate'])) {
 $pre = cms_db_prefix();
 
 if (isset($_POST['save_meta_settings'])) {
-	// These are irrelevant here
-	unset($_POST['save_meta_settings']);
-	unset($_POST['mact']);
-	unset($_POST[$this->secstr]);
-
 	// Update active groups
 	$pre = cms_db_prefix();
 	$query = 'SELECT gname FROM '.$pre.'module_seotools_group WHERE gname != \'before\' AND gname != \'after\'';
 	$groups = $db->GetCol($query);
 	$query = 'UPDATE '.$pre.'module_seotools_group SET active=? WHERE gname=?';
 	foreach ($groups as $name) {
-		$val = !empty($_POST[$name]) ? 1 : 0;
-		$db->Execute($query, array($val,$name));
+		$db->Execute($query, array($val,(int)$_POST[$name]));
 		unset($_POST[$name]);
 	}
 
 	$args = array('message'=>'settings_updated','tab'=>'metasettings');
 
+	// These are irrelevant here
+	unset($_POST['save_meta_settings']);
+	unset($_POST['mact']);
+	unset($_POST[$this->secstr]);
 	// Update metadata
 	$query = 'UPDATE '.$pre.'module_seotools_meta SET value=?,active=? WHERE mname=?';
 	foreach ($_POST as $name=>$val) {
@@ -96,14 +94,12 @@ if (isset($_POST['save_meta_settings'])) {
 			}
 			break;
 		 default:
-			//TODO manage injection-risk here
-			//TODO handle runtime booleans for [in]active
 		 	$db->Execute($query,array($val,1,$name));
 			break;
 		}
 	}
 
-	$this->Audit(0, $this->Lang('friendlyname'), 'Edited META settings');
+	$this->Audit(0, $this->Lang('friendlyname'), 'Updated META settings');
 	$this->Redirect($id, 'defaultadmin', '', $args);
 }
 
@@ -171,12 +167,6 @@ if (isset($_POST['save_keyword_settings'])) {
 	else {
 		$old = str_replace(' ','_',$val);
 	}
-	$this->SetPreference('keyword_minlength',$_POST['keyword_minlength']);
-	$this->SetPreference('keyword_title_weight',$_POST['keyword_title_weight']);
-	$this->SetPreference('keyword_description_weight',$_POST['keyword_description_weight']);
-	$this->SetPreference('keyword_headline_weight',$_POST['keyword_headline_weight']);
-	$this->SetPreference('keyword_content_weight',$_POST['keyword_content_weight']);
-	$this->SetPreference('keyword_minimum_weight',$_POST['keyword_minimum_weight']);
 
 	$val = $this->GetPreference('keyword_separator',',');
 	$new = $_POST['keyword_separator'];
@@ -214,26 +204,37 @@ if (isset($_POST['save_keyword_settings'])) {
 		$this->SetPreference('keyword_exclude',$_POST['keyword_exclude']);
 	}
 
-	$this->Audit(0, $this->Lang('friendlyname'), 'Edited keyword settings');
+	// These are irrelevant here
+	unset($_POST['save_keyword_settings']);
+	unset($_POST['mact']);
+	unset($_POST[$this->secstr]);
+	unset($_POST['keyword_block']);
+	unset($_POST['keyword_separator']);
+
+	foreach ($_POST as $name=>$val) {
+		$this->SetPreference($name,$val);
+	}
+
+	$this->Audit(0, $this->Lang('friendlyname'), 'Updated keyword settings');
 	$this->Redirect($id, 'defaultadmin', '', $args);
 }
 
 if (isset($_POST['save_sitemap_settings'])) {
-	$val = (isset($_POST['create_sitemap'])) ? 1 : 0;
-	$this->SetPreference('create_sitemap', $val);
-	$val = (isset($_POST['push_sitemap'])) ? 1 : 0;
-	$this->SetPreference('push_sitemap', $val);
-	$val = (isset($_POST['create_robots'])) ? 1 : 0;
-	$this->SetPreference('create_robots', $val);
-	$val = (isset($_POST['robot_start'])) ? $_POST['robot_start'] : '';
-	$this->SetPreference('robot_start',$val);
-	$val = (isset($_POST['robot_end'])) ? $_POST['robot_end'] : '';
-	$this->SetPreference('robot_end',$val);
 
 	$db->Execute('UPDATE '.$pre.'module_seotools_meta SET value=? WHERE mname=\'verification\'',
  		array($_POST['verification']));
 
-	$this->Audit(0, $this->Lang('friendlyname'), 'Edited sitemap settings');
+	// These are irrelevant here
+	unset($_POST['save_sitemap_settings']);
+	unset($_POST['mact']);
+	unset($_POST[$this->secstr]);
+	unset($_POST['verification']);
+
+	foreach ($_POST as $name=>$val) {
+		$this->SetPreference($name, $val);
+	}
+
+	$this->Audit(0, $this->Lang('friendlyname'), 'Updated sitemap settings');
 	$this->Redirect($id, 'defaultadmin', '', array('message'=>'settings_updated','tab'=>'sitemapsettings'));
 }
 
