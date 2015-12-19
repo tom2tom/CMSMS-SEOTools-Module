@@ -6,87 +6,89 @@
 
 # Setup and display admin page, after processing any action-request
 
-function vardata_text(&$mod, &$trans, &$meta, &$out, $name, $len, $def = '') {
+function vardata_text(&$mod, $trans, &$meta, &$out, $name, $len, $def = '') {
 	$oneset = new stdClass();
 	$k = $name.'_title';
-	$oneset->title = (array_key_exists($k,$trans)) ? $trans[$k] : $name;
+	$oneset->title = (array_key_exists($k,$trans)) ? $mod->Lang($k) : $name;
 	$k = $name.'_help';
-	$oneset->help = (array_key_exists($k,$trans)) ? $trans[$k] : null;
+	$oneset->help = (array_key_exists($k,$trans)) ? $mod->Lang($k) : null;
 	$val = (!empty($meta[$name])) ? $meta[$name]['value']:$def;
 	$oneset->input = $mod->CreateInputText(null, $name, $val, $len, $len);
 	$out[$name] = $oneset;
 }
 
-function vardata_textarea(&$mod, &$trans, &$meta, &$out, $name, $rows, $def = '') {
+function vardata_textarea(&$mod, $trans, &$meta, &$out, $name, $rows, $def = '') {
 	$oneset = new stdClass();
 	$k = $name.'_title';
-	$oneset->title = (array_key_exists($k,$trans)) ? $trans[$k] : $name;
+	$oneset->title = (array_key_exists($k,$trans)) ? $mod->Lang($k) : $name;
 	$k = $name.'_help';
-	$oneset->help = (array_key_exists($k,$trans)) ? $trans[$k] : null;
+	$oneset->help = (array_key_exists($k,$trans)) ? $mod->Lang($k) : null;
 	$val = (!empty($meta[$name])) ? $meta[$name]['value']:$def;
 	$oneset->input = $mod->CreateTextArea(false, null, $val, $name,
 		'', '', '', '', 60, $rows, '', '', 'style="height:'.($rows+1).'em;"');
 	$out[$name] = $oneset;
 }
 
-function vardata_check(&$mod, &$trans, &$meta, &$out, $name, $def = 0) {
+function vardata_check(&$mod, $trans, &$meta, &$out, $name, $def = 0) {
 	$oneset = new stdClass();
 	$k = $name.'_title';
-	$oneset->title = (array_key_exists($k,$trans)) ? $trans[$k] : $name;
+	$oneset->title = (array_key_exists($k,$trans)) ? $mod->Lang($k) : $name;
 	$k = $name.'_help';
-	$oneset->help = (array_key_exists($k,$trans)) ? $trans[$k] : null;
+	$oneset->help = (array_key_exists($k,$trans)) ? $mod->Lang($k) : null;
 	$val = (!empty($meta[$name])) ? (int)$meta[$name]['value']:$def;
-	$oneset->input = $mod->CreateInputCheckbox(null, $name, 1, $val);
+	$oneset->input = '<input type="hidden" name="'.$name.'" value="0" />'. //ensure an 'unchecked' report
+		$mod->CreateInputCheckbox(null, $name, 1, $val);
 	$oneset->inline = true;
 	$out[$name] = $oneset;
 }
 
-function vardata_drop(&$mod, &$trans, &$meta, &$out, $name, $choices, $def = '') {
+function vardata_drop(&$mod, $trans, &$meta, &$out, $name, $choices, $def = '') {
 	$oneset = new stdClass();
 	$k = $name.'_title';
-	$oneset->title = (array_key_exists($k,$trans)) ? $trans[$k] : $name;
+	$oneset->title = (array_key_exists($k,$trans)) ? $mod->Lang($k) : $name;
 	$k = $name.'_help';
-	$oneset->help = (array_key_exists($k,$trans)) ? $trans[$k] : null;
+	$oneset->help = (array_key_exists($k,$trans)) ? $mod->Lang($k) : null;
 	$val = (!empty($meta[$name])) ? $meta[$name]['value']:$def;
-	$oneset->input = $mod->CreateInputDropdown(null, $name, $choices, $def, -1);
+	$oneset->input = '<input type="hidden" name="'.$name.'" value="0" />'. //ensure a 'false' report
+		$mod->CreateInputDropdown(null, $name, $choices, $def, -1);
 	$out[$name] = $oneset;
 }
 
-function varpref_text(&$mod, &$trans, &$out, $name, $len, $def = '') {
+function varpref_text(&$mod, $trans, &$out, $name, $len, $def = '') {
 	$oneset = new stdClass();
 	$k = $name.'_title';
-	$oneset->title = (array_key_exists($k,$trans)) ? $trans[$k] : $name;
+	$oneset->title = (array_key_exists($k,$trans)) ? $mod->Lang($k) : $name;
 	$k = $name.'_help';
-	$oneset->help = (array_key_exists($k,$trans)) ? $trans[$k] : null;
+	$oneset->help = (array_key_exists($k,$trans)) ? $mod->Lang($k) : null;
 	$val = $mod->GetPreference($name, $def);
 	$oneset->input = $mod->CreateInputText(null, $name, $val, $len, $len);
 	$out[$name] = $oneset;
 }
 
-function varpref_textarea(&$mod, &$trans, &$out, $name, $rows, $def = '') {
+function varpref_textarea(&$mod, $trans, &$out, $name, $rows, $def = '') {
 	$oneset = new stdClass();
 	$k = $name.'_title';
-	$oneset->title = (array_key_exists($k,$trans)) ? $trans[$k] : $name;
+	$oneset->title = (array_key_exists($k,$trans)) ? $mod->Lang($k) : $name;
 	$k = $name.'_help';
-	$oneset->help = (array_key_exists($k,$trans)) ? $trans[$k] : null;
+	$oneset->help = (array_key_exists($k,$trans)) ? $mod->Lang($k) : null;
 	$val = $mod->GetPreference($name, $def);
 	$oneset->input = $mod->CreateTextArea(false, null, $val, $name,
 		'', '', '', '', 60, $rows, '', '', 'style="height:'.($rows+1).'em;"');
 	$out[$name] = $oneset;
 }
 
-function varpref_check(&$mod, &$trans, &$out, $name, $def = 0) {
+function varpref_check(&$mod, $trans, &$out, $name, $def = 0) {
 	$oneset = new stdClass();
 	$k = $name.'_title';
-	$oneset->title = (array_key_exists($k,$trans)) ? $trans[$k] : $name;
+	$oneset->title = (array_key_exists($k,$trans)) ? $mod->Lang($k) : $name;
 	$k = $name.'_help';
-	$oneset->help = (array_key_exists($k,$trans)) ? $trans[$k] : null;
+	$oneset->help = (array_key_exists($k,$trans)) ? $mod->Lang($k) : null;
 	$val = (int)$mod->GetPreference($name, $def);
-	$oneset->input = $mod->CreateInputCheckbox(null, $name, 1, $val);
+	$oneset->input = '<input type="hidden" name="'.$name.'" value="0" />'. //ensure an 'unchecked' report
+		$mod->CreateInputCheckbox(null, $name, 1, $val);
 	$oneset->inline = true;
 	$out[$name] = $oneset;
 }
-
 
 if (!$this->CheckAccess()) {
 	return $this->DisplayErrorPage($this->Lang('accessdenied'));
@@ -696,8 +698,9 @@ $smarty->assign('cancel',$this->CreateInputSubmit(null, 'cancel', $this->Lang('c
 /* SEO Settings Tab */
 
 // Get lang array, for dynamic checking
-$var = key($this->langhash);
-$trans = $this->langhash[$var];
+//$tdbg = $config['admin_encoding'];
+$var = key($this->langhash); //TODO
+$trans = &$this->langhash[$var];
 
 $smarty->assign('startform_settings',$this->CreateFormStart($id, 'changesettings'));
 
@@ -823,6 +826,7 @@ foreach ($meta as $name=>&$data) {
 	}
 }
 unset($data);
+unset($oneset);
 
 $metaset[] = array(
 	$this->CreateFieldsetStart(null, 'meta_values', $this->Lang('title_meta_values')),
@@ -897,6 +901,8 @@ vardata_text($this, $trans, $meta, $fileset, 'verification', 40); //NOTE tabled 
 varpref_check($this, $trans, $fileset, 'create_robots');
 varpref_textarea($this, $trans, $fileset, 'robot_start', 5);
 varpref_textarea($this, $trans, $fileset, 'robot_end', 5);
+
+unset($trans);
 
 $sitemapset[] = array(
 	$this->CreateFieldsetStart(null, 'sitemap_description', $this->Lang('title_sitemap_description')),
