@@ -8,24 +8,25 @@ function confirm_click(name) {
  return (cb.length > 0);
 }
 function tipkeep() {
- $(this).css('display','block'); //TODO timer
+ $(this).closest('div.slidediv').css('display','block').stop(false,true)
+ .slideDown({duration:10, queue:false});
 }
 function tipsee() {
  $(this).parent().next('.slidediv').slideDown(300);
 }
 function tiphide() {
- $(this).parent().next('.slidediv').slideUp({ duration : 200, queue : false });
+ $(this).parent().next('.slidediv').slideUp({ duration:200, queue:false });
 }
 function tiphide2() {
  var a = document.activeElement,
    n = a.tagName.toUpperCase();
  if (n == 'BODY' || a != this) {
-  $(this).parent().next('.slidediv').slideUp({ duration : 200, queue : false });
+  $(this).parent().next('.slidediv').slideUp({ duration:200, queue:false });
  }
 }
 
 $(document).ready(function(){
- $('.slidediv').css('display','none').children().click(tipkeep);
+ $('.slidediv').css('display','none').find('p').click(tipkeep);
  $('.slidetip').children().filter(':input').hover(tipsee,tiphide2).focus(tipsee).blur(tiphide);
  $('#alerts_c a').click(function(){
   var indx = $(this).attr('class').substring(1);
