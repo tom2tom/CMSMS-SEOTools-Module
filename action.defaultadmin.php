@@ -833,7 +833,7 @@ $metaset[] = array(
 
 $extraset = array();
 
-vardata_textarea($this, $trans, $meta, $extraset, 'meta_additional', 4);
+vardata_textarea($this, $trans, $meta, $extraset, 'meta_additional', 8);
 
 $metaset[] = array(
 	$this->CreateFieldsetStart(null, 'meta_additional', $this->Lang('title_meta_additional')),
