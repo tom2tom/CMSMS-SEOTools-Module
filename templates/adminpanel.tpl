@@ -133,12 +133,16 @@
 {if $row[0]}{$row[0]}{/if}{*start set*}
 <div class="pageoverflow" style="margin-top:0;">
  {foreach from=$row[1] item=entry}
-{if empty($entry->inline)}
-<p class="pagetext" style="margin:0.5em 0 0.5em 5%;">{$entry->title}:</p>
-<p class="pageinput"{if !empty($entry->help)} title="{$entry->help}"{/if}>{$entry->input}</p>
-{else}
-<p class="pagetext" style="margin:0.5em 0 0.5em 5%;"{if !empty($entry->help)} title="{$entry->help}"{/if}>{$entry->title}:&nbsp;&nbsp;{$entry->input}</p>
-{/if}
+  {if !empty($entry->head)}<h4 class="pagetext" style="margin-top:1.5em">{$entry->head}</h4>{/if}
+  {if empty($entry->inline)}
+<p class="pagetext">{$entry->title}:</p>
+<p class="pageinput{if !empty($entry->help)} slidetip{/if}">{$entry->input}</p>
+  {else}
+<p class="pagetext{if !empty($entry->help)} slidetip{/if}">{$entry->title}:&nbsp;&nbsp;{$entry->input}</p>
+  {/if}
+{if !empty($entry->help)}<div class="slidediv">
+<p class="pageinput">{$entry->help}</p>
+</div>{/if}
  {/foreach}
 </div>
 {if $row[0]}{$end_set}{/if}
@@ -157,11 +161,14 @@
 <div class="pageoverflow" style="margin-top:0;">
  {foreach from=$row[1] item=entry}
 {if empty($entry->inline)}
-<p class="pagetext" style="margin:0.5em 0 0.5em 5%;">{$entry->title}:</p>
-<p class="pageinput"{if !empty($entry->help)} title="{$entry->help}"{/if}>{$entry->input}</p>
+<p class="pagetext">{$entry->title}:</p>
+<p class="pageinput{if !empty($entry->help)} slidetip{/if}">{$entry->input}</p>
 {else}
-<p class="pagetext" style="margin:0.5em 0 0.5em 5%;"{if !empty($entry->help)} title="{$entry->help}"{/if}>{$entry->title}:&nbsp;&nbsp;{$entry->input}</p>
+<p class="pagetext{if !empty($entry->help)} slidetip{/if}">{$entry->title}:&nbsp;&nbsp;{$entry->input}</p>
 {/if}
+{if !empty($entry->help)}<div class="slidediv">
+<p class="pageinput">{$entry->help}</p>
+</div>{/if}
  {/foreach}
 </div>
 {$end_set}
@@ -178,11 +185,14 @@
 <div class="pageoverflow" style="margin-top:0;">
  {foreach from=$row[1] item=entry}
 {if empty($entry->inline)}
-<p class="pagetext" style="margin:0.5em 0 0.5em 5%;">{$entry->title}:</p>
-<p class="pageinput"{if !empty($entry->help)} title="{$entry->help}"{/if}>{$entry->input}</p>
+<p class="pagetext">{$entry->title}:</p>
+<p class="pageinput{if !empty($entry->help)} slidetip{/if}">{$entry->input}</p>
 {else}
-<p class="pagetext" style="margin:0.5em 0 0.5em 5%;"{if !empty($entry->help)} title="{$entry->help}"{/if}>{$entry->title}:&nbsp;&nbsp;{$entry->input}</p>
+<p class="pagetext{if !empty($entry->help)} slidetip{/if}">{$entry->title}:&nbsp;&nbsp;{$entry->input}</p>
 {/if}
+{if !empty($entry->help)}<div class="slidediv">
+<p class="pageinput">{$entry->help}</p>
+</div>{/if}
  {/foreach}
 {if $smarty.foreach.bundle.last}
 <br />
