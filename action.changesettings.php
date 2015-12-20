@@ -10,6 +10,9 @@ if (!$this->CheckAccess('Edit SEO Settings'))
 if (isset($_POST['cancel']))
 	$this->Redirect($id, 'defaultadmin');
 
+if (isset($_POST['display_metadata']))
+	$this->Redirect($id, 'meta');
+
 if (isset($_POST['display_robots_file']))
 	$this->Redirect($id, 'robot');
 
@@ -101,43 +104,6 @@ if (isset($_POST['save_meta_settings'])) {
 
 	$this->Audit(0, $this->Lang('friendlyname'), 'Updated META settings');
 	$this->Redirect($id, 'defaultadmin', '', $args);
-}
-
-if (isset($_POST['revert_meta_settings'])) {
-	// get default metadata
-	require ('method.setmeta.php');
-
-	$db->Execute('DELETE FROM '.$pre.'module_seotools_meta');
-
-	$gid = -1; //unmatched
-	$query = 'INSERT INTO '.$pre.'module_seotools_meta
-(group_id,mname,value,output,calc,smarty,vieworder,active)
-VALUES (?,?,?,?,?,?,?,?)';
-	foreach ($defs as $name=>$data) {
-		if ($gid != $data['gid']) {
-			$gid = $data['gid'];
-			$i = 1;
-		}
-		else {
-			$i++;
-		}
-		$db->Execute($query,array(
-			$data['gid'],
-			$name,
-			$data['value'],
-			$data['output'],
-			$data['calc'],
-			$data['smarty'],
-			$i,
-			$data['active']));
-	}
-
-	$db->Execute('UPDATE '.$pre.'module_seotools_group SET active=0');
-	$db->Execute('UPDATE '.$pre.'module_seotools_group SET active=1 WHERE gname IN (\'before\',\'after\',\'meta_std\')');
-
-	$this->Audit(0, $this->Lang('friendlyname'), 'Applied default META settings');
-	$this->Redirect($id, 'defaultadmin', '',
-		array('message'=>'settings_updated','tab'=>'metasettings'));
 }
 
 if (isset($_POST['save_keyword_settings'])) {
