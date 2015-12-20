@@ -210,8 +210,9 @@ foreach ($rows as $name=>&$one) {
 				$val = $root_url.'/uploads/images/'.$val;
 			}
 			break;
-//		 case 'meta_additional':
-//			break;
+		 case 'meta_additional':
+		 //nothing here (yet?)
+			break;
 		}
 	}
 	if ($val && $val !== 'UNUSED') {
@@ -235,7 +236,7 @@ if ($page_image) {
 
 if ($out) {
 	echo implode(PHP_EOL,$out);
-	echo PHP_EOL;
+//	echo PHP_EOL;
 }
 
 ?>
