@@ -2,5 +2,5 @@
 <p class="pageinput">{$content}</p>
 <br />
 {$startform}
-<p class="pageinput">{$submitbtn}&nbsp;&nbsp;{$cancelbtn}</p>
+<p class="pageinput">{if $submitbtn}{$submitbtn}&nbsp;&nbsp;{/if}{$cancelbtn}</p>
 {$endform}
