@@ -1,8 +1,9 @@
 <ul>
-<li>Version 1.0 - 24 August 2010. Initial Release.</li>
-<li>Version 1.1 - 02 November 2010. Several bugfixes.</li>
-<li>Version 1.2 - 06 January 2011. Several bugfixes and enhancements.</li>
-<li>Version 1.3 - 12 July 2011. Fork upstream version, with added features.</li>
-<li>Version 1.5 - 06 December 2012. Support explicit keywords entry, adapt for CMSMS 1.10+.</li>
-<li>Version 1.6 - 16 December 2015. Bugfixes, min CMSMS 1.9, adapt for CMSMS 2.0,2.1.</li>
+<li>Version 1.0 - 24 August 2010 Initial Release.</li>
+<li>Version 1.1 - 02 November 2010 Several bugfixes.</li>
+<li>Version 1.2 - 06 January 2011 Several bugfixes and enhancements.</li>
+<li>Version 1.3 - 12 July 2011 Fork upstream version, with added features.</li>
+<li>Version 1.5 - 06 December 2012 Support explicit keywords entry, adapt for CMSMS 1.10+.</li>
+<li>Version 1.6 - 06  December 2015 Bugfixes, min CMSMS 1.9, adapt for CMSMS 2.0,2.1.</li>
+<li>Version 1.7 - 20 December 2015 Refactor to facilitate flexible meta-property usage.</li>
 </ul>
