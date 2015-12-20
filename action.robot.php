@@ -30,6 +30,10 @@ if (isset($_POST['newrobotfile'])) {
 		$this->Redirect($id, 'defaultadmin', '',
 		array('warning'=>1,'message'=>'error','tab'=>'sitemapsettings'));
 	}
+	$back = false;
+}
+else {
+	$back = true;
 }
 
 $smarty->assign('startform', $this->CreateFormStart(null, 'robot'));
@@ -39,8 +43,10 @@ $fp = @fopen($fn, 'rb');
 $contents = @fread($fp, filesize($fn));
 @fclose($fp);
 $smarty->assign('content', nl2br($contents));
-$smarty->assign('submitbtn',$this->CreateInputSubmit(null, 'newrobotfile', $this->lang('regenerate'),
-	'onclick="return confirm(\''.$this->Lang('robots_confirm').'\');"'));
+if ($back) {
+	$smarty->assign('submitbtn',$this->CreateInputSubmit(null, 'newrobotfile', $this->lang('regenerate'),
+		'onclick="return confirm(\''.$this->Lang('confirm').'\');"'));
+}
 $smarty->assign('cancelbtn', $this->CreateInputSubmit(null, 'cancel', $this->lang('close')));
 
 echo $this->ProcessTemplate('display.tpl');
