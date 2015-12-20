@@ -3,6 +3,7 @@
 
 {$start_alerts_tab}
 <div class="pageoverflow">
+{if $pset}
 {$start_urgent_set}
 <p>{$urgent_icon}&nbsp;{$urgent_text}{if isset($urgent_link)}&nbsp;{$urgent_link}{/if}</p>
 {$end_set}
@@ -16,6 +17,7 @@
  {/foreach}
  {$end_set}
 {/if}
+{/if}{*pset*}
 {if !empty($resource_links)}
 {$start_resources_set}
 <ul>
@@ -25,6 +27,8 @@
 {/if}
 </div>
 {$end_tab}
+
+{if $pset}
 
 {$start_urgent_tab}
 {if !empty($urgents)}
@@ -51,7 +55,7 @@
 {/foreach}
 </table>
 <br />
-<div style="float:right;">{$unignore1}&nbsp;{$ignore1}</div><div style="clear:right;"></div>
+<div class="pageinput">{$unignore1}&nbsp;{$ignore1}</div>
 </div>
 {$end_form}
 {/if}
@@ -82,11 +86,13 @@
 {/foreach}
 </table>
 <br />
-<div style="float:right;">{$unignore2}&nbsp;{$ignore2}</div><div style="clear:right;"></div>
+<div class="pageinput">{$unignore2}&nbsp;{$ignore2}</div>
 </div>
 {$end_form}
 {/if}
 {$end_tab}
+
+{/if}{*pset*}
 
 {$start_description_tab}
 {$startform_pages}
@@ -94,38 +100,50 @@
 <table class="pagetable" style="border-spacing:0;">
  <tr>
   <th>{$title_name}</th>
+{if $pset}
   <th>{$title_priority}</th>
   <th>{$title_ogtype}</th>
   <th>{$title_keywords}</th>
+{/if}
   <th>{$title_desc}</th>
+{if $pset}
   <th>{$title_index}</th>
   <th class="checkbox seocb"><input id="allindx" type="checkbox" onclick="select_all('indx');" /></th>
+{/if}
  </tr>
 {if isset($items)}
  {foreach from=$items item=entry}
   <tr class="{$entry->rowclass}" onmouseover="this.className='{$entry->rowclass}hover';" onmouseout="this.className='{$entry->rowclass}';">
    <td>{$entry->name}</td>
+{if $pset}
    <td>{$entry->priority}</td>
    <td>{$entry->ogtype}</td>
    <td>{$entry->keywords}</td>
+{/if}
    <td>{$entry->desc}</td>
+{if $pset}
    <td>{$entry->index}</td>
 {if $entry->index}
    <td><input type="checkbox" name="indxsel[]"{if ($entry->sel)} checked="checked"{/if} value="{$entry->checkval}" /></td>
 {else}
    <td></td>
 {/if}
+{/if}{*pset*}
   </tr>
  {/foreach}
 {/if}
 </table>
+{if $pset}
 <br />
 {if isset($items)}
-<div style="float:right;">{$unindex}&nbsp;{$index}</div><div style="clear:right;"></div>
+<div class="pageinput">{$unindex}&nbsp;{$index}</div>
 {/if}
+{/if}{*pset*}
 </div>
 {$end_form}
 {$end_tab}
+
+{if $pset}
 
 {$start_meta_tab}
 {$startform_settings}
@@ -212,5 +230,7 @@
 {/if}
 {$end_form}
 {$end_tab}
+
+{/if}{*pset*}
 
 {$tab_footers}

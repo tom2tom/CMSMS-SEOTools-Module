@@ -91,9 +91,12 @@ function varpref_check(&$mod, $trans, &$out, $name, $def = 0) {
 	$out[$name] = $oneset;
 }
 
-if (!$this->CheckAccess()) {
+$pset = $this->CheckAccess('Edit SEO Settings');
+$pdesc = $this->CheckAccess('Edit page descriptions');
+if (!($pset || $pdesc)) {
 	return $this->DisplayErrorPage($this->Lang('accessdenied'));
 }
+$smarty->assign('pset', $pset);
 
 if (isset($_GET['tab'])) {
 	$params['tab'] = $_GET['tab'];
@@ -102,113 +105,115 @@ if (isset($_GET['tab'])) {
 
 $pre = cms_db_prefix();
 
-// Do the action, if any
-if (isset($_GET['what'])) {
-	$params['tab'] = 'pagedescriptions';
-	$cid = (int)$_GET['content_id'];
-	switch($_GET['what']) {
-	case 'toggle_index':
-		//upsert, sort-of
-		$query = 'UPDATE '.$pre.'module_seotools SET indexable=!indexable WHERE content_id=?';
-		$query2 = 'INSERT INTO '.$pre.
+if ($pset) {
+	// Do the action, if any
+	if (isset($_GET['what'])) {
+		$params['tab'] = 'pagedescriptions';
+		$cid = (int)$_GET['content_id'];
+		switch($_GET['what']) {
+		case 'toggle_index':
+			//upsert, sort-of
+			$query = 'UPDATE '.$pre.'module_seotools SET indexable=!indexable WHERE content_id=?';
+			$query2 = 'INSERT INTO '.$pre.
 'module_seotools (content_id, indexable) SELECT ?,? FROM (SELECT 1 AS dmy) Z WHERE NOT EXISTS (SELECT 1 FROM '.
-		$pre.'module_seotools T WHERE T.content_id=?)';
-		$db->Execute($query, array($cid));
-		$db->Execute($query2, array($cid, 1, $cid));
+			$pre.'module_seotools T WHERE T.content_id=?)';
+			$db->Execute($query, array($cid));
+			$db->Execute($query2, array($cid, 1, $cid));
 /* only manual updates
-		if ($this->GetPreference('create_robots',0)) {
-			$funcs = new SEO_robot();
-			$funcs->createRobotsTXT($this);
-		}
-		if ($this->GetPreference('create_sitemap',0)) {
-			$funcs = new SEO_sitemap();
-			$funcs->createSitemap($this);
-		}
+			if ($this->GetPreference('create_robots',0)) {
+				$funcs = new SEO_robot();
+				$funcs->createRobotsTXT($this);
+			}
+			if ($this->GetPreference('create_sitemap',0)) {
+				$funcs = new SEO_sitemap();
+				$funcs->createSitemap($this);
+			}
 */
-		break;
-	case 'toggle_ignore':
-		$pages = explode('@',$_GET['content_data']);
-		unset($pages[0]);
-		foreach($pages as $sig) {
-			list($id,$ignored) = explode('-', $sig);
-			$id = (int)$id;
-			$query = 'SELECT content_id,ignored FROM '.$pre.'module_seotools WHERE content_id=?';
-			$res = $db->GetRow($query,array($id));
-			$parms = array();
-			if ($res) {
-				if ($res['ignored']) {
-					$codes = explode(',',$res['ignored']);
-					if (in_array($ignored, $codes)) {
-						foreach($codes as $i => $name) {
-						  if ($name == $ignored) unset($codes[$i]);
+			break;
+		case 'toggle_ignore':
+			$pages = explode('@',$_GET['content_data']);
+			unset($pages[0]);
+			foreach($pages as $sig) {
+				list($id,$ignored) = explode('-', $sig);
+				$id = (int)$id;
+				$query = 'SELECT content_id,ignored FROM '.$pre.'module_seotools WHERE content_id=?';
+				$res = $db->GetRow($query,array($id));
+				$parms = array();
+				if ($res) {
+					if ($res['ignored']) {
+						$codes = explode(',',$res['ignored']);
+						if (in_array($ignored, $codes)) {
+							foreach($codes as $i => $name) {
+							  if ($name == $ignored) unset($codes[$i]);
+							}
+						}
+						else {
+							$codes[] = $ignored;
+						}
+						if ($codes) {
+							$query = 'UPDATE '.$pre.'module_seotools SET ignored=? WHERE content_id=?';
+							$parms[] = implode(',',$codes);
+						}
+						else {
+							$query = 'UPDATE '.$pre.'module_seotools SET ignored=NULL WHERE content_id=?';
 						}
 					}
 					else {
-						$codes[] = $ignored;
-					}
-					if ($codes) {
 						$query = 'UPDATE '.$pre.'module_seotools SET ignored=? WHERE content_id=?';
-						$parms[] = implode(',',$codes);
-					}
-					else {
-						$query = 'UPDATE '.$pre.'module_seotools SET ignored=NULL WHERE content_id=?';
+						$parms[] = $ignored;
 					}
 				}
 				else {
-					$query = 'UPDATE '.$pre.'module_seotools SET ignored=? WHERE content_id=?';
+					$query = 'INSERT INTO '.$pre.'module_seotools(ignored,content_id) VALUES(?,?)';
 					$parms[] = $ignored;
 				}
+				$parms[] = $id;
+				$db->Execute($query,$parms);
+				unset($parms);
 			}
-			else {
-				$query = 'INSERT INTO '.$pre.'module_seotools(ignored,content_id) VALUES(?,?)';
-				$parms[] = $ignored;
-			}
-			$parms[] = $id;
-			$db->Execute($query,$parms);
-			unset($parms);
-		}
-		break;
-	case 'set_priority':
-		//upsert, sort-of
-		$query = 'UPDATE '.$pre.'module_seotools SET priority=? WHERE content_id=?';
-		$query2 = 'INSERT INTO '.$pre.
+			break;
+		case 'set_priority':
+			//upsert, sort-of
+			$query = 'UPDATE '.$pre.'module_seotools SET priority=? WHERE content_id=?';
+			$query2 = 'INSERT INTO '.$pre.
 'module_seotools (content_id, priority) SELECT ?,? FROM (SELECT 1 AS dmy) Z WHERE NOT EXISTS (SELECT 1 FROM '.
-		$pre.'module_seotools T WHERE T.content_id=?)';
-		$db->Execute($query, array($_GET['priority'], $cid));
-		$db->Execute($query2, array($cid, $_GET['priority'], $cid));
+			$pre.'module_seotools T WHERE T.content_id=?)';
+			$db->Execute($query, array($_GET['priority'], $cid));
+			$db->Execute($query2, array($cid, $_GET['priority'], $cid));
 /* only manual updates
-		if ($this->GetPreference('create_sitemap',0)) {
-			$funcs = new SEO_sitemap();
-			$funcs->createSitemap($this);
-		}
+			if ($this->GetPreference('create_sitemap',0)) {
+				$funcs = new SEO_sitemap();
+				$funcs->createSitemap($this);
+			}
 */
-		break;
-	case 'reset_priority':
-		$query = 'UPDATE '.$pre.'module_seotools SET priority=NULL WHERE content_id=?';
-		$db->Execute($query,array($cid));
+			break;
+		case 'reset_priority':
+			$query = 'UPDATE '.$pre.'module_seotools SET priority=NULL WHERE content_id=?';
+			$db->Execute($query,array($cid));
 /* only manual updates
-		if ($this->GetPreference('create_sitemap',0)) {
-			$funcs = new SEO_sitemap();
-			$funcs->createSitemap($this);
-		}
+			if ($this->GetPreference('create_sitemap',0)) {
+				$funcs = new SEO_sitemap();
+				$funcs->createSitemap($this);
+			}
 */
-		break;
-	case 'reset_ogtype':
-		$query = 'UPDATE '.$pre.'module_seotools SET ogtype=NULL WHERE content_id=?';
-		$db->Execute($query,array($cid));
-		break;
-	case 'reset_keywords':
-		$query = 'UPDATE '.$pre.'module_seotools SET keywords=NULL WHERE content_id=?';
-		$db->Execute($query,array($cid));
-		break;
-	case 'edit_ogtype':
-		$this->Redirect($id, 'edit_ogtype', '', array('content_id'=>$cid));
-		break;
-	case 'edit_keywords':
-		$this->Redirect($id, 'edit_keywords', '', array('content_id'=>$cid));
-		break;
+			break;
+		case 'reset_ogtype':
+			$query = 'UPDATE '.$pre.'module_seotools SET ogtype=NULL WHERE content_id=?';
+			$db->Execute($query,array($cid));
+			break;
+		case 'reset_keywords':
+			$query = 'UPDATE '.$pre.'module_seotools SET keywords=NULL WHERE content_id=?';
+			$db->Execute($query,array($cid));
+			break;
+		case 'edit_ogtype':
+			$this->Redirect($id, 'edit_ogtype', '', array('content_id'=>$cid));
+			break;
+		case 'edit_keywords':
+			$this->Redirect($id, 'edit_keywords', '', array('content_id'=>$cid));
+			break;
+		}
+//		unset($_GET['what']);
 	}
-//	unset($_GET['what']);
 }
 
 if (isset($params['message'])) {
@@ -244,34 +249,41 @@ if (isset($params['tab'])) {
 	}
 }
 
-$smarty->assign('tab_headers',$this->StartTabHeaders().
-	$this->SetTabHeader('alerts',$this->Lang('title_alerts'),$indx==0).
-	$this->SetTabHeader('urgentfixes',$this->Lang('title_urgent'),$indx==1).
-	$this->SetTabHeader('importantfixes',$this->Lang('title_important'),$indx==2).
-	$this->SetTabHeader('pagedescriptions',$this->Lang('title_descriptions'),$indx==3).
-	$this->SetTabHeader('metasettings',$this->Lang('title_metasettings'),$indx==4).
-	$this->SetTabHeader('keywordsettings',$this->Lang('title_keywordsettings'),$indx==5).
-	$this->SetTabHeader('sitemapsettings',$this->Lang('title_sitemapsettings'),$indx==6).
-	$this->EndTabHeaders().$this->StartTabContent());
+if ($pset) {
+	$smarty->assign('tab_headers',$this->StartTabHeaders().
+		$this->SetTabHeader('alerts',$this->Lang('title_alerts'),$indx==0).
+		$this->SetTabHeader('urgentfixes',$this->Lang('title_urgent'),$indx==1).
+		$this->SetTabHeader('importantfixes',$this->Lang('title_important'),$indx==2).
+		$this->SetTabHeader('pagedescriptions',$this->Lang('title_descriptions'),$indx==3).
+		$this->SetTabHeader('metasettings',$this->Lang('title_metasettings'),$indx==4).
+		$this->SetTabHeader('keywordsettings',$this->Lang('title_keywordsettings'),$indx==5).
+		$this->SetTabHeader('sitemapsettings',$this->Lang('title_sitemapsettings'),$indx==6).
+		$this->EndTabHeaders().$this->StartTabContent());
+}
+else {
+	$smarty->assign('tab_headers',$this->StartTabHeaders().
+		$this->SetTabHeader('alerts',$this->Lang('friendlyname'),$indx==0).
+		$this->SetTabHeader('pagedescriptions',$this->Lang('title_descriptions'),$indx==3).
+		$this->EndTabHeaders().$this->StartTabContent());
+}
+
 $smarty->assign('tab_footers',$this->EndTabContent());
 
 $smarty->assign('start_alerts_tab',$this->StartTab('alerts'));
-$smarty->assign('start_urgent_tab',$this->StartTab('urgentfixes'));
-$smarty->assign('start_important_tab',$this->StartTab('importantfixes'));
+if ($pset) {
+	$smarty->assign('start_urgent_tab',$this->StartTab('urgentfixes'));
+	$smarty->assign('start_important_tab',$this->StartTab('importantfixes'));
+}
 $smarty->assign('start_description_tab',$this->StartTab('pagedescriptions'));
-$smarty->assign('start_meta_tab',$this->StartTab('metasettings'));
-$smarty->assign('start_keyword_tab',$this->StartTab('keywordsettings'));
-$smarty->assign('start_sitemap_tab',$this->StartTab('sitemapsettings'));
-$smarty->assign('end_tab',$this->EndTab());
+if ($pset) {
+	$smarty->assign('start_meta_tab',$this->StartTab('metasettings'));
+	$smarty->assign('start_keyword_tab',$this->StartTab('keywordsettings'));
+	$smarty->assign('start_sitemap_tab',$this->StartTab('sitemapsettings'));
+}
 
-/* Alerts and Fixes Tabs */
-
-$smarty->assign('startform_problems',$this->CreateFormStart($id, 'allignore')); //several uses
-$smarty->assign('end_form',$this->CreateFormEnd()); //several uses
-$smarty->assign('start_urgent_set',$this->CreateFieldsetStart($id, 'alerts_urgent', $this->Lang('title_alerts_urgent')));
-$smarty->assign('start_important_set',$this->CreateFieldsetStart($id, 'alerts_important', $this->Lang('title_alerts_important')));
-$smarty->assign('start_notice_set',$this->CreateFieldsetStart($id, 'alerts_notices', $this->Lang('title_alerts_notices')));
 $smarty->assign('end_set',$this->CreateFieldsetEnd());
+$smarty->assign('end_tab',$this->EndTab());
+$smarty->assign('end_form',$this->CreateFormEnd());
 
 if (isset($config['admin_url'])) {
 	$adminurl = $config['admin_url'];
@@ -283,255 +295,266 @@ else {
 $theme = ($this->before20) ? cmsms()->get_variable('admintheme'): //CMSMS 1.9+
 	cms_utils::get_theme_object();
 $theme_url = $adminurl.'/themes/'.$theme->themeName.'/images/icons';
-$icontrue = '<img src="'.$theme_url.'/system/true.gif" class="systemicon" />';
 
-$funcs = new SEO_populator();
-$urgent = array();
-$urgent_alerts = $funcs->getUrgentAlerts($this);
-if ($urgent_alerts) {
+if ($pset) {
+	/* Alerts and Fixes Tabs */
+
+	$smarty->assign('startform_problems',$this->CreateFormStart($id, 'allignore')); //several uses
+	$smarty->assign('start_urgent_set',$this->CreateFieldsetStart($id, 'alerts_urgent', $this->Lang('title_alerts_urgent')));
+	$smarty->assign('start_important_set',$this->CreateFieldsetStart($id, 'alerts_important', $this->Lang('title_alerts_important')));
+	$smarty->assign('start_notice_set',$this->CreateFieldsetStart($id, 'alerts_notices', $this->Lang('title_alerts_notices')));
+
+	$icontrue = '<img src="'.$theme_url.'/system/true.gif" class="systemicon" />';
+
+	$funcs = new SEO_populator();
+	$urgent = array();
+	$urgent_alerts = $funcs->getUrgentAlerts($this);
+	if ($urgent_alerts) {
+			$count = 0;
+			$more = false;
+			$groups = array();
+			//count non-ignored urgents
+			foreach($urgent_alerts as $alert) {
+				if (!array_key_exists('active', $alert) || $alert['active'] == true) {
+					if (empty($alert['ignored'])) {
+						$count++;
+					}
+					else {
+						$more = true;
+					}
+				}
+				$groups[$alert['group']][] = $alert;
+			}
+			$icon = '<img src="'.$theme_url.'/Notifications/1.gif" class="systemicon" />';
+			if ($count) {
+				$smarty->assign('urgent_icon',$icon);
+				$smarty->assign('urgent_text',$this->Lang('summary_urgent',$count));
+				$smarty->assign('urgent_link','['.$funcs->getTabLink(1,$this->Lang('view_all')).']');
+			}
+			else {
+				$smarty->assign('urgent_icon',$icontrue);
+				$key = ($more) ? 'nothing_but' : 'nothing_tofix';
+				$smarty->assign('urgent_text',$this->Lang($key));
+			}
+			$j = 0;
+			foreach($groups as $group => $galerts) {
+			foreach($galerts as $alert) {
+				$oneset = new stdClass;
+				$oneset->rowclass = 'row'.($j % 2 + 1);
+				if (isset($alert['pages']))
+					$oneset->pages = implode('<br />',$alert['pages']);
+				else
+					$oneset->pages = '';
+				$oneset->problem = $alert['message'];
+				if (array_key_exists('links_data', $alert)) {
+					$links = $alert['links_data'];
+					if (count($links) == 1) {
+						foreach($links as $id => $data) {
+							$oneset->action = $funcs->getFixLink($this, $_GET[$this->secstr], $id);
+							$sig = '@'.$id.'-'.$data[1];
+						}
+					}
+					else {
+						$s = array();
+						$sig = '';
+						foreach($links as $id => $data) {
+							$s[] = $funcs->getFixLink($this, $_GET[$this->secstr], $id, $data[0]);
+							$sig .= '@'.$id.'-'.$data[1];
+						}
+						$oneset->action = implode('<br />', $s);
+						unset($s);
+					}
+				}
+				elseif (array_key_exists('links', $alert)) {
+					$links = 'TODO'; //QQQ
+					$oneset->action = implode('<br />',$alert['links']);
+					$sig = '';
+				}
+				else {
+					$links = 'NONE'; //TODO CHECKME
+					$oneset->action = '';
+					$sig = '';
+				}
+				if (array_key_exists('ignored', $alert)) {
+					$iname = ($alert['ignored']) ? 'true':'false';
+					$oneset->ignored = $this->CreateTooltipLink(null, 'defaultadmin', '',
+					'<img src="'.$theme_url.'/system/'.$iname.'.gif" class="systemicon" />',
+					$this->Lang('toggle'), array('what'=>'toggle_ignore','content_data'=>$sig,'tab'=>'urgentfixes'));
+					$oneset->checkval = $sig;
+					$oneset->sel = ''; //TODO
+				}
+				else {
+					$oneset->checkval = '';
+					$oneset->sel = '';
+				}
+				if (array_key_exists('active', $alert)) {
+					if (strpos($alert['active'],',') === false) {
+						$act1 = $alert['active'];
+						$act2 = false;
+					}
+					else {
+						list($act1, $act2) = explode(',',$alert['active']);
+						$act1 = (int)$act1;
+						$act2 = (int)$act2;
+					}
+					$cb = '<input type="checkbox" disabled="disabled"';
+					if ($act1) $cb .= ' checked="checked"';
+					$cb .= ' />';
+					if ($act2 !== false) {
+						$cb .= '<br /><input type="checkbox" disabled="disabled"';
+						if ($act2) $cb .= ' checked="checked"';
+						$cb .= ' />';
+					}
+					$oneset->active = $cb;
+				}
+				else {
+					$oneset->active = '';
+				}
+
+				$urgent[] = $oneset;
+				$j++;
+			}
+		}
+	}
+	else {
+		$smarty->assign('urgent_icon',$icontrue);
+		$smarty->assign('urgent_text',$this->Lang('nothing_tofix'));
+	}
+	$smarty->assign('urgents',$urgent);
+
+	$important = array();
+	$important_alerts = $funcs->getImportantAlerts($this);
+	if ($important_alerts) {
 		$count = 0;
 		$more = false;
 		$groups = array();
-		//count non-ignored urgents
-		foreach($urgent_alerts as $alert) {
-			if (!array_key_exists('active', $alert) || $alert['active'] == true) {
-				if (empty($alert['ignored'])) {
-					$count++;
-				}
-				else {
-					$more = true;
-				}
-			}
+		//count non-ignored importants
+		foreach($important_alerts as $alert) {
+			if (empty($alert['ignored']))
+				$count++;
+			else
+				$more = true;
 			$groups[$alert['group']][] = $alert;
 		}
-		$icon = '<img src="'.$theme_url.'/Notifications/1.gif" class="systemicon" />';
+		$icon = '<img src="'.$theme_url.'/Notifications/2.gif" class="systemicon" />';
 		if ($count) {
-			$smarty->assign('urgent_icon',$icon);
-			$smarty->assign('urgent_text',$this->Lang('summary_urgent',$count));
-			$smarty->assign('urgent_link','['.$funcs->getTabLink(1,$this->Lang('view_all')).']');
+			$smarty->assign('important_icon',$icon);
+			$smarty->assign('important_text',$this->Lang('summary_important', $count));
+			$smarty->assign('important_link','['.$funcs->getTabLink(2,$this->Lang('view_all')).']');
 		}
 		else {
-			$smarty->assign('urgent_icon',$icontrue);
+			$smarty->assign('important_icon',$icontrue);
 			$key = ($more) ? 'nothing_but' : 'nothing_tofix';
-			$smarty->assign('urgent_text',$this->Lang($key));
+			$smarty->assign('important_text',$this->Lang($key));
 		}
 		$j = 0;
 		foreach($groups as $group => $galerts) {
-		foreach($galerts as $alert) {
-			$oneset = new stdClass;
-			$oneset->rowclass = 'row'.($j % 2 + 1);
-			if (isset($alert['pages']))
-				$oneset->pages = implode('<br />',$alert['pages']);
-			else
-				$oneset->pages = '';
-			$oneset->problem = $alert['message'];
-			if (array_key_exists('links_data', $alert)) {
-				$links = $alert['links_data'];
-				if (count($links) == 1) {
-					foreach($links as $id => $data) {
-						$oneset->action = $funcs->getFixLink($this, $_GET[$this->secstr], $id);
-						$sig = '@'.$id.'-'.$data[1];
+			foreach($galerts as $alert) {
+				$oneset = new stdClass;
+				$oneset->rowclass = 'row'.($j % 2 + 1);
+				if (isset($alert['pages']))
+					$oneset->pages = implode('<br />',$alert['pages']);
+				else
+					$oneset->pages = '';
+				$oneset->problem = $alert['message'];
+				if (array_key_exists('links_data', $alert)) {
+					$links = $alert['links_data'];
+					if (count($links) == 1) {
+						foreach($links as $id => $data) {
+							$oneset->action = $funcs->getFixLink($this, $_GET[$this->secstr], $id);
+							$sig = '@'.$id.'-'.$data[1];
+						}
+					}
+					else {
+						$s = array();
+						$sig = '';
+						foreach($links as $id => $data) {
+							$s[] = $funcs->getFixLink($this, $_GET[$this->secstr], $id, $data[0]);
+							$sig .= '@'.$id.'-'.$data[1];
+						}
+						$oneset->action = implode('<br />', $s);
+						$oneset->checkval = $sig;
+						unset($s);
 					}
 				}
-				else {
-					$s = array();
+				elseif (array_key_exists('links', $alert)) {
+					$links = 'TODO'; //QQQ
+					$oneset->action = implode('<br />',$alert['links']);
 					$sig = '';
-					foreach($links as $id => $data) {
-						$s[] = $funcs->getFixLink($this, $_GET[$this->secstr], $id, $data[0]);
-						$sig .= '@'.$id.'-'.$data[1];
-					}
-					$oneset->action = implode('<br />', $s);
-					unset($s);
-				}
-			}
-			elseif (array_key_exists('links', $alert)) {
-				$links = 'TODO'; //QQQ
-				$oneset->action = implode('<br />',$alert['links']);
-				$sig = '';
-			}
-			else {
-				$links = 'NONE'; //TODO CHECKME
-				$oneset->action = '';
-				$sig = '';
-			}
-			if (array_key_exists('ignored', $alert)) {
-				$iname = ($alert['ignored']) ? 'true':'false';
-				$oneset->ignored = $this->CreateTooltipLink(null, 'defaultadmin', '',
-				'<img src="'.$theme_url.'/system/'.$iname.'.gif" class="systemicon" />',
-				$this->Lang('toggle'), array('what'=>'toggle_ignore','content_data'=>$sig,'tab'=>'urgentfixes'));
-				$oneset->checkval = $sig;
-				$oneset->sel = ''; //TODO
-			}
-			else {
-				$oneset->checkval = '';
-				$oneset->sel = '';
-			}
-			if (array_key_exists('active', $alert)) {
-				if (strpos($alert['active'],',') === false) {
-					$act1 = $alert['active'];
-					$act2 = false;
 				}
 				else {
-					list($act1, $act2) = explode(',',$alert['active']);
-					$act1 = (int)$act1;
-					$act2 = (int)$act2;
+					$links = 'NONE';
+					$sig = '';
 				}
-				$cb = '<input type="checkbox" disabled="disabled"';
-				if ($act1) $cb .= ' checked="checked"';
-				$cb .= ' />';
-				if ($act2 !== false) {
-					$cb .= '<br /><input type="checkbox" disabled="disabled"';
-					if ($act2) $cb .= ' checked="checked"';
+
+				if (array_key_exists('ignored', $alert)) {
+					$iname = ($alert['ignored']) ? 'true':'false';
+					$oneset->ignored = $this->CreateTooltipLink(null, 'defaultadmin', '',
+					 '<img src="'.$theme_url.'/system/'.$iname.'.gif" class="systemicon" />',
+					 $this->Lang('toggle'), array('what'=>'toggle_ignore','content_data'=>$sig,'tab'=>'importantfixes'));
+					$oneset->checkval = $sig;
+				}
+				else {
+					$oneset->ignored = '';
+					$oneset->checkval = '';
+				}
+				if (array_key_exists('active', $alert)) {
+					if (strpos($alert['active'],',') === false) {
+						$act1 = $alert['active'];
+						$act2 = false;
+					}
+					else {
+						list($act1, $act2) = explode(',',$alert['active']);
+						$act1 = (int)$act1;
+						$act2 = (int)$act2;
+					}
+					$cb = '<input type="checkbox" disabled="disabled"';
+					if ($act1) $cb .= ' checked="checked"';
 					$cb .= ' />';
+					if ($act2 !== false) {
+						$cb .= '<br /><input type="checkbox" disabled="disabled"';
+						if ($act2) $cb .= ' checked="checked"';
+						$cb .= ' />';
+					}
+					$oneset->active = $cb;
+					$oneset->sel = ''; //TODO
 				}
-				$oneset->active = $cb;
+				else {
+					$oneset->active = '';
+					$oneset->sel = ''; //TODO
+				}
+				$important[] = $oneset;
+				$j++;
 			}
-			else {
-				$oneset->active = '';
-			}
-
-			$urgent[] = $oneset;
-			$j++;
 		}
-	}
-}
-else {
-	$smarty->assign('urgent_icon',$icontrue);
-	$smarty->assign('urgent_text',$this->Lang('nothing_tofix'));
-}
-$smarty->assign('urgents',$urgent);
-
-$important = array();
-$important_alerts = $funcs->getImportantAlerts($this);
-if ($important_alerts) {
-	$count = 0;
-	$more = false;
-	$groups = array();
-	//count non-ignored importants
-	foreach($important_alerts as $alert) {
-		if (empty($alert['ignored']))
-			$count++;
-		else
-			$more = true;
-		$groups[$alert['group']][] = $alert;
-	}
-	$icon = '<img src="'.$theme_url.'/Notifications/2.gif" class="systemicon" />';
-	if ($count) {
-		$smarty->assign('important_icon',$icon);
-		$smarty->assign('important_text',$this->Lang('summary_important', $count));
-		$smarty->assign('important_link','['.$funcs->getTabLink(2,$this->Lang('view_all')).']');
 	}
 	else {
 		$smarty->assign('important_icon',$icontrue);
-		$key = ($more) ? 'nothing_but' : 'nothing_tofix';
-		$smarty->assign('important_text',$this->Lang($key));
+		$smarty->assign('important_text',$this->Lang('nothing_tofix'));
 	}
-	$j = 0;
-	foreach($groups as $group => $galerts) {
-		foreach($galerts as $alert) {
-			$oneset = new stdClass;
-			$oneset->rowclass = 'row'.($j % 2 + 1);
-			if (isset($alert['pages']))
-				$oneset->pages = implode('<br />',$alert['pages']);
-			else
-				$oneset->pages = '';
-			$oneset->problem = $alert['message'];
-			if (array_key_exists('links_data', $alert)) {
-				$links = $alert['links_data'];
-				if (count($links) == 1) {
-					foreach($links as $id => $data) {
-						$oneset->action = $funcs->getFixLink($this, $_GET[$this->secstr], $id);
-						$sig = '@'.$id.'-'.$data[1];
-					}
-				}
-				else {
-					$s = array();
-					$sig = '';
-					foreach($links as $id => $data) {
-						$s[] = $funcs->getFixLink($this, $_GET[$this->secstr], $id, $data[0]);
-						$sig .= '@'.$id.'-'.$data[1];
-					}
-					$oneset->action = implode('<br />', $s);
-					$oneset->checkval = $sig;
-					unset($s);
-				}
-			}
-			elseif (array_key_exists('links', $alert)) {
-				$links = 'TODO'; //QQQ
-				$oneset->action = implode('<br />',$alert['links']);
-				$sig = '';
-			}
-			else {
-				$links = 'NONE';
-				$sig = '';
-			}
+	$smarty->assign('importants',$important);
 
-			if (array_key_exists('ignored', $alert)) {
-				$iname = ($alert['ignored']) ? 'true':'false';
-				$oneset->ignored = $this->CreateTooltipLink(null, 'defaultadmin', '',
-				 '<img src="'.$theme_url.'/system/'.$iname.'.gif" class="systemicon" />',
-				 $this->Lang('toggle'), array('what'=>'toggle_ignore','content_data'=>$sig,'tab'=>'importantfixes'));
-				$oneset->checkval = $sig;
-			}
-			else {
-				$oneset->ignored = '';
-				$oneset->checkval = '';
-			}
-			if (array_key_exists('active', $alert)) {
-				if (strpos($alert['active'],',') === false) {
-					$act1 = $alert['active'];
-					$act2 = false;
-				}
-				else {
-					list($act1, $act2) = explode(',',$alert['active']);
-					$act1 = (int)$act1;
-					$act2 = (int)$act2;
-				}
-				$cb = '<input type="checkbox" disabled="disabled"';
-				if ($act1) $cb .= ' checked="checked"';
-				$cb .= ' />';
-				if ($act2 !== false) {
-					$cb .= '<br /><input type="checkbox" disabled="disabled"';
-					if ($act2) $cb .= ' checked="checked"';
-					$cb .= ' />';
-				}
-				$oneset->active = $cb;
-				$oneset->sel = ''; //TODO
-			}
-			else {
-				$oneset->active = '';
-				$oneset->sel = ''; //TODO
-			}
-			$important[] = $oneset;
-			$j++;
+	$notice = array();
+	$notice_alerts = $funcs->getNoticeAlerts($this);
+	if ($notice_alerts) {
+		$icon = '<img src="'.$theme_url.'/Notifications/3.gif" class="systemicon" />';
+		foreach($notice_alerts as $alert) {
+			$oneset = new stdClass;
+			$oneset->icon = $icon;
+			$oneset->text = $alert['message'];
+			if (isset($alert['links'])) $oneset->link = '['.implode(' | ',$alert['links']).']';
+			$notice[] = $oneset;
 		}
 	}
-}
-else {
-	$smarty->assign('important_icon',$icontrue);
-	$smarty->assign('important_text',$this->Lang('nothing_tofix'));
-}
-$smarty->assign('importants',$important);
-
-$notice = array();
-$notice_alerts = $funcs->getNoticeAlerts($this);
-if ($notice_alerts) {
-	$icon = '<img src="'.$theme_url.'/Notifications/3.gif" class="systemicon" />';
-	foreach($notice_alerts as $alert) {
+	else {
 		$oneset = new stdClass;
-		$oneset->icon = $icon;
-		$oneset->text = $alert['message'];
-		if (isset($alert['links'])) $oneset->link = '['.implode(' | ',$alert['links']).']';
+		$oneset->icon = $icontrue;
+		$oneset->text = $this->Lang('nothing_tofix');
 		$notice[] = $oneset;
 	}
-}
-else {
-	$oneset = new stdClass;
-	$oneset->icon = $icontrue;
-	$oneset->text = $this->Lang('nothing_tofix');
-	$notice[] = $oneset;
-}
-$smarty->assign('notices',$notice);
+	$smarty->assign('notices',$notice);
+} //end if $pset
+
 
 $smarty->assign('start_resources_set',$this->CreateFieldsetStart(null, 'resources',$this->Lang('title_resources')));
 $smarty->assign('resource_links',array(
@@ -541,19 +564,23 @@ $smarty->assign('resource_links',array(
  '<a href="http://www.siteliner.com">Siteliner</a>'
 ));
 
-$smarty->assign('title_pages',$this->Lang('title_pages'));
-$smarty->assign('title_active',$this->Lang('title_active'));
-$smarty->assign('title_problem',$this->Lang('title_problem'));
-$smarty->assign('title_ignored',$this->Lang('title_ignored'));
-$smarty->assign('title_action',$this->Lang('title_action'));
-$smarty->assign('ignore1',$this->CreateInputSubmit(null, 'ignore_selected',
-	$this->Lang('ignore'),'title="'.$this->Lang('help_ignore').'" onclick="return confirm_click(\'urgent\');"'));
-$smarty->assign('unignore1',$this->CreateInputSubmit(null, 'unignore_selected',
-	$this->Lang('unignore'),'title="'.$this->Lang('help_unignore').'" onclick="return confirm_click(\'urgent\');"'));
-$smarty->assign('ignore2',$this->CreateInputSubmit(null, 'ignore_selected',
-	$this->Lang('ignore'),'title="'.$this->Lang('help_ignore').'" onclick="return confirm_click(\'important\');"'));
-$smarty->assign('unignore2',$this->CreateInputSubmit(null, 'unignore_selected',
-	$this->Lang('unignore'),'title="'.$this->Lang('help_unignore').'" onclick="return confirm_click(\'important\');"'));
+if ($pset) {
+	$smarty->assign('cancel',$this->CreateInputSubmit(null, 'cancel', $this->Lang('cancel')));
+
+	$smarty->assign('title_pages',$this->Lang('title_pages'));
+	$smarty->assign('title_active',$this->Lang('title_active'));
+	$smarty->assign('title_problem',$this->Lang('title_problem'));
+	$smarty->assign('title_ignored',$this->Lang('title_ignored'));
+	$smarty->assign('title_action',$this->Lang('title_action'));
+	$smarty->assign('ignore1',$this->CreateInputSubmit(null, 'ignore_selected',
+		$this->Lang('ignore'),'title="'.$this->Lang('help_ignore').'" onclick="return confirm_click(\'urgent\');"'));
+	$smarty->assign('unignore1',$this->CreateInputSubmit(null, 'unignore_selected',
+		$this->Lang('unignore'),'title="'.$this->Lang('help_unignore').'" onclick="return confirm_click(\'urgent\');"'));
+	$smarty->assign('ignore2',$this->CreateInputSubmit(null, 'ignore_selected',
+		$this->Lang('ignore'),'title="'.$this->Lang('help_ignore').'" onclick="return confirm_click(\'important\');"'));
+	$smarty->assign('unignore2',$this->CreateInputSubmit(null, 'unignore_selected',
+		$this->Lang('unignore'),'title="'.$this->Lang('help_unignore').'" onclick="return confirm_click(\'important\');"'));
+}
 
 $meta = $db->GetAssoc('SELECT mname,value,output,smarty,active FROM '.$pre.'module_seotools_meta ORDER BY mname');
 
@@ -564,7 +591,6 @@ $smarty->assign('startform_pages',$this->CreateFormStart($id, 'allindex'));
 $smarty->assign('title_name',$this->Lang('page_name'));
 $smarty->assign('title_priority',$this->Lang('priority'));
 $smarty->assign('title_ogtype',$this->Lang('og_type'));
-//TODO other groups' titles
 $smarty->assign('title_keywords',$this->Lang('keywords'));
 $smarty->assign('title_desc',$this->Lang('description'));
 $smarty->assign('title_index',$this->Lang('title_index'));
@@ -689,12 +715,16 @@ if ($rst) {
 }
 
 $smarty->assign('items',$items);
+
+if (!$pset) {
+	echo $this->ProcessTemplate('adminpanel.tpl');
+	return;
+}
+
 $smarty->assign('index',$this->CreateInputSubmit(null, 'index_selected',
 	$this->Lang('index'),'title="'.$this->Lang('help_index').'" onclick="return confirm_click(\'indx\');"'));
 $smarty->assign('unindex',$this->CreateInputSubmit(null, 'unindex_selected',
 	$this->Lang('unindex'),'title="'.$this->Lang('help_unindex').'" onclick="return confirm_click(\'indx\');"'));
-
-$smarty->assign('cancel',$this->CreateInputSubmit(null, 'cancel', $this->Lang('cancel')));
 
 /* SEO Settings Tab */
 
