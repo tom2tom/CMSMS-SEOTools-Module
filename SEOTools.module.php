@@ -56,12 +56,12 @@ class SEOTools extends CMSModule
 
 	function GetAuthor()
 	{
-		return 'Henning Schaefer';
+		return 'tomphantoo';
 	}
 
 	function GetAuthorEmail()
 	{
-		return 'henning.schaefer@gmail.com';
+		return 'tpgww@onepost.net';
 	}
 
 	function GetChangeLog()
