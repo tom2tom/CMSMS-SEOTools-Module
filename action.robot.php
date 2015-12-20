@@ -43,6 +43,6 @@ $smarty->assign('submitbtn',$this->CreateInputSubmit(null, 'newrobotfile', $this
 	'onclick="return confirm(\''.$this->Lang('robots_confirm').'\');"'));
 $smarty->assign('cancelbtn', $this->CreateInputSubmit(null, 'cancel', $this->lang('close')));
 
-echo $this->ProcessTemplate('robot.tpl');
+echo $this->ProcessTemplate('display.tpl');
 
 ?>
