@@ -1,4 +1,4 @@
-table.pagetable { padding: 3px; }
+table.pagetable { padding: 3px; margin-left:5%; width:auto; table-layout:auto; }
 p.pagetext { margin-top:0.5em; margin-bottom:0.5em; }
 a img { border-style: none !important; vertical-align:middle; }
 input.seocb { width:20px; }
