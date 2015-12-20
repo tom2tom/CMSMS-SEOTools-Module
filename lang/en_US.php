@@ -256,17 +256,18 @@ $lang['help'] = <<<EOS
 Specifically, it adds several SEO capabilities and provides alerts about SEO-related
 problems. Currently, the following features are supported:</p>
 <ul>
-<li>generate meta tags in standard html, Dublin Core and OpenGraph formats</li>
-<li>extract keywords from site pages and add the keywords to the meta tags and page title</li>
-<li>alerts about multiple pages featuring the same page titles and descriptions</li>
-<li>alerts about very short page meta descriptions</li>
-<li>user-choice whether or not specified site-pages should be indexed by search engines</li>
-<li>generate a sitemap.xml file for the site, with full control over the priorities of site pages</li>
-<li>automatically submit the sitemap file to Google when site content is changed</li>
+<li>generate meta tags in standard html, Dublin Core, OpenGraph, Twitter and/or GooglePlus formats</li>
+<li>optionally specify keywords for individual site pages</li>
+<li>optionally extract keywords from site pages automatically, using specified rules and prriorities</li>
+<li>provide alerts about multiple pages with the same page-titles and descriptions</li>
+<li>provide alerts about short page meta descriptions</li>
+<li>generate a sitemap.xml file for the site, with user-choice which pages should be indexed, and their priorities</li>
+<li>automatically submit the sitemap file to searchers Google/Bing/ASK, when site content is changed</li>
 <li>generate a robots.txt file explicitly disallowing access to pages you don't want to be indexed</li>
 </ul>
 <h3>How Do I Use It</h3>
-<p>First, open each template/page where you want to apply SEO Tools. For each of them:</p>
+<p>Begin by giving permissions 'Edit SEO Settings' and/or 'Edit page descriptions' to relevant groups and users</p>
+<p>Open each template/page where you want to apply SEO Tools. For each of them:</p>
 <ol>
 <li>Remove the whole &lt;title&gt;&lt;/title&gt; line, and the <code>{metadata}</code> tag (even if the official advice is to never remove it) and replace them with the tag
 <code>{SEOTools}</code><br />
