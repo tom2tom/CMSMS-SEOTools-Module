@@ -1,15 +1,15 @@
 <?php
 # This file is part of CMS Made Simple module: SEOTools.
 # Copyright (C) 2010-2011 Henning Schaefer <henning.schaefer@gmail.com>
-# Copyright (C) 2014-2015 Tom Phane <tpgww@onepost.net>
+# Copyright (C) 2012-2015 Tom Phane <tpgww@onepost.net>
 # Refer to licence and other details at the top of file SEOTools.module.php
 
 $sitename = get_site_preference('sitename','CMSMS Site');
 $yr = date('Y');
 //replicated from CMSMS global metadata
 $additional = <<<EOS
-<meta name="viewport" content="width=device-width,initial-scale=1" />
 <meta name="generator" content="CMS Made Simple - Copyright (C) 2004-{$yr} Ted Kulp. All rights reserved." />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
 <meta http-equiv="X-UA-Compatible" content="IE=edge" />
 <link rel="icon" href="favicon.ico" type="image/x-icon" />
 <link rel="shortcut icon" href="favicon.ico" type="image/x-icon" />
