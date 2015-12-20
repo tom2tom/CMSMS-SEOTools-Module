@@ -284,7 +284,7 @@ As an alternative to this content block, you can enable the SEO Tools option
 'Automatically generate descriptions where none is given'. This is not as good, but better than nothing.</li>
 <li>After that, optionally insert another tag to create a block for entering page keywords,
 like the following:<br />
-<code>{content assign='meta_keyworkds' block='metakeywords' label='Your next block label' wysiwyg=false oneline=true size=70}</code><br />
+<code>{content assign='meta_keywords' block='metakeywords' label='Your next block label' wysiwyg=false oneline=true size=70}</code><br />
 Again, the content block name is your choice, and it <strong>must be recorded</strong> as one of the SEOTools module preferences.<br />
 This content block can be omitted, in which case keywords will be generated from page title, description and content.</li>
 </ol><br />
