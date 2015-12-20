@@ -876,8 +876,8 @@ $metaset[] = array(
 
 $smarty->assign('metaset',$metaset);
 $smarty->assign('submit1',$this->CreateInputSubmit(null, 'save_meta_settings', $this->Lang('save')));
-$smarty->assign('revert',$this->CreateInputSubmit(null, 'revert_meta_settings',	$this->Lang('revert'),
-	'title="'.$this->Lang('reset_to_default2').'" onclick="return confirm(\''.$this->Lang('confirm').'\');"'));
+$smarty->assign('display1',$this->CreateInputSubmit(null, 'display_metadata', $this->Lang('display'),
+ 'title="'.$this->Lang('meta_display').'"'));
 
 /* KEYWORD Settings */
 

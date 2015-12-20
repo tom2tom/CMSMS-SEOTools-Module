@@ -6,79 +6,100 @@
 
 # Creates the SEO content for each page that has a {SEOTools} tag
 
-// Get page data
-//{CMSMS 1.6,1.7,1.8}::index.php if(...) $smarty->assign('content_obj',$contentobj);
-/*$content = $smarty->get_template_vars('content_obj');
-if (!$content) {
-*/
-	$content = cms_utils::get_current_content(); //CMSMS 1.9+
-//}
-if (!$content) {
-	return;
+if ($params['action'] == 'default') { //this is frontend
+	$front = true;
+	// Get page data
+	//{CMSMS 1.6,1.7,1.8}::index.php if(...) $smarty->assign('content_obj',$contentobj);
+	/*$content = $smarty->get_template_vars('content_obj');
+	if (!$content) {
+	*/
+		$content = cms_utils::get_current_content(); //CMSMS 1.9+
+	//}
+	if (!$content) {
+		return;
+	}
+	$page_id = (int)$content->Id();
+	$page_type = $content->Markup();
+	$page_name = $content->Name();
+	$page_url = $content->GetURL();
+	$page_mdate = $content->GetModifiedDate();
+	$page_cdate = $content->GetCreationDate();
+	$page_image = $content->GetPropertyValue('image');
+	if ($page_image == -1) {
+		$page_image = '';
+	}
 }
-$page_id = (int)$content->Id();
-$page_name = $content->Name();
-$page_url = $content->GetURL();
-$page_mdate = date('Y-m-d\TH:i:sP',$content->GetModifiedDate());
-$page_image = $content->GetPropertyValue('image');
-if ($page_image == -1) {
-	$page_image = '';
+else {
+	$front = false;
+	$page_type = 'ACTUALTYPE';
+	$page_name = 'ACTUALPAGENAME';
+	$page_url = 'URL';
+	$page_mdate = 0;
+	$page_cdate = 0;
+	$page_image = 'ACTUALIMAGE';
+	$description = 'ACTUALDESCRIPTION';
+	$title_keywords = 'ACTUALKEYWORDS';
+	$page_row = array('keywords'=>'ACTUALKEYWORDS','ogtype'=>'ACTUALTYPE');
+	$merged = false;
+	//dunno why these are needed
+	$smarty->assign('seo_keywords', '');
+	$smarty->assign('title_keywords', '');
 }
 
 $out = array();
 
 $pre = cms_db_prefix();
-
-// Keyword generator
-
-$sep = $this->GetPreference('keyword_separator',' ');
-$pref = $this->GetPreference('keyword_default','');
-$smarty->assign('default_keywords',$pref);
-
-$keywords = explode($sep,$pref);
-
-$query = 'SELECT * FROM '.$pre.'module_seotools WHERE content_id=?';
-$page_row = $db->GetRow($query,array($page_id));
-
-$funcs = new SEO_keyword();
-$kw = (!empty($page_row['keywords'])) ? $page_row['keywords'] : ''; //NOT false
-$other_keywords = $funcs->getKeywords($this, $page_id, $content, $kw);
-$smarty->assign('page_keywords', implode($sep, $other_keywords));
-
-$merged = array_unique(array_merge($keywords, $other_keywords));
-foreach ($merged as $i => $val) {
-	if ($val == '') unset ($merged[$i]);
-}
-$smarty->assign('seo_keywords', implode($sep, $merged)); //CHECKME was always comma-separator
-$title_keywords = implode(' ',$merged);
-$smarty->assign('title_keywords', $title_keywords); //never a comma-separator
-
-// Page description
-
-$description = $smarty->get_template_vars('page_description'); //dynamic content
-if (!$description) {
-	$description_id = str_replace(' ','_',$this->GetPreference('description_block',''));
-	$description = strip_tags($content->GetPropertyValue($description_id));
-}
-if (!$description && $this->GetPreference('description_auto_generate',false)) {
-	$description = str_replace('{title}',$page_name,$description);
-	if (count($other_keywords) > 1) {
-		$kw = $other_keywords;
-		$last_keyword = array_pop($kw);
-		$keywords = $this->Lang('and',implode(',',$kw),$last_keyword);
-	}
-	else {
-		$keywords = reset($other_keywords);
-	}
-	$description = str_replace('{keywords}',$keywords,$this->GetPreference('description_auto',''));
-	$description = $this->ProcessTemplateFromData($description);
-}
-
 $rooturl = (empty($_SERVER['HTTPS'])) ? $config['root_url'] : $config['ssl_url'];
 
-// Show base?
-if (empty($params['showbase']) || strcasecmp($params['showbase'],'false') != 0)
-	$out[] = '<base href="'.$rooturl.'/" />';
+if ($front) {
+	// Keyword generator
+	$sep = $this->GetPreference('keyword_separator',' ');
+	$pref = $this->GetPreference('keyword_default','');
+	$smarty->assign('default_keywords',$pref);
+
+	$keywords = explode($sep,$pref);
+
+	$query = 'SELECT * FROM '.$pre.'module_seotools WHERE content_id=?';
+	$page_row = $db->GetRow($query,array($page_id));
+
+	$funcs = new SEO_keyword();
+	$kw = (!empty($page_row['keywords'])) ? $page_row['keywords'] : ''; //NOT false
+	$other_keywords = $funcs->getKeywords($this, $page_id, $content, $kw);
+	$smarty->assign('page_keywords', implode($sep, $other_keywords));
+
+	$merged = array_unique(array_merge($keywords, $other_keywords));
+	foreach ($merged as $i => $val) {
+		if ($val == '') unset ($merged[$i]);
+	}
+	$smarty->assign('seo_keywords', implode($sep, $merged)); //CHECKME was always comma-separator
+	$title_keywords = implode(' ',$merged);
+	$smarty->assign('title_keywords', $title_keywords); //never a comma-separator
+
+	// Page description
+
+	$description = $smarty->get_template_vars('page_description'); //dynamic content
+	if (!$description) {
+		$description_id = str_replace(' ','_',$this->GetPreference('description_block',''));
+		$description = strip_tags($content->GetPropertyValue($description_id));
+	}
+	if (!$description && $this->GetPreference('description_auto_generate',false)) {
+		$description = str_replace('{title}',$page_name,$description);
+		if (count($other_keywords) > 1) {
+			$kw = $other_keywords;
+			$last_keyword = array_pop($kw);
+			$keywords = $this->Lang('and',implode(',',$kw),$last_keyword);
+		}
+		else {
+			$keywords = reset($other_keywords);
+		}
+		$description = str_replace('{keywords}',$keywords,$this->GetPreference('description_auto',''));
+		$description = $this->ProcessTemplateFromData($description);
+	}
+
+	// Show base?
+	if (empty($params['showbase']) || strcasecmp($params['showbase'],'false') != 0)
+		$out[] = '<base href="'.$rooturl.'/" />';
+}
 
 $coord = FALSE; //cache for first of lat. or long.
 
@@ -94,7 +115,7 @@ foreach ($rows as $name=>&$one) {
 		switch ($name) {
 		 case 'content_type':
 			if (!$val) {
-				$val = strtolower($content->Markup());
+				$val = strtolower($page_type);
 			}
 			if ($val) {
 				$out[] = '<meta http-equiv="Content-Type" content="text/'.$val.'; charset='.$config['default_encoding'].'" />';
@@ -161,11 +182,11 @@ foreach ($rows as $name=>&$one) {
 			$val = 'UNUSED';
 			break;
 		 case 'meta_std_date':
-			$val = date('Y-m-d\TH:i:sP',$content->GetCreationDate());
+			$val = date('Y-m-d\TH:i:sP',$page_cdate);
 			break;
 		 case 'meta_std_lastdate':
 		 case 'meta_std_revised':
-			$val = $page_mdate;
+			$val = date('Y-m-d\TH:i:sP',$page_mdate);
 			break;
 		 case 'meta_dc':
 		 //TODO don't hard-code these, but still suppport shared data ...
@@ -174,8 +195,9 @@ foreach ($rows as $name=>&$one) {
 			if ($val) $out[] = '<meta name="DC.title" content="'.$val.'" />';
 			if ($description) $out[] = '<meta name="DC.description" content="'.$description.'" />';
 			if ($merged) $out[] = '<meta name="DC.subject" content="'.implode($sep, $merged).'" />';
+			$val = date('Y-m-d\TH:i:sP',$page_mdate);
+			$out[] = '<meta name="DC.date" content="'.$val.'" scheme="DCTERMS.W3CDTF" />';
 			$val = (!empty($rows['meta_std_publisher'])) ? $rows['meta_std_publisher']['value'] : '';
-			$out[] = '<meta name="DC.date" content="'.$page_mdate.'" scheme="DCTERMS.W3CDTF" />';
 			if ($val) $out[] = '<meta name="DC.publisher" content="'.$val.'" />';
 			$val = (!empty($rows['meta_std_contributor'])) ? $rows['meta_std_contributor']['value'] : '';
 			if ($val) $out[] = '<meta name="DC.contributor" content="'.$val.'" />';
@@ -231,7 +253,7 @@ unset($one);
 
 // Image-Link
 if ($page_image) {
-	$out[] = '<link rel="image_src" href="'.$root_url.'/uploads/images/'.$page_image.'" />';
+	$out[] = '<link rel="image_src" href="'.$rooturl.'/uploads/images/'.$page_image.'" />';
 }
 
 if ($out) {

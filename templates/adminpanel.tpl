@@ -166,7 +166,7 @@
 {if $row[0]}{$end_set}{/if}
 {/foreach}
 <br />
-<p class="pageinput">{$submit1}&nbsp;{$cancel}&nbsp;{$revert}</p>
+<p class="pageinput">{$submit1}&nbsp;{$cancel}&nbsp;{$display1}</p>
 {$end_form}
 {$end_tab}
 
