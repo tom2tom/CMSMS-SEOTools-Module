@@ -52,7 +52,7 @@ $pre = cms_db_prefix();
 $rooturl = (empty($_SERVER['HTTPS'])) ? $config['root_url'] : $config['ssl_url'];
 
 if ($front) {
-	// Keyword generator
+	// Keywords
 	$sep = $this->GetPreference('keyword_separator',' ');
 	$pref = $this->GetPreference('keyword_default','');
 	$smarty->assign('default_keywords',$pref);
@@ -76,7 +76,6 @@ if ($front) {
 	$smarty->assign('title_keywords', $title_keywords); //never a comma-separator
 
 	// Page description
-
 	$description = $smarty->get_template_vars('page_description'); //dynamic content
 	if (!$description) {
 		$description_id = str_replace(' ','_',$this->GetPreference('description_block',''));
