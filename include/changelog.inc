@@ -6,4 +6,5 @@
 <li>Version 1.5 - 06 December 2012 Support explicit keywords entry, adapt for CMSMS 1.10+.</li>
 <li>Version 1.6 - 06  December 2015 Bugfixes, min CMSMS 1.9, adapt for CMSMS 2.0,2.1.</li>
 <li>Version 1.7 - 20 December 2015 Refactor to facilitate flexible meta-property usage.</li>
+<li>Version 1.7.1 - 22 December 2015 Bugfixes, speedups, support current metadata display.</li>
 </ul>
