@@ -6,36 +6,71 @@
 
 # Setup and display admin page, after processing any action-request
 
-function vardata_text(&$mod, $trans, &$meta, &$out, $name, $len, $def = '') {
+function langval(&$mod,$key,$def) {
+	static $cmsvers = 0;
+	static $trans = NULL;
+	static $realm;
+
+	if ($cmsvers == 0) {
+		$cmsvers = ($mod->before20) ? 1:2;
+		if ($cmsvers == 1) {
+			$realm = cms_current_language(); //CMSMS 1.8+
+			$trans = $mod->langhash[$realm];
+		}
+/*		else {
+			CmsLangOperations::set_realm();
+			$realm = CmsLangOperations::CMSMS_ADMIN_REALM;
+		}
+*/
+	}
+	if ($cmsvers == 1) {
+		if (array_key_exists($key,$trans)) {
+			//NOTE $trans[] values could be any encoding
+			//use $mod->Lang($k) to transcode to UTF-8, interpret embedded params etc
+			return $trans[$key];
+		}
+		else {
+			return $def;
+		}
+	}
+	else {
+/* TODO DO THIS BETTER
+		if (CmsLangOperations::key_exists($key,$realm)) {
+			return CmsLangOperations::lang_from_realm($realm,$key);
+		}
+		else {
+		echo 'key '.$key.' not found for realm '.$realm.'<br />';
+			return $def;
+		}
+*/
+		$s = $mod->Lang($key);
+		return (strpos($s,'-- Missing Language') === false) ? $s:$def;
+	}
+}
+
+function vardata_text(&$mod, &$meta, &$out, $name, $len, $def = '') {
 	$oneset = new stdClass();
-	$k = $name.'_title';
-	//NOTE $trans[] values could be any encoding, use $mod->Lang($k) to transcode to UTF-8, interpret embedded params etc
-	$oneset->title = (array_key_exists($k,$trans)) ? $trans[$k] : $name;
-	$k = $name.'_help';
-	$oneset->help = (array_key_exists($k,$trans)) ? $trans[$k] : null;
+	$oneset->title = langval($mod,$name.'_title',$name);
+	$oneset->help = langval($mod,$name.'_help',null);
 	$val = (!empty($meta[$name])) ? $meta[$name]['value']:$def;
 	$oneset->input = $mod->CreateInputText(null, $name, $val, $len, $len);
 	$out[$name] = $oneset;
 }
 
-function vardata_textarea(&$mod, $trans, &$meta, &$out, $name, $rows, $def = '') {
+function vardata_textarea(&$mod, &$meta, &$out, $name, $rows, $def = '') {
 	$oneset = new stdClass();
-	$k = $name.'_title';
-	$oneset->title = (array_key_exists($k,$trans)) ? $trans[$k] : $name;
-	$k = $name.'_help';
-	$oneset->help = (array_key_exists($k,$trans)) ? $trans[$k] : null;
+	$oneset->title = langval($mod,$name.'_title',$name);
+	$oneset->help = langval($mod,$name.'_help',null);
 	$val = (!empty($meta[$name])) ? $meta[$name]['value']:$def;
 	$oneset->input = $mod->CreateTextArea(false, null, $val, $name,
 		'', '', '', '', 60, $rows, '', '', 'style="height:'.($rows+1).'em;"');
 	$out[$name] = $oneset;
 }
 
-function vardata_check(&$mod, $trans, &$meta, &$out, $name, $def = 0) {
+function vardata_check(&$mod, &$meta, &$out, $name, $def = 0) {
 	$oneset = new stdClass();
-	$k = $name.'_title';
-	$oneset->title = (array_key_exists($k,$trans)) ? $trans[$k] : $name;
-	$k = $name.'_help';
-	$oneset->help = (array_key_exists($k,$trans)) ? $trans[$k] : null;
+	$oneset->title = langval($mod,$name.'_title',$name);
+	$oneset->help = langval($mod,$name.'_help',null);
 	$val = (!empty($meta[$name])) ? (int)$meta[$name]['value']:$def;
 	$oneset->input = '<input type="hidden" name="'.$name.'" value="0" />'. //ensure an 'unchecked' report
 		$mod->CreateInputCheckbox(null, $name, 1, $val);
@@ -43,47 +78,39 @@ function vardata_check(&$mod, $trans, &$meta, &$out, $name, $def = 0) {
 	$out[$name] = $oneset;
 }
 
-function vardata_drop(&$mod, $trans, &$meta, &$out, $name, $choices, $def = '') {
+function vardata_drop(&$mod, &$meta, &$out, $name, $choices, $def = '') {
 	$oneset = new stdClass();
-	$k = $name.'_title';
-	$oneset->title = (array_key_exists($k,$trans)) ? $trans[$k] : $name;
-	$k = $name.'_help';
-	$oneset->help = (array_key_exists($k,$trans)) ? $trans[$k] : null;
+	$oneset->title = langval($mod,$name.'_title',$name);
+	$oneset->help = langval($mod,$name.'_help',null);
 	$val = (!empty($meta[$name])) ? $meta[$name]['value']:$def;
 	$oneset->input = '<input type="hidden" name="'.$name.'" value="0" />'. //ensure a 'false' report
 		$mod->CreateInputDropdown(null, $name, $choices, $def, -1);
 	$out[$name] = $oneset;
 }
 
-function varpref_text(&$mod, $trans, &$out, $name, $len, $def = '') {
+function varpref_text(&$mod, &$out, $name, $len, $def = '') {
 	$oneset = new stdClass();
-	$k = $name.'_title';
-	$oneset->title = (array_key_exists($k,$trans)) ? $trans[$k] : $name;
-	$k = $name.'_help';
-	$oneset->help = (array_key_exists($k,$trans)) ? $trans[$k] : null;
+	$oneset->title = langval($mod,$name.'_title',$name);
+	$oneset->help = langval($mod,$name.'_help',null);
 	$val = $mod->GetPreference($name, $def);
 	$oneset->input = $mod->CreateInputText(null, $name, $val, $len, $len);
 	$out[$name] = $oneset;
 }
 
-function varpref_textarea(&$mod, $trans, &$out, $name, $rows, $def = '') {
+function varpref_textarea(&$mod, &$out, $name, $rows, $def = '') {
 	$oneset = new stdClass();
-	$k = $name.'_title';
-	$oneset->title = (array_key_exists($k,$trans)) ? $trans[$k] : $name;
-	$k = $name.'_help';
-	$oneset->help = (array_key_exists($k,$trans)) ? $trans[$k] : null;
+	$oneset->title = langval($mod,$name.'_title',$name);
+	$oneset->help = langval($mod,$name.'_help',null);
 	$val = $mod->GetPreference($name, $def);
 	$oneset->input = $mod->CreateTextArea(false, null, $val, $name,
 		'', '', '', '', 60, $rows, '', '', 'style="height:'.($rows+1).'em;"');
 	$out[$name] = $oneset;
 }
 
-function varpref_check(&$mod, $trans, &$out, $name, $def = 0) {
+function varpref_check(&$mod, &$out, $name, $def = 0) {
 	$oneset = new stdClass();
-	$k = $name.'_title';
-	$oneset->title = (array_key_exists($k,$trans)) ? $trans[$k] : $name;
-	$k = $name.'_help';
-	$oneset->help = (array_key_exists($k,$trans)) ? $trans[$k] : null;
+	$oneset->title = langval($mod,$name.'_title',$name);
+	$oneset->help = langval($mod,$name.'_help',null);
 	$val = (int)$mod->GetPreference($name, $def);
 	$oneset->input = '<input type="hidden" name="'.$name.'" value="0" />'. //ensure an 'unchecked' report
 		$mod->CreateInputCheckbox(null, $name, 1, $val);
@@ -267,8 +294,6 @@ else {
 		$this->EndTabHeaders().$this->StartTabContent());
 }
 
-$smarty->assign('tab_footers',$this->EndTabContent());
-
 $smarty->assign('start_alerts_tab',$this->StartTab('alerts'));
 if ($pset) {
 	$smarty->assign('start_urgent_tab',$this->StartTab('urgentfixes'));
@@ -282,6 +307,8 @@ if ($pset) {
 }
 
 $smarty->assign('end_set',$this->CreateFieldsetEnd());
+//NOTE CMSMS2+ barfs if EndTab() is called before EndTabContent() - some craziness to fix !!!
+$smarty->assign('tab_footers',$this->EndTabContent());
 $smarty->assign('end_tab',$this->EndTab());
 $smarty->assign('end_form',$this->CreateFormEnd());
 
@@ -490,8 +517,8 @@ if ($pset) {
 				if (array_key_exists('ignored', $alert)) {
 					$iname = ($alert['ignored']) ? 'true':'false';
 					$oneset->ignored = $this->CreateTooltipLink(null, 'defaultadmin', '',
-					 '<img src="'.$theme_url.'/system/'.$iname.'.gif" class="systemicon" />',
-					 $this->Lang('toggle'), array('what'=>'toggle_ignore','content_data'=>$sig,'tab'=>'importantfixes'));
+					'<img src="'.$theme_url.'/system/'.$iname.'.gif" class="systemicon" />',
+					$this->Lang('toggle'), array('what'=>'toggle_ignore','content_data'=>$sig,'tab'=>'importantfixes'));
 					$oneset->checkval = $sig;
 				}
 				else {
@@ -654,7 +681,8 @@ if ($rst) {
 			}
 			$priority = '('.$this->Lang('auto').') '.$auto_priority.'%';
 			$ogtype = '('.$this->Lang('default').') '.$default_ogtype.' '.$this->CreateTooltipLink(null, 'defaultadmin', '', $iconedit, $this->Lang('edit_value'), array('what'=>'edit_ogtype','content_id'=>$row['content_id']));
-			$keywords = '('.$this->Lang('auto').') '.count($kw).' '.$this->CreateTooltipLink(null, 'defaultadmin', '', $iconedit, implode(', ',$kw).'; '.$this->Lang('edit_value'), array('what'=>'edit_keywords','content_id'=>$row['content_id']));
+			$val = ($kw) ? implode(', ',$kw).'; ':'';
+			$keywords = '('.$this->Lang('auto').') '.count($kw).' '.$this->CreateTooltipLink(null, 'defaultadmin', '', $iconedit, $val.$this->Lang('edit_value'), array('what'=>'edit_keywords','content_id'=>$row['content_id']));
 			$iname = 'true';
 
 			$query = 'SELECT * FROM '.$pre.'module_seotools WHERE content_id = ?';
@@ -664,12 +692,12 @@ if ($rst) {
 				  $priority = '<strong>'.$info['priority'] . '% '.$this->CreateTooltipLink(null, 'defaultadmin', '', $iconreset, $this->Lang('reset_to_default'), array('what'=>'reset_priority','content_id'=>$row['content_id'])) . '</strong>';
 				  $auto_priority = $info['priority'];
 				}
-				if ($info['ogtype'] != '') {
+				if ($info['ogtype']) {
 				  $ogtype = '<strong>'.$info['ogtype'] . ' '
 				  . $this->CreateTooltipLink(null, 'defaultadmin', '', $iconreset, $this->Lang('reset_to_default'), array('what'=>'reset_ogtype','content_id'=>$row['content_id']))
 				  . $this->CreateTooltipLink(null, 'defaultadmin', '', $iconedit, $this->Lang('edit_value'), array('what'=>'edit_ogtype','content_id'=>$row['content_id'])).'</strong>';
 				}
-				if ($info['keywords'] != '') {
+				if ($info['keywords']) {
 					$keywords = '<strong>'.count(explode($sep,$info['keywords']))
 					. $this->CreateTooltipLink(null, 'defaultadmin', '', $iconreset, $this->Lang('reset_to_default'), array('what'=>'reset_keywords','content_id'=>$row['content_id']))
 					. $this->CreateTooltipLink(null, 'defaultadmin', '', $iconedit, $this->Lang('edit_value'), array('what'=>'edit_keywords','content_id'=>$row['content_id'])).'</strong>';
@@ -728,17 +756,13 @@ $smarty->assign('unindex',$this->CreateInputSubmit(null, 'unindex_selected',
 
 /* SEO Settings Tab */
 
-// Get lang array, for dynamic checking
-$var = cms_current_language(); //CMSMS 1.8+ (but marked as deprecated)
-$trans = &$this->langhash[$var];
-
 $smarty->assign('startform_settings',$this->CreateFormStart($id, 'changesettings'));
 
 $metaset = array();
 
 $ungrouped = array();
 
-vardata_text($this, $trans, $meta, $ungrouped, 'content_type', 10, 'html');
+vardata_text($this, $meta, $ungrouped, 'content_type', 10, 'html');
 
 $metaset[] = array(
 	'',
@@ -747,12 +771,12 @@ $metaset[] = array(
 
 $pagevals = array();
 
-vardata_text($this, $trans, $meta, $pagevals, 'title', 60, '{title} | {$sitename} - {$title_keywords}');
-vardata_text($this, $trans, $meta, $pagevals, 'meta_std_title', 60, '{title} | {$sitename}');
+vardata_text($this, $meta, $pagevals, 'title', 60, '{title} | {$sitename} - {$title_keywords}');
+vardata_text($this, $meta, $pagevals, 'meta_std_title', 60, '{title} | {$sitename}');
 
-varpref_text($this, $trans, $pagevals, 'description_block', 60, 'metadescription');
-varpref_check($this, $trans, $pagevals, 'description_auto_generate');
-varpref_textarea($this, $trans, $pagevals, 'description_auto', 2, 'This page covers the topics {keywords}');
+varpref_text($this, $pagevals, 'description_block', 60, 'metadescription');
+varpref_check($this, $pagevals, 'description_auto_generate');
+varpref_textarea($this, $pagevals, 'description_auto', 2, 'This page covers the topics {keywords}');
 
 $metaset[] = array(
 	$this->CreateFieldsetStart(null, 'title_description', $this->Lang('title_title_description')),
@@ -767,7 +791,7 @@ $metatypes = array();
 $groups = $db->GetAssoc('SELECT gname,active FROM '.$pre.
 	'module_seotools_group WHERE gname != \'before\' AND gname != \'after\' ORDER BY vieworder');
 foreach ($groups as $name=>$act) {
-	vardata_check($this, $trans, $meta, $metatypes, $name, $act);
+	vardata_check($this, $meta, $metatypes, $name, $act);
 }
 
 $metaset[] = array(
@@ -805,39 +829,39 @@ if ($dp) {
 
 $metavals = array();
 
-vardata_text($this, $trans, $meta, $metavals, 'meta_std_publisher', 32);
-vardata_text($this, $trans, $meta, $metavals, 'meta_std_contributor', 32);
-vardata_text($this, $trans, $meta, $metavals, 'meta_std_copyright', 32, '(C) '.date('Y').'. All rights reserved.');
-vardata_text($this, $trans, $meta, $metavals, 'meta_std_location', 32);
+vardata_text($this, $meta, $metavals, 'meta_std_publisher', 32);
+vardata_text($this, $meta, $metavals, 'meta_std_contributor', 32);
+vardata_text($this, $meta, $metavals, 'meta_std_copyright', 32, '(C) '.date('Y').'. All rights reserved.');
+vardata_text($this, $meta, $metavals, 'meta_std_location', 32);
 $oneset = &$metavals['meta_std_location'];
 $oneset->head = $this->Lang('meta_std_location_description');
-vardata_text($this, $trans, $meta, $metavals, 'meta_std_region', 6);
-vardata_text($this, $trans, $meta, $metavals, 'meta_std_latitude', 15);
-vardata_text($this, $trans, $meta, $metavals, 'meta_std_longitude', 15);
-vardata_text($this, $trans, $meta, $metavals, 'meta_og_title', 60, '{title}');
+vardata_text($this, $meta, $metavals, 'meta_std_region', 6);
+vardata_text($this, $meta, $metavals, 'meta_std_latitude', 15);
+vardata_text($this, $meta, $metavals, 'meta_std_longitude', 15);
+vardata_text($this, $meta, $metavals, 'meta_og_title', 60, '{title}');
 $oneset = &$metavals['meta_og_title'];
 $oneset->head = $this->Lang('meta_og_description');
-vardata_text($this, $trans, $meta, $metavals, 'meta_og_type', 32);
-vardata_text($this, $trans, $meta, $metavals, 'meta_og_sitename', 25);
-vardata_drop($this, $trans, $meta, $metavals, 'meta_og_image', $img_files);
-vardata_text($this, $trans, $meta, $metavals, 'meta_og_admins', 48);
-vardata_text($this, $trans, $meta, $metavals, 'meta_og_application', 32);
+vardata_text($this, $meta, $metavals, 'meta_og_type', 32);
+vardata_text($this, $meta, $metavals, 'meta_og_sitename', 25);
+vardata_drop($this, $meta, $metavals, 'meta_og_image', $img_files);
+vardata_text($this, $meta, $metavals, 'meta_og_admins', 48);
+vardata_text($this, $meta, $metavals, 'meta_og_application', 32);
 /* twitter metas derived from others
-vardata_text($this, $trans, $meta, $metavals, 'meta_twt_title', 60, '{title}');
-vardata_textarea($this, $trans, $meta, $metavals, 'meta_twt_description', 6);
+vardata_text($this, $meta, $metavals, 'meta_twt_title', 60, '{title}');
+vardata_textarea($this, $meta, $metavals, 'meta_twt_description', 6);
 */
-vardata_text($this, $trans, $meta, $metavals, 'meta_twt_card', 20);
+vardata_text($this, $meta, $metavals, 'meta_twt_card', 20);
 $oneset = &$metavals['meta_twt_card'];
 $oneset->head = $this->Lang('meta_twt_description');
-vardata_drop($this, $trans, $meta, $metavals, 'meta_twt_image', $img_files);
-vardata_text($this, $trans, $meta, $metavals, 'meta_twt_site', 18);
-vardata_text($this, $trans, $meta, $metavals, 'meta_twt_creator', 18);
+vardata_drop($this, $meta, $metavals, 'meta_twt_image', $img_files);
+vardata_text($this, $meta, $metavals, 'meta_twt_site', 18);
+vardata_text($this, $meta, $metavals, 'meta_twt_creator', 18);
 /* google+ metas derived from others
-vardata_text($this, $trans, $meta, $metavals, 'meta_gplus_name', 60, '{title}');
+vardata_text($this, $meta, $metavals, 'meta_gplus_name', 60, '{title}');
 $oneset = &$metavals['meta_gplus_name'];
 $oneset->head = $this->Lang('meta_gplus_description');
-vardata_textarea($this, $trans, $meta, $metavals, 'meta_gplus_description', 6);
-vardata_drop($this, $trans, $meta, $metavals, 'meta_gplus_image', $img_files);
+vardata_textarea($this, $meta, $metavals, 'meta_gplus_description', 6);
+vardata_drop($this, $meta, $metavals, 'meta_gplus_image', $img_files);
 */
 $j = 0;
 foreach ($meta as $name=>&$data) {
@@ -846,7 +870,7 @@ foreach ($meta as $name=>&$data) {
 		   || array_key_exists($name,$pagevals)
 		   || array_key_exists($name,$metavals)
 		   || array_key_exists($name,$ungrouped))) {
-			vardata_text($this, $trans, $meta, $metavals, $name, 40);
+			vardata_text($this, $meta, $metavals, $name, 40);
 			if ($j == 0) {
 				$oneset = &$metavals[$name];
 				$oneset->head = $this->Lang('meta_new_description');
@@ -867,7 +891,7 @@ $metaset[] = array(
 
 $extraset = array();
 
-vardata_textarea($this, $trans, $meta, $extraset, 'meta_additional', 8);
+vardata_textarea($this, $meta, $extraset, 'meta_additional', 8);
 
 $metaset[] = array(
 	$this->CreateFieldsetStart(null, 'meta_additional', $this->Lang('title_meta_additional')),
@@ -885,14 +909,14 @@ $keywordset = array();
 
 $keyset = array();
 
-varpref_text($this, $trans, $keyset, 'keyword_block', 60, 'metakeywords');
-varpref_text($this, $trans, $keyset, 'keyword_separator', 1, ',');
-varpref_text($this, $trans, $keyset, 'keyword_minlength', 2, '6');
-varpref_text($this, $trans, $keyset, 'keyword_minimum_weight', 2, '7');
-varpref_text($this, $trans, $keyset, 'keyword_title_weight', 2, '6');
-varpref_text($this, $trans, $keyset, 'keyword_description_weight', 2, '4');
-varpref_text($this, $trans, $keyset, 'keyword_headline_weight', 2, '2');
-varpref_text($this, $trans, $keyset, 'keyword_content_weight', 2, '1');
+varpref_text($this, $keyset, 'keyword_block', 60, 'metakeywords');
+varpref_text($this, $keyset, 'keyword_separator', 1, ',');
+varpref_text($this, $keyset, 'keyword_minlength', 2, '6');
+varpref_text($this, $keyset, 'keyword_minimum_weight', 2, '7');
+varpref_text($this, $keyset, 'keyword_title_weight', 2, '6');
+varpref_text($this, $keyset, 'keyword_description_weight', 2, '4');
+varpref_text($this, $keyset, 'keyword_headline_weight', 2, '2');
+varpref_text($this, $keyset, 'keyword_content_weight', 2, '1');
 
 $keywordset[] = array(
 	$this->CreateFieldsetStart(null, 'keyword_gener_description', $this->Lang('title_keyword_gener')),
@@ -901,8 +925,8 @@ $keywordset[] = array(
 
 $listset = array();
 
-varpref_textarea($this, $trans, $listset, 'keyword_default', 3);
-varpref_textarea($this, $trans, $listset, 'keyword_exclude', 5);
+varpref_textarea($this, $listset, 'keyword_default', 3);
+varpref_textarea($this, $listset, 'keyword_exclude', 5);
 
 $keywordset[] = array(
 	$this->CreateFieldsetStart(null, 'keyword_list_description', $this->Lang('title_keyword_lists')),
@@ -919,20 +943,18 @@ $sitemapset = array();
 
 $fileset = array();
 
-varpref_check($this, $trans, $fileset, 'create_sitemap');
-varpref_check($this, $trans, $fileset, 'push_sitemap', $this->GetPreference('create_sitemap',0));
+varpref_check($this, $fileset, 'create_sitemap');
+varpref_check($this, $fileset, 'push_sitemap', $this->GetPreference('create_sitemap',0));
 if (!(ini_get('allow_url_fopen') || function_exists('curl_version'))) {
 	$oneset = &$fileset['push_sitemap'];
 	$oneset->input = $this->Lang('no_pusher');
 }
 
-vardata_text($this, $trans, $meta, $fileset, 'verification', 40); //NOTE tabled value
+vardata_text($this, $meta, $fileset, 'verification', 40); //NOTE tabled value
 
-varpref_check($this, $trans, $fileset, 'create_robots');
-varpref_textarea($this, $trans, $fileset, 'robot_start', 5);
-varpref_textarea($this, $trans, $fileset, 'robot_end', 5);
-
-unset($trans);
+varpref_check($this, $fileset, 'create_robots');
+varpref_textarea($this, $fileset, 'robot_start', 5);
+varpref_textarea($this, $fileset, 'robot_end', 5);
 
 $sitemapset[] = array(
 	$this->CreateFieldsetStart(null, 'sitemap_description', $this->Lang('title_sitemap_description')),
