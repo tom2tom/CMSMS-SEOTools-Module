@@ -51,22 +51,32 @@ class SEO_keyword
 			 'SELECT keywords FROM '.$pre.'module_seotools WHERE content_id=?',
 			 array($content_id));
 		}
-		
-		$wlen = $mod->GetPreference('keyword_minlength',6);
-		$minwt = $mod->GetPreference('keyword_minimum_weight',7);
-		$sep = $mod->GetPreference('keyword_separator',' ');
-		$propname = str_replace(' ','_',$mod->GetPreference('keyword_block',''));
-		$query = 'SELECT content FROM '.$pre.'content_props WHERE content_id=? AND prop_name=?';
+
+		// Hack to avoid lots of expensive roundtrips to server
+		$intro = $mod->GetName().'_mapi_pref_';
+		$query = 'SELECT sitepref_name,sitepref_value FROM '.$pre.
+			'siteprefs WHERE sitepref_name LIKE \''.$intro.'%\'';
+		$prefs = $db->GetAssoc($query);
+
+		$wlen = (int)$prefs[$intro.'keyword_minlength']; if (!$wlen) $wlen = 6;
+		$minwt = (int)$prefs[$intro.'keyword_minimum_weight']; if (!$minwt) $minwt = 7;
+		$sep = $prefs[$intro.'keyword_separator']; if (!$sep) $sep = ',';
 
 		$got_keywords = array();
-		/* Try for explicit stored keywords */
+		// Try for explicit stored keywords
 		if ($savedwords) {
 			$stored_keywords = $savedwords.$sep;
 		}
 		else {
 			$stored_keywords = '';
 		}
-		$stored_keywords .= $db->GetOne($query,array($content_id,$propname));
+
+		$query = 'SELECT content FROM '.$pre.'content_props WHERE content_id=? AND prop_name=?';
+		$block = $prefs[$intro.'keyword_block'];
+		if ($block) {
+			$propname = str_replace(' ','_',$block);
+			$stored_keywords .= $db->GetOne($query,array($content_id,$propname));
+		}
 		if ($stored_keywords) {
 			$stored_keywords = self::_get_keywords($stored_keywords,$sep,$wlen);
 			if ($stored_keywords) {
@@ -75,11 +85,11 @@ class SEO_keyword
 				}
 			}
 		}
-		if (!$got_keywords) {
-			/* Revert to keywords derived from page title, description and content */
+		if (!$savedwords) {
+			// Get keywords derived from page title, description and content
 			$page_name = $content->Name();
 			if ($page_name) {
-				$wt = $mod->GetPreference('keyword_title_weight',6);
+				$wt = (int)$prefs[$intro.'keyword_title_weight']; if (!$wt) $wt = 6;
 				$title_keywords = self::_get_keywords($page_name,' ',$wlen);
 				foreach($title_keywords as $keyword) {
 					if (!isset($got_keywords[$keyword])) {
@@ -88,29 +98,33 @@ class SEO_keyword
 					$got_keywords[$keyword] += $wt;
 				}
 			}
-			$propname = str_replace(' ','_',$mod->GetPreference('description_block',''));
-			$description = $db->GetOne($query,array($content_id,$propname));
-			if ($description) {
-				$wt = $mod->GetPreference('keyword_description_weight',4);
-				$description_keywords = self::_get_keywords($description,' ',$wlen);
-				foreach($description_keywords as $keyword) {
-					if (!isset($got_keywords[$keyword])) {
-						$got_keywords[$keyword] = 0;
+			$block = $prefs[$intro.'description_block'];
+			if ($block) {
+				$propname = str_replace(' ','_', $block);
+				$description = $db->GetOne($query,array($content_id,$propname));
+				if ($description) {
+					$wt = (int)$prefs[$intro.'keyword_description_weight']; if (!$wt) $wt = 4;
+					$description_keywords = self::_get_keywords($description,' ',$wlen);
+					foreach($description_keywords as $keyword) {
+						if (!isset($got_keywords[$keyword])) {
+							$got_keywords[$keyword] = 0;
+						}
+						$got_keywords[$keyword] += $wt;
 					}
-					$got_keywords[$keyword] += $wt;
 				}
 			}
-			$content = $db->GetOne($query,array($content_id,'content_en'));
-			if ($content) {
+			$props = $content->Properties();
+			$html = $props['content_en']; // Main content block
+			if ($html) {
 				$heads = '';
 				for ($i = 1; $i < 7; $i++) {
-					if (preg_match_all("/(<h{$i}.*>)(\w.*)(<\/h{$i}>)/isxmU",$content,$patterns)) {
+					if (preg_match_all("/(<h{$i}.*>)(\w.*)(<\/h{$i}>)/isxmU",$html,$patterns)) {
 						if ($heads) $heads .= ' ';
 						$heads .= implode(' ',$patterns[2]);
 					}
 				}
 				if ($heads) {
-					$wt = $mod->GetPreference('keyword_headline_weight',2);
+					$wt = (int)$prefs[$intro.'keyword_headline_weight']; if (!$wt) $wt = 2;
 					$headline_keywords = self::_get_keywords($heads,' ',$wlen);
 					foreach($headline_keywords as $keyword) {
 						if (!isset($got_keywords[$keyword])) {
@@ -119,8 +133,8 @@ class SEO_keyword
 						$got_keywords[$keyword] += $wt;
 					}
 				}
-				$wt = $mod->GetPreference('keyword_content_weight',1);
-				$content_keywords = self::_get_keywords($content,' ',$wlen);
+				$wt = (int)$prefs[$intro.'keyword_content_weight']; if (!$wt) $wt = 1;
+				$content_keywords = self::_get_keywords($html,' ',$wlen);
 				foreach($content_keywords as $keyword) {
 					if (!isset($got_keywords[$keyword])) {
 						$got_keywords[$keyword] = 0;
@@ -128,20 +142,33 @@ class SEO_keyword
 					$got_keywords[$keyword] += $wt;
 				}
 			}
-			arsort($got_keywords);
-			//cache derived keywords (until next page-content-change)
-			$query = 'UPDATE '.$pre.'module_seotools SET keywords=? WHERE content_id=?';
-			$merged = implode($sep,array_keys($got_keywords));
-			$db->Execute($query,array($merged,$content_id));
-		}
 
-		$exclude_list = $mod->GetPreference('keyword_exclude','');
-		foreach ($got_keywords as $key=>&$value) {
-			if ($value < $minwt || ($exclude_list && strpos($key,$exclude_list) !== false)) { //TODO caseless mb scan
-				$value = '';
+			$exclude_list = $prefs[$intro.'keyword_exclude'];
+			foreach ($got_keywords as $key=>&$value) {
+				if ($value < $minwt || ($exclude_list && strpos($key,$exclude_list) !== false)) { //TODO caseless mb scan
+					unset($got_keywords[$key]);
+				}
 			}
+			unset($value);
+			arsort($got_keywords, SORT_NUMERIC);
+			// Cache derived keywords (until next page-content-change)
+			$query = 'UPDATE '.$pre.'module_seotools SET keywords=? WHERE content_id=?';
+			$merged = implode($sep, array_keys($got_keywords));
+			$db->Execute($query,array($merged,$content_id));
+			$query = 'INSERT INTO '.$pre.
+'module_seotools (content_id,keywords) SELECT ?,? FROM (SELECT 1 AS dmy) Z WHERE NOT EXISTS (SELECT 1 FROM '.
+			$pre.'module_seotools T WHERE T.content_id=?)';
+			$db->Execute($query,array($content_id,$merged,$content_id));
 		}
-		unset($value);
+		else {
+			$exclude_list = $prefs[$intro.'keyword_exclude'];
+			foreach ($got_keywords as $key=>&$value) {
+				if ($value < $minwt || ($exclude_list && strpos($key,$exclude_list) !== false)) { //TODO caseless mb scan
+					$value = '';
+				}
+			}
+			unset($value);
+		}
 
 		return array_keys(array_filter($got_keywords,'is_numeric'));
 	}
