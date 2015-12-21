@@ -24,19 +24,20 @@ function tiphide2() {
   $(this).parent().next('.slidediv').slideUp({ duration:200, queue:false });
  }
 }
+function totab() {
+ var indx = $(this).attr('tabindx');
+ //this relies on undocumented tabs-structure for admin pages
+ var from = $('#page_tabs > .active').attr('id');
+ var to = $('#page_tabs div:eq('+indx+')').attr('id'); //lazy, no range-check
+ $('#'+from).removeClass('active');
+ $('#'+from+'_c').css('display','none');
+ $('#'+to).addClass('active');
+ $('#'+to+'_c').css('display','block');
+ return false;
+}
 
 $(document).ready(function(){
  $('.slidediv').css('display','none').find('p').click(tipkeep);
  $('.slidetip').children().filter(':input').hover(tipsee,tiphide2).focus(tipsee).blur(tiphide);
- $('#alerts_c a').click(function(){
-  var indx = $(this).attr('tabindx');
-  //this relies on undocumented tabs-structure for admin pages
-  var from = $('#page_tabs > .active').attr('id');
-  var to = $('#page_tabs div:eq('+indx+')').attr('id'); //lazy, no range-check
-  $('#'+from).removeClass('active');
-  $('#'+from+'_c').css('display','none');
-  $('#'+to).addClass('active');
-  $('#'+to+'_c').css('display','block');
-  return false;
- });
+ $('a[tabindx]').click(totab);
 });
