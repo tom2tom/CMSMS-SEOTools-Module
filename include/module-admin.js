@@ -29,7 +29,7 @@ $(document).ready(function(){
  $('.slidediv').css('display','none').find('p').click(tipkeep);
  $('.slidetip').children().filter(':input').hover(tipsee,tiphide2).focus(tipsee).blur(tiphide);
  $('#alerts_c a').click(function(){
-  var indx = $(this).attr('class').substring(1);
+  var indx = $(this).attr('tabindx');
   //this relies on undocumented tabs-structure for admin pages
   var from = $('#page_tabs > .active').attr('id');
   var to = $('#page_tabs div:eq('+indx+')').attr('id'); //lazy, no range-check
