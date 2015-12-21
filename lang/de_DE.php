@@ -196,6 +196,7 @@ $lang['save'] = 'Einstellungen speichern';
 $lang['set_up_auto_description'] = 'Setzen Sie den Generator für automatische Beschreibungen auf und stellen Sie sicher, da&szlig; der Text das Tag {keywords} enth&auml;lt';
 $lang['set_up_description_block'] = 'Setzen Sie einen Content-Block f&uuml;r Meta-Beschreibungen auf';
 $lang['settings_updated'] = 'Die SEO-Einstellungen wurden erfolgreich aktualisiert.';
+$lang['showtab'] = 'go to tab';
 $lang['sitemap_not_writeable'] = 'Ihre sitemap.xml - Datei ist nicht beschreibbar den Webserver';
 $lang['sitemap_regenerated'] = 'Die Sitemap und die robots.txt - Datei wurden erfolgreich neu erstellt.';
 $lang['summary_important'] = 'Wir haben %d important Probleme festgestellt';

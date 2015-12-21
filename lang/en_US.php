@@ -196,6 +196,7 @@ $lang['save'] = 'Save';
 $lang['set_up_auto_description'] = 'Set up the description auto-generator and ensure the text contains the tag <code>{keywords}</code>';
 $lang['set_up_description_block'] = 'No content block has been defined for meta descriptions';
 $lang['settings_updated'] = 'The SEO settings were successfully updated.';
+$lang['showtab'] = 'go to tab';
 $lang['sitemap_not_writeable'] = 'The site\'s /sitemap.xml file is not writeable by the web server';
 $lang['sitemap_regenerated'] = 'The sitemap has been successfully regenerated.';
 $lang['summary_important'] = '%d important problem(s) detected';
