@@ -4,24 +4,22 @@ p.pagetext { margin-top:0.5em; margin-bottom:0.5em; }
 a.admin-tooltip {
  text-decoration: none;
 }
-a.admin-tooltip:hover {
- background: #fff;
-}
 a.admin-tooltip span {
- display: none;
- padding: 3px 5px;
- max-width: 20%;
- width: auto; //override any upstream
-}
-a.admin-tooltip:hover span {
- display: inline;
- position: absolute;
- border: 1px solid #000;
+ display:none;
  background: #fff;
  color: #6c6c6c;
+ border:1px solid #aaa;
+ padding:3px 5px;
+ max-width:20%;
+ width:auto; //override any ancestor
+ line-height:1.1;
+}
+a.admin-tooltip:hover span {
+ display:inline;
+ position:absolute;
 }
 a img {
- border-style: none !important;
+ border-style:none !important;
  vertical-align:middle;
 }
 input.seocb { width:20px; }
