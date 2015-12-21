@@ -46,7 +46,7 @@ class SEOTools extends CMSModule
 
 	function GetVersion()
 	{
-		return '1.7';
+		return '1.7.1';
 	}
 
 	function GetHelp()

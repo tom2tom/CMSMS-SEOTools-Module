@@ -193,6 +193,11 @@ VALUES (?,?,?,?,?,?,?,?)';
 				$i,
 				$data['active']));
 		}
+	case "1.7":
+		//redundant file
+		$fp = cms_join_path(dirname(__FILE__),'templates','robot.tpl');
+		if (is_file($fp))
+			unlink($fp);
 
 }
 
