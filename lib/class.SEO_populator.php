@@ -22,7 +22,7 @@ class SEO_populator
 		return false;
 	}
 */
-	private function getSeeLink(&$mod, $priority, $title = '')
+	private function getSeeLink(&$mod, $indx, $title = '')
 	{
 		$gCms = cmsms(); //CMSMS 1.8+
 		if ($this->adminurl == null) {
@@ -40,12 +40,12 @@ class SEO_populator
 				$gCms->get_variable('admintheme'):
 				cms_utils::get_theme_object();
 		}
-		$lnk = '<a class=@"'.$priority.'" href="#"><img src="'.$this->adminurl.'/themes/'
+		$lnk = '<a href="#" tabindx="'.$indx.'"><img src="'.$this->adminurl.'/themes/'
 		 .$this->theme->themeName.'/images/icons/system/edit.gif" class="systemicon"';
-		if ($title) {
-			$lnk .= ' title = "'.$title.'"';
+		if (!$title) {
+			$title = 'go to tab';
 		}
-		$lnk .= ' /></a>';
+		$lnk .= ' alt="'.$title.'" title="'.$title.'" /></a>';
 		return $lnk;
 	}
 
@@ -337,9 +337,9 @@ WHERE(p1.prop_name = ? AND p1.content_id < p2.content_id  AND p1.content != ? AN
 		return $alerts;
 	}
 
-	public function getTabLink($priority, $label)
+	public function getTabLink($indx, $label)
 	{
-		return '<a class="@'.$priority.'" href="#">'.$label.'</a>';
+		return '<a href="#" tabindx="'.$indx.'">'.$label.'</a>';
 	}
 
 	public function getNoticeAlerts(&$mod)
