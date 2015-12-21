@@ -40,12 +40,13 @@ class SEO_populator
 				$gCms->get_variable('admintheme'):
 				cms_utils::get_theme_object();
 		}
-		$lnk = '<a href="#" tabindx="'.$indx.'"><img src="'.$this->adminurl.'/themes/'
-		 .$this->theme->themeName.'/images/icons/system/edit.gif" class="systemicon"';
+		//mimic $mod->GetTooltipLink
 		if (!$title) {
-			$title = 'go to tab';
+			$title = $mod->Lang('showtab');
 		}
-		$lnk .= ' alt="'.$title.'" title="'.$title.'" /></a>';
+		$lnk = '<a href="#" class="admin-tooltip" tabindx="'.$indx.'"><img src="'.
+		$this->adminurl.'/themes/'.$this->theme->themeName.'/images/icons/system/edit.gif" class="systemicon" /><span>'.
+		$title.'</span></a>';
 		return $lnk;
 	}
 
@@ -397,16 +398,17 @@ WHERE(p1.prop_name = ? AND p1.content_id < p2.content_id  AND p1.content != ? AN
 				$gCms->get_variable('admintheme'):
 				cms_utils::get_theme_object();
 		}
-		$lnk = '<a href="'.$this->adminurl.'/editcontent.php?'.$mod->secstr.'='.$sp.'&content_id='.$id
-		 .'"><img src="'.$this->adminurl.'/themes/'
-		 .$this->theme->themeName.'/images/icons/system/edit.gif" title = "';
+		//mimic $mod->CreateTooltipLink
 		if ($pagename) {
-			$lnk .= $mod->Lang('edit_page',$pagename);
+			$title = $mod->Lang('edit_page',$pagename);
 		}
 		else {
-			$lnk .= $mod->Lang('edit_page2');
+			$title = $mod->Lang('edit_page2');
 		}
-		$lnk .= '" class="systemicon" /></a>';
+		$lnk = '<a href="'.$this->adminurl.'/editcontent.php?'.$mod->secstr.'='.$sp.'&content_id='.$id.
+		'" class="admin-tooltip"><img src="'.
+		$this->adminurl.'/themes/'.$this->theme->themeName.'/images/icons/system/edit.gif" class="systemicon" /><span>'.
+		$title.'</span></a>';
 		return $lnk;
 	}
 }

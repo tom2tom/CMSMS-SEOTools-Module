@@ -1,4 +1,4 @@
-table.pagetable { padding: 3px; margin-left:5%; width:auto; table-layout:auto; }
+table.pagetable { padding:3px; border-spacing:0; margin-left:0; width:auto }
 p.pagetext { margin-top:0.5em; margin-bottom:0.5em; }
 /* CRAPPY one-eleven theme doesn't have 'admin-tooltip' classes */
 a.admin-tooltip {
@@ -9,16 +9,14 @@ a.admin-tooltip:hover {
 }
 a.admin-tooltip span {
  display: none;
- padding: 2px 3px;
- margin-left: 8px;
- min-width: 3em;
+ padding: 3px 5px;
  max-width: 20%;
- font-weight: bold;
+ width: auto; //override any upstream
 }
 a.admin-tooltip:hover span {
  display: inline;
  position: absolute;
- border: 1px solid #ccc;
+ border: 1px solid #000;
  background: #fff;
  color: #6c6c6c;
 }

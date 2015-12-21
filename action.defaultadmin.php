@@ -674,8 +674,7 @@ if ($rst) {
 			}
 			$priority = '('.$this->Lang('auto').') '.$auto_priority.'%';
 			$ogtype = '('.$this->Lang('default').') '.$default_ogtype.' '.$this->CreateTooltipLink(null, 'defaultadmin', '', $iconedit, $this->Lang('edit_value'), array('what'=>'edit_ogtype','content_id'=>$row['content_id']));
-			$val = ($kw) ? implode(', ',$kw).'; ':'';
-			$keywords = '('.$this->Lang('auto').') '.count($kw).' '.$this->CreateTooltipLink(null, 'defaultadmin', '', $iconedit, $val.$this->Lang('edit_value'), array('what'=>'edit_keywords','content_id'=>$row['content_id']));
+			$keywords = '0 '.$this->CreateTooltipLink(null, 'defaultadmin', '', $iconedit, $this->Lang('edit_keywords'), array('what'=>'edit_keywords','content_id'=>$row['content_id']));
 			$iname = 'true';
 
 			$query = 'SELECT * FROM '.$pre.'module_seotools WHERE content_id = ?';
@@ -692,8 +691,7 @@ if ($rst) {
 				}
 				if ($info['keywords']) {
 					$keywords = '<strong>'.count(explode($sep,$info['keywords']))
-					. $this->CreateTooltipLink(null, 'defaultadmin', '', $iconreset, $this->Lang('reset_to_default'), array('what'=>'reset_keywords','content_id'=>$row['content_id']))
-					. $this->CreateTooltipLink(null, 'defaultadmin', '', $iconedit, $this->Lang('edit_value'), array('what'=>'edit_keywords','content_id'=>$row['content_id'])).'</strong>';
+					. $this->CreateTooltipLink(null, 'defaultadmin', '', $iconedit, $this->Lang('edit_keywords'), array('what'=>'edit_keywords','content_id'=>$row['content_id'])).'</strong>';
 				}
 				if (!$info['indexable']) {
 				  $iname = 'false';
@@ -710,9 +708,11 @@ if ($rst) {
 				strip_tags($description).'" class="systemicon" />';
 			}
 			else {
+				//mimic $this->CreateTooltipLink
 				$oneset->desc = '<a href="editcontent.php?'.$this->secstr.'='.$_GET[$this->secstr].
-				'&content_id='.$row['content_id'].'"><img src="'.$theme_url.'/system/false.gif" title="'.
-				$this->Lang('click_to_add_description').'" class="systemicon" /></a>';
+				'&content_id='.$row['content_id'].'" class="admin-tooltip"><img src="'.
+				$theme_url.'/system/false.gif" class="systemicon" /><span>'.
+				$this->Lang('click_add_description').'</span></a>';
 			}
 			$oneset->index = $this->CreateTooltipLink(null, 'defaultadmin', '',
 				'<img src="'.$theme_url.'/system/'.$iname.'.gif" class="systemicon" />',

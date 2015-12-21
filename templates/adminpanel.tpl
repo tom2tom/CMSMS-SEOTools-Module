@@ -33,8 +33,8 @@
 {$start_urgent_tab}
 {if !empty($urgents)}
 {$startform_problems}
-<div class="pageoverflow">
-<table class="pagetable" style="border-spacing:0;">
+<div class="pageinput pageoverflow">
+<table class="pagetable">
  <tr>
   <th>{$title_pages}</th>
   <th>{$title_active}</th>
@@ -54,9 +54,9 @@
  </tr>
 {/foreach}
 </table>
+</div>
 <br />
 <div class="pageinput">{$unignore1}&nbsp;{$ignore1}</div>
-</div>
 {$end_form}
 {/if}
 {$end_tab}
@@ -64,8 +64,8 @@
 {$start_important_tab}
 {if !empty($importants)}
 {$startform_problems}
-<div class="pageoverflow">
-<table class="pagetable" style="border-spacing:0;">
+<div class="pageinput pageoverflow">
+<table class="pagetable">
  <tr>
   <th>{$title_pages}</th>
   <th>{$title_active}</th>
@@ -85,9 +85,9 @@
  </tr>
 {/foreach}
 </table>
+</div>
 <br />
 <div class="pageinput">{$unignore2}&nbsp;{$ignore2}</div>
-</div>
 {$end_form}
 {/if}
 {$end_tab}
@@ -96,8 +96,8 @@
 
 {$start_description_tab}
 {$startform_pages}
-<div class="pageoverflow">
-<table class="pagetable" style="border-spacing:0;">
+<div class="pageinput pageoverflow">
+<table class="pagetable">
  <tr>
   <th>{$title_name}</th>
 {if $pset}
@@ -133,13 +133,11 @@
  {/foreach}
 {/if}
 </table>
-{if $pset}
-<br />
-{if isset($items)}
-<div class="pageinput">{$unindex}&nbsp;{$index}</div>
-{/if}
-{/if}{*pset*}
 </div>
+{if $pset && isset($items)}
+<br />
+<div class="pageinput">{$unindex}&nbsp;{$index}</div>
+{/if}{*pset*}
 {$end_form}
 {$end_tab}
 

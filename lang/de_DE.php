@@ -16,7 +16,7 @@ $lang['button_regenerate_sitemap'] = 'Regenerate sitemap';
 $lang['cancel'] = 'Cancel';
 $lang['chmod_robots'] = 'Change permissions';
 $lang['chmod_sitemap'] = 'Change permissions';
-$lang['click_to_add_description'] = 'Hier klicken um eine Seitenbeschreibung hinzuzuf&uuml;gen';
+$lang['click_add_description'] = 'Hier klicken um eine Seitenbeschreibung hinzuzuf&uuml;gen';
 $lang['close'] = 'Close';
 $lang['confirm'] = 'Are you sure?';
 $lang['content_block_check'] = 'Be sure to apply the changed block-name to relevant pages and templates';
@@ -42,6 +42,7 @@ $lang['display'] = 'Display';
 $lang['duplicate_descriptions'] = 'Die Seiten haben die gleiche Meta-Beschreibung';
 $lang['duplicate_titles'] = 'Die Seiten haben den gleichen Titel';
 
+$lang['edit_keywords'] = 'edit page keywords';
 $lang['edit_page'] = '\'%s\' Bearbeiten';
 $lang['edit_page2'] = 'zum Bearbeiten der Seite';
 $lang['edit_value'] = 'Diesen Wert bearbeiten';
