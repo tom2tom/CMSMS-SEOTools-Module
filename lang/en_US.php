@@ -52,7 +52,7 @@ $lang['error'] = 'Error!';
 
 $lang['friendlyname'] = 'SEO Tools';
 
-$lang['get_help'] = 'Get help';
+$lang['get_help'] = 'get help';
 
 $lang['help_ignore'] = 'Ignore selected items';
 $lang['help_index'] = 'Make selected items indexable';

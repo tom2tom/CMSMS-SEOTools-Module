@@ -212,9 +212,8 @@ class SEO_populator
 			$alert['group'] = 'system';
 			$alert['message'] = $mod->Lang('activate_pretty_urls');
 			$alert['links'][] =
-'<a href="http://docs.cmsmadesimple.org/configuration/pretty-url" onclick="window.open(this.href,\'_blank\');return false;"><img src="'
-.$this->adminurl.'/themes/'.$this->theme->themeName.'/images/icons/system/info-external.gif" title = "'
-.$mod->Lang('get_help').'" class="systemicon" /></a>';
+'<a href="http://docs.cmsmadesimple.org/configuration/pretty-url" class="admin-tooltip" onclick="window.open(this.href,\'_blank\');return false;"><img src="'.$this->adminurl.
+'/themes/'.$this->theme->themeName.'/images/icons/system/info-external.gif" class="systemicon" /><span>'.$mod->Lang('get_help').'</span></a>';
 			$alerts[] = $alert;
 		}
 		// Content pages with short description
