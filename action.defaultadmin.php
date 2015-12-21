@@ -14,14 +14,12 @@ function langval(&$mod,$key,$def) {
 	if ($cmsvers == 0) {
 		$cmsvers = ($mod->before20) ? 1:2;
 		if ($cmsvers == 1) {
-			$realm = cms_current_language(); //CMSMS 1.8+
-			$trans = $mod->langhash[$realm];
+			$var = cms_current_language(); //CMSMS 1.8+
+			$trans = $mod->langhash[$var];
 		}
-/*		else {
-			CmsLangOperations::set_realm();
-			$realm = CmsLangOperations::CMSMS_ADMIN_REALM;
+		else {
+			$realm = $mod->GetName();
 		}
-*/
 	}
 	if ($cmsvers == 1) {
 		if (array_key_exists($key,$trans)) {
@@ -34,17 +32,12 @@ function langval(&$mod,$key,$def) {
 		}
 	}
 	else {
-/* TODO DO THIS BETTER
 		if (CmsLangOperations::key_exists($key,$realm)) {
 			return CmsLangOperations::lang_from_realm($realm,$key);
 		}
 		else {
-		echo 'key '.$key.' not found for realm '.$realm.'<br />';
 			return $def;
 		}
-*/
-		$s = $mod->Lang($key);
-		return (strpos($s,'-- Missing Language') === false) ? $s:$def;
 	}
 }
 
