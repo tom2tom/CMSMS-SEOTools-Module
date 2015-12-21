@@ -674,24 +674,24 @@ if ($rst) {
 			}
 			$priority = '('.$this->Lang('auto').') '.$auto_priority.'%';
 			$ogtype = '('.$this->Lang('default').') '.$default_ogtype.' '.$this->CreateTooltipLink(null, 'defaultadmin', '', $iconedit, $this->Lang('edit_value'), array('what'=>'edit_ogtype','content_id'=>$row['content_id']));
-			$keywords = '0 '.$this->CreateTooltipLink(null, 'defaultadmin', '', $iconedit, $this->Lang('edit_keywords'), array('what'=>'edit_keywords','content_id'=>$row['content_id']));
+			$keywords = '<strong>0</strong> '.$this->CreateTooltipLink(null, 'defaultadmin', '', $iconedit, $this->Lang('edit_keywords'), array('what'=>'edit_keywords','content_id'=>$row['content_id']));
 			$iname = 'true';
 
 			$query = 'SELECT * FROM '.$pre.'module_seotools WHERE content_id = ?';
 			$info = $db->GetRow($query,array($row['content_id']));
 			if ($info && $info['content_id'] != '') {
 				if ($info['priority'] != 0) {
-				  $priority = '<strong>'.$info['priority'] . '% '.$this->CreateTooltipLink(null, 'defaultadmin', '', $iconreset, $this->Lang('reset_to_default'), array('what'=>'reset_priority','content_id'=>$row['content_id'])) . '</strong>';
+				  $priority = '<strong>'.$info['priority'].'%</strong> '.$this->CreateTooltipLink(null, 'defaultadmin', '', $iconreset, $this->Lang('reset_to_default'), array('what'=>'reset_priority','content_id'=>$row['content_id']));
 				  $auto_priority = $info['priority'];
 				}
 				if ($info['ogtype']) {
-				  $ogtype = '<strong>'.$info['ogtype'] . ' '
+				  $ogtype = '<strong>'.$info['ogtype'].'</strong> '
 				  . $this->CreateTooltipLink(null, 'defaultadmin', '', $iconreset, $this->Lang('reset_to_default'), array('what'=>'reset_ogtype','content_id'=>$row['content_id']))
-				  . $this->CreateTooltipLink(null, 'defaultadmin', '', $iconedit, $this->Lang('edit_value'), array('what'=>'edit_ogtype','content_id'=>$row['content_id'])).'</strong>';
+				  . $this->CreateTooltipLink(null, 'defaultadmin', '', $iconedit, $this->Lang('edit_value'), array('what'=>'edit_ogtype','content_id'=>$row['content_id']));
 				}
 				if ($info['keywords']) {
-					$keywords = '<strong>'.count(explode($sep,$info['keywords']))
-					. $this->CreateTooltipLink(null, 'defaultadmin', '', $iconedit, $this->Lang('edit_keywords'), array('what'=>'edit_keywords','content_id'=>$row['content_id'])).'</strong>';
+					$keywords = count(explode($sep,$info['keywords'])).' '
+					.$this->CreateTooltipLink(null, 'defaultadmin', '', $iconedit, $this->Lang('edit_keywords'), array('what'=>'edit_keywords','content_id'=>$row['content_id']));
 				}
 				if (!$info['indexable']) {
 				  $iname = 'false';
