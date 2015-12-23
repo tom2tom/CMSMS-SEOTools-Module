@@ -270,7 +270,7 @@ if (isset($params['tab'])) {
 }
 
 if ($pset) {
-	$smarty->assign('tab_headers',$this->StartTabHeaders().
+	$smarty->assign('tabs_header',$this->StartTabHeaders().
 		$this->SetTabHeader('alerts',$this->Lang('title_alerts'),$indx==0).
 		$this->SetTabHeader('urgentfixes',$this->Lang('title_urgent'),$indx==1).
 		$this->SetTabHeader('importantfixes',$this->Lang('title_important'),$indx==2).
@@ -281,7 +281,7 @@ if ($pset) {
 		$this->EndTabHeaders().$this->StartTabContent());
 }
 else {
-	$smarty->assign('tab_headers',$this->StartTabHeaders().
+	$smarty->assign('tabs_header',$this->StartTabHeaders().
 		$this->SetTabHeader('alerts',$this->Lang('friendlyname'),$indx==0).
 		$this->SetTabHeader('pagedescriptions',$this->Lang('title_descriptions'),$indx==3).
 		$this->EndTabHeaders().$this->StartTabContent());
@@ -300,8 +300,8 @@ if ($pset) {
 }
 
 $smarty->assign('end_set',$this->CreateFieldsetEnd());
-//NOTE CMSMS2+ barfs if EndTab() is called before EndTabContent() - some craziness to fix !!!
-$smarty->assign('tab_footers',$this->EndTabContent());
+//NOTE CMSMS 2+ barfs if EndTab() is called before EndTabContent() - some craziness there !!!
+$smarty->assign('tabs_footer',$this->EndTabContent());
 $smarty->assign('end_tab',$this->EndTab());
 $smarty->assign('end_form',$this->CreateFormEnd());
 

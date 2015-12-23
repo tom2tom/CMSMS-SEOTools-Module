@@ -1,5 +1,5 @@
 {if !empty($message)}{$message}{/if}
-{$tab_headers}
+{$tabs_header}
 
 {$start_alerts_tab}
 <div class="pageoverflow">
@@ -231,4 +231,4 @@
 
 {/if}{*pset*}
 
-{$tab_footers}
+{$tabs_footer}
