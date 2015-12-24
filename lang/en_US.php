@@ -202,7 +202,7 @@ $lang['sitemap_regenerated'] = 'The sitemap has been successfully regenerated.';
 $lang['summary_important'] = '%d important problem(s) detected';
 $lang['summary_urgent'] = '%d urgent problem(s) detected';
 
-$lang['text_regenerate_sitemap'] = 'It\'s best to regenerate sitemap.xml and robots.txt files after extensive changes to the page structure';
+$lang['text_regenerate_sitemap'] = 'Files sitemap.xml and robots.txt should be regenerated after changes to the page structure.';
 $lang['title_action'] = 'Action';
 $lang['title_active'] = 'Active';
 $lang['title_alerts'] = 'Alerts';
@@ -303,7 +303,7 @@ You should consider signing up the site with Google Webmaster tools.
 Having done so, paste the Google verification code (a long string of characters and numbers)
 into the box 'Verification Code' in 'SEO Settings' to automatically verify that
 you are really the owner of your page (don't paste the whole Google meta-code).<br /><br />
-Visit the 'Page settings' tab which lists all site pages. There, among other things, 
+Visit the 'Page settings' tab which lists all site pages. There, among other things,
 you can change the sitemap priority (which is auto-calculated by default) of any page
 to indicate that it should be considered more important for search engines or exclude
 certain pages from the search index.<br /><br />
