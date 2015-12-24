@@ -33,7 +33,7 @@
 {$start_urgent_tab}
 {if !empty($urgents)}
 {$startform_problems}
-<div class="pageinput pageoverflow">
+<div style="display:inline-block;" class="pageinput pageoverflow">
 <table class="pagetable">
  <tr>
   <th>{$title_pages}</th>
@@ -54,9 +54,9 @@
  </tr>
 {/foreach}
 </table>
-</div>
 <br />
-<div class="pageinput">{$unignore1}&nbsp;{$ignore1}</div>
+<div style="float:right;">{$unignore1}&nbsp;{$ignore1}</div><div style="clear:both;"></div>
+</div>
 {$end_form}
 {/if}
 {$end_tab}
@@ -64,7 +64,7 @@
 {$start_important_tab}
 {if !empty($importants)}
 {$startform_problems}
-<div class="pageinput pageoverflow">
+<div style="display:inline-block;" class="pageinput pageoverflow">
 <table class="pagetable">
  <tr>
   <th>{$title_pages}</th>
@@ -85,9 +85,9 @@
  </tr>
 {/foreach}
 </table>
-</div>
 <br />
-<div class="pageinput">{$unignore2}&nbsp;{$ignore2}</div>
+<div style="float:right;">{$unignore2}&nbsp;{$ignore2}</div><div style="clear:both;"></div>
+</div>
 {$end_form}
 {/if}
 {$end_tab}
@@ -96,7 +96,7 @@
 
 {$start_description_tab}
 {$startform_pages}
-<div class="pageinput pageoverflow">
+<div style="display:inline-block;" class="pageinput pageoverflow">
 <table class="pagetable">
  <tr>
   <th>{$title_name}</th>
@@ -133,11 +133,11 @@
  {/foreach}
 {/if}
 </table>
-</div>
 {if $pset && isset($items)}
 <br />
-<div class="pageinput">{$unindex}&nbsp;{$index}</div>
+<div style="float:right;">{$unindex}&nbsp;{$index}</div><div style="clear:both;"></div>
 {/if}{*pset*}
+</div>
 {$end_form}
 {$end_tab}
 
@@ -145,9 +145,9 @@
 
 {$start_meta_tab}
 {$startform_settings}
+<div class="pageoverflow" style="margin-top:0;display:inline-block;">
 {foreach from=$metaset item=row}
 {if $row[0]}{$row[0]}{/if}{*start set*}
-<div class="pageoverflow" style="margin-top:0;">
  {foreach from=$row[1] item=entry}
   {if !empty($entry->head)}<h4 class="pagetext" style="margin-top:1.5em">{$entry->head}</h4>{/if}
   {if empty($entry->inline)}
@@ -160,21 +160,20 @@
 <p class="pageinput">{$entry->help}</p>
 </div>{/if}
  {/foreach}
-</div>
 {if $row[0]}{$end_set}{/if}
 {/foreach}
 <br />
-<p class="pageinput">{$submit1}&nbsp;{$cancel}&nbsp;{$display1}</p>
+<div style="float:right;">{$submit1}&nbsp;{$cancel}</div><div style="clear:both;"></div>
+</div>
 {$end_form}
 {$end_tab}
 
 {$start_keyword_tab}
-<strong>{$keyword_help}</strong>
-<br />
+<p style="font-weight:bold;max-width:50em;">{$keyword_help}</p>
 {$startform_settings}
+<div class="pageoverflow" style="margin-top:0;display:inline-block;">
 {foreach from=$keywordset item=row}
 {$row[0]}{*start set*}
-<div class="pageoverflow" style="margin-top:0;">
  {foreach from=$row[1] item=entry}
 {if empty($entry->inline)}
 <p class="pagetext">{$entry->title}:</p>
@@ -186,19 +185,19 @@
 <p class="pageinput">{$entry->help}</p>
 </div>{/if}
  {/foreach}
-</div>
 {$end_set}
 {/foreach}
 <br />
-<p class="pageinput">{$submit2}&nbsp;{$cancel}</p>
+<div style="float:right;">{$submit2}&nbsp;{$cancel}</div><div style="clear:both;"></div>
+</div>
 {$end_form}
 {$end_tab}
 
 {$start_sitemap_tab}
 {$startform_settings}
+<div class="pageoverflow" style="margin-top:0;display:inline-block;">
 {foreach from=$sitemapset item=row name=bundle}
 {$row[0]}{*start set*}
-<div class="pageoverflow" style="margin-top:0;">
  {foreach from=$row[1] item=entry}
 {if empty($entry->inline)}
 <p class="pagetext">{$entry->title}:</p>
@@ -212,20 +211,18 @@
  {/foreach}
 {if $smarty.foreach.bundle.last}
 <br />
-<p class="pageinput">{$submit3}&nbsp;{$cancel}&nbsp;{$display}</p>
+<div style="float:right;">{$submit3}&nbsp;{$cancel}&nbsp;{$display}</div><div style="clear:both;"></div>
 {/if}
-</div>
 {$end_set}
 {/foreach}
 {if isset($regenerate)}
  {$start_regen_set}
-  <div class="pageoverflow" style="margin-top:0;">
-   <p class="pageinput">{$regenerate}<br /><br />{$help_regenerate}</p>
-   <br />
-  {$sitemap_help}
-  </div>
+  <p class="pageinput">{$help_regenerate}<br /><br />{$regenerate}</p>
+  <br />
+  <p style="max-width:50em;">{$sitemap_help}</p>
  {$end_set}
 {/if}
+</div>
 {$end_form}
 {$end_tab}
 
