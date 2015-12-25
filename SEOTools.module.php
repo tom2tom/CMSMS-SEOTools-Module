@@ -34,6 +34,22 @@ class SEOTools extends CMSModule
 		$this->RegisterModulePlugin(true);
 	}
 
+	function AllowAutoInstall()
+	{
+		return false;
+	}
+
+	function AllowAutoUpgrade()
+	{
+		return false;
+	}
+
+	//CMSMS 1.11+
+	function AllowSmartyCaching()
+	{
+		return false; //need freshly-assigned meta (keywords etc) & exported vars
+	}
+
 	function GetName()
 	{
 		return 'SEOTools';
@@ -73,12 +89,6 @@ class SEOTools extends CMSModule
 	function IsPluginModule()
 	{
 		return true;
-	}
-
-	//CMSMS 1.11+
-	function AllowSmartyCaching()
-	{
-		return false; //need freshly-assigned meta (keywords etc) & exported vars
 	}
 
 	function HasAdmin()
