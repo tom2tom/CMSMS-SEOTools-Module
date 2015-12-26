@@ -345,7 +345,7 @@ for the full disclaimer.</p>
 <li>you may have some success emailing the author directly.</li>
 </ul></p>
 <h3>Copyright and License</h3>
-<p>Copyright &copy; 2011-2015, Tom Phane &lt;tpgww@onepost.net&gt;. All rights reserved.<br />
+<p>Copyright &copy; 2011-2016, Tom Phane &lt;tpgww@onepost.net&gt;. All rights reserved.<br />
 This module is inspired by and partly derived from another one of the same name, copyright &copy; 2010-2011, Henning Schaefer &lt;henning.schaefer@gmail.com&gt;.</p>
 <p>This module has been released under the <a href="http://www.gnu.org/licenses/licenses.html#AGPL">GNU Affero General Public License</a> version 3.
 You must comply with that license when distributing or using the module.</p>

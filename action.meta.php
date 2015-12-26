@@ -1,6 +1,6 @@
 <?php
 # This file is part of CMS Made Simple module: SEOTools.
-# Copyright (C) 2015 Tom Phane <tpgww@onepost.net>
+# Copyright (C) 2015-2016 Tom Phane <tpgww@onepost.net>
 # Refer to licence and other details at the top of file SEOTools.module.php
 
 # Display and optionally revert metadata settings

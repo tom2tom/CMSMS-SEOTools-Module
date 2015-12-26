@@ -291,7 +291,7 @@ f&uuml;r OpenGraph-Seiten das Sie in den Einstellungen von SEO Tools festgelegt 
 <p>This software is provided as-is. Please read the text of the license (see below) for the full disclaimer.</p>
 <h3>Copyright and License</h3>
 <p>Portions copyright &copy; 2010-2011, Henning Schaefer &lt;henning.schaefer@gmail.com&gt;.<br />
-Portions copyright &copy; 2011-2015, Tom Phane &lt;tpgww@onepost.net&gt;.<br />
+Portions copyright &copy; 2011-2016, Tom Phane &lt;tpgww@onepost.net&gt;.<br />
 All rights reserved.</p>
 <p>This module has been released under the <a href="http://www.gnu.org/licenses/licenses.html#AGPL">GNU Affero General Public License</a> version 3.
 You must comply with that license when distributing or using the module.</p>';

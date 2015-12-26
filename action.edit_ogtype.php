@@ -1,7 +1,7 @@
 <?php
 # This file is part of CMS Made Simple module: SEOTools.
 # Copyright (C) 2010-2011 Henning Schaefer <henning.schaefer@gmail.com>
-# Copyright (C) 2014-2015 Tom Phane <tpgww@onepost.net>
+# Copyright (C) 2011-2016 Tom Phane <tpgww@onepost.net>
 # Refer to licence and other details at the top of file SEOTools.module.php
 
 #Setup and display template for editing a page's opengraph type

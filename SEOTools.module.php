@@ -5,7 +5,7 @@
 # suboptimal SEO-related things.
 # Version: 1.6 Tom Phane
 #-------------------------------------------------------------------------
-# CMS Made Simple (C) 2005-2015 Ted Kulp (wishy@cmsmadesimple.org)
+# CMS Made Simple (C) 2005-2016 Ted Kulp (wishy@cmsmadesimple.org)
 # CMS Made Simple homepage is: http://www.cmsmadesimple.org
 #-------------------------------------------------------------------------
 # This module is free software; you can redistribute it and/or modify it
