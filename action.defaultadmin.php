@@ -309,7 +309,7 @@ if (isset($config['admin_url'])) {
 	$adminurl = $config['admin_url'];
 }
 else {
-	$rooturl = (empty($_SERVER['HTTPS'])) ? $config['root_url'] : $config['ssl_url'];
+	$rooturl = (!isset($_SERVER['HTTPS']) || $_SERVER['HTTPS'] != 'on') ? $config['root_url'] : $config['ssl_url'];
 	$adminurl = $rooturl.'/'.$config['admin_dir'];
 }
 $theme = ($this->before20) ? cmsms()->get_variable('admintheme'): //CMSMS 1.9+

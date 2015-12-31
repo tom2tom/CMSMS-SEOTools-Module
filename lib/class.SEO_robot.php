@@ -22,7 +22,7 @@ class SEO_robot
 
 		$gCms = cmsms(); //CMSMS 1.8+
 		$config = $gCms->GetConfig();
-		$rooturl = (empty($_SERVER['HTTPS'])) ? $config['root_url'] : $config['ssl_url'];
+		$rooturl = (!isset($_SERVER['HTTPS']) || $_SERVER['HTTPS'] != 'on') ? $config['root_url'] : $config['ssl_url'];
 
 		$outs = array();
 		if ($mod->GetPreference('create_sitemap',0))
