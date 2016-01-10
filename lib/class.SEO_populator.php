@@ -31,7 +31,7 @@ class SEO_populator
 				$this->adminurl = $config['admin_url'];
 			}
 			else {
-				$rooturl = (!isset($_SERVER['HTTPS']) || $_SERVER['HTTPS'] != 'on') ? $config['root_url'] : $config['ssl_url'];
+				$rooturl = (empty($_SERVER['HTTPS'])) ? $config['root_url'] : $config['ssl_url'];
 				$this->adminurl = $rooturl.'/'.$config['admin_dir'];
 			}
 		}
@@ -194,7 +194,7 @@ class SEO_populator
 				$this->adminurl = $config['admin_url'];
 			}
 			else {
-				$rooturl = (!isset($_SERVER['HTTPS']) || $_SERVER['HTTPS'] != 'on') ? $config['root_url'] : $config['ssl_url'];
+				$rooturl = (empty($_SERVER['HTTPS'])) ? $config['root_url'] : $config['ssl_url'];
 				$this->adminurl = $rooturl.'/'.$config['admin_dir'];
 			}
 		}
@@ -388,7 +388,7 @@ WHERE(p1.prop_name = ? AND p1.content_id < p2.content_id  AND p1.content != ? AN
 				$this->adminurl = $config['admin_url'];
 			}
 			else {
-				$rooturl = (!isset($_SERVER['HTTPS']) || $_SERVER['HTTPS'] != 'on') ? $config['root_url'] : $config['ssl_url'];
+				$rooturl = (empty($_SERVER['HTTPS'])) ? $config['root_url'] : $config['ssl_url'];
 				$this->adminurl = $rooturl.'/'.$config['admin_dir'];
 			}
 		}

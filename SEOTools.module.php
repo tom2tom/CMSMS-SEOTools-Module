@@ -148,12 +148,10 @@ class SEOTools extends CMSModule
 	function GetHeaderHTML()
 	{
 		$url = $this->GetModuleURLPath();
-		$incs = <<<EOS
+		return <<<EOS
 <script type="text/javascript" src="{$url}/include/module-admin.js"></script>
-<link rel="stylesheet" type="text/css" href="{$url}/css/module-admin.css" />
-
+<link rel="stylesheet" type="text/css" id="adminstyler" href="{$url}/css/admin.css" />
 EOS;
-		return $incs;
 	}
 
 	//CMSMS 1.9-

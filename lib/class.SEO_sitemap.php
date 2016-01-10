@@ -33,7 +33,7 @@ class SEO_sitemap
 			return false;
 
 		$config = $gCms->GetConfig();
-		$rooturl = (!isset($_SERVER['HTTPS']) || $_SERVER['HTTPS'] != 'on') ? $config['root_url'] : $config['ssl_url'];
+		$rooturl = (empty($_SERVER['HTTPS'])) ? $config['root_url'] : $config['ssl_url'];
 		$addslash = ($config['url_rewriting'] != 'none' && empty($config['page_extension']));
 		if ($addslash)//appending / to most urls, so google's walker won't ignore them
 			$siteroot = $rooturl.'/'; //this page will already be slashed, so don't duplicate
@@ -121,7 +121,7 @@ EOS
 
 		if(!$rooturl) {
 			$config = cmsms()->GetConfig();
-			$rooturl = (!isset($_SERVER['HTTPS']) || $_SERVER['HTTPS'] != 'on') ? $config['root_url'] : $config['ssl_url'];
+			$rooturl = (empty($_SERVER['HTTPS'])) ? $config['root_url'] : $config['ssl_url'];
 		}
 		$url = urlencode($rooturl).'/sitemap.xml';
 

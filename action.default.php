@@ -49,7 +49,7 @@ else {
 $out = array();
 
 $pre = cms_db_prefix();
-$rooturl = (!isset($_SERVER['HTTPS']) || $_SERVER['HTTPS'] != 'on') ? $config['root_url'] : $config['ssl_url'];
+$rooturl = (empty($_SERVER['HTTPS'])) ? $config['root_url'] : $config['ssl_url'];
 
 if ($front) {
 	// Keywords
