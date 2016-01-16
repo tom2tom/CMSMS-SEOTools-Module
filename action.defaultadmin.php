@@ -351,7 +351,7 @@ if ($pset) {
 			}
 			$icon = '<img src="'.$theme_url.'/Notifications/1.gif" class="systemicon" />';
 			if ($count) {
-				$tplvars = $tplvara + array(
+				$tplvars = $tplvars + array(
 					'urgent_icon' => $icon,
 					'urgent_text' => $this->Lang('summary_urgent',$count),
 					'urgent_link' => '['.$funcs->getTabLink(1,$this->Lang('view_all')).']'
@@ -594,7 +594,7 @@ $tplvars['resource_links'] = array(
 
 if ($pset) {
 	$tplvars = $tplvars + array(
-		'cancel'] = $this->CreateInputSubmit(null, 'cancel', $this->Lang('cancel')),
+		'cancel' => $this->CreateInputSubmit(null, 'cancel', $this->Lang('cancel')),
 		'title_pages' => $this->Lang('title_pages'),
 		'title_active' => $this->Lang('title_active'),
 		'title_problem' => $this->Lang('title_problem'),
@@ -903,9 +903,9 @@ $metaset[] = array(
 );
 
 $tplvars = $tplvars + array(
-	'metaset'] = $metaset,
-	'submit1'] = $this->CreateInputSubmit(null, 'save_meta_settings', $this->Lang('save')),
-	'display1'] = $this->CreateInputSubmit(null, 'display_metadata', $this->Lang('display'),
+	'metaset' => $metaset,
+	'submit1' => $this->CreateInputSubmit(null, 'save_meta_settings', $this->Lang('save')),
+	'display1' => $this->CreateInputSubmit(null, 'display_metadata', $this->Lang('display'),
 		'title="'.$this->Lang('meta_display').'"')
 );
 /* KEYWORD Settings */
@@ -988,9 +988,9 @@ else
 
 if ($title != null) {
 	$tplvars = $tplvars + array(
-		'start_regen_set' => $this->CreateFieldsetStart(null, 'regenerate_sitemap', $this->Lang('title_regenerate_both'),
+		'start_regen_set' => $this->CreateFieldsetStart(null,'regenerate_sitemap',$this->Lang('title_regenerate_both')),
 		'help_regenerate' => $this->Lang('text_regenerate_sitemap'),
-		'regenerate' => $this->CreateInputSubmit(null, 'do_regenerate', $title),
+		'regenerate' => $this->CreateInputSubmit(null,'do_regenerate',$title),
 		'sitemap_help' => $this->Lang('help_sitemap_robots')
 	);
 }
