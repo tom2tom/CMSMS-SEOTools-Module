@@ -215,15 +215,6 @@ EOS;
 		$db->Execute($query);
 	}
 
-	function DisplayErrorPage($message)
-	{
-		global $smarty;
-		$smarty->assign('title_error', $this->Lang('error'));
-		$smarty->assign('message', $message);
-		// Display the populated template
-		echo $this->ProcessTemplate('error.tpl');
-	}
-
 }
 
 ?>
