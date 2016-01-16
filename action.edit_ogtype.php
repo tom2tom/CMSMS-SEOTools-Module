@@ -7,7 +7,7 @@
 #Setup and display template for editing a page's opengraph type
 
 if (isset($_POST['cancel']))
-	$this->Redirect($id, 'defaultadmin', '', array('tab'=>'pagedescriptions'));
+	$this->Redirect($id, 'defaultadmin','',array('tab'=>'pagedescriptions'));
 
 $pre = cms_db_prefix();
 
@@ -40,19 +40,18 @@ if ($og == FALSE) {
 	$og = '';
 }
 
-$smarty->assign('startform',$this->CreateFormStart(null, 'edit_ogtype'));
-$smarty->assign('endform', $this->CreateFormEnd());
-$smarty->assign('hidden', $this->CreateInputHidden(null, 'content_id', $_GET['content_id']));
-$smarty->assign('prompt_ogtype',$this->Lang('enter_new_ogtype',$name));
-$smarty->assign('input_ogtype',
-	$this->CreateInputText(null, 'og_type', $og, 32, 32).'<br />'
-	 .$this->Lang('help_new_ogtype').'<br />'
-	 .$this->Lang('help_opengraph'));
-$smarty->assign('submit',
-	$this->CreateInputSubmit(null, 'set_ogtype', $this->Lang('save')));
-$smarty->assign('cancel',
-	$this->CreateInputSubmit(null, 'cancel', $this->Lang('cancel')));
+$tplvars = array(
+	'startform' => $this->CreateFormStart(null,'edit_ogtype'),
+	'endform' => $this->CreateFormEnd(),
+	'hidden' => $this->CreateInputHidden(null,'content_id',$_GET['content_id']),
+	'prompt_ogtype' => $this->Lang('enter_new_ogtype',$name),
+	'input_ogtype' => $this->CreateInputText(null,'og_type',$og,32,32).'<br />'
+		.$this->Lang('help_new_ogtype').'<br />'
+		.$this->Lang('help_opengraph'),
+	'submit' => $this->CreateInputSubmit(null,'set_ogtype',$this->Lang('save')),
+	'cancel' => $this->CreateInputSubmit(null,'cancel',$this->Lang('cancel'))
+);
 
-echo $this->ProcessTemplate('ogedit.tpl');
+SEO_utils::ProcessTemplate($this,'ogedit.tpl',$tplvars);
 
 ?>

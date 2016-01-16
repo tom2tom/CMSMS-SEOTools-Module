@@ -6,7 +6,7 @@
 # Display and optionally revert metadata settings
 
 if (!$this->CheckAccess('Edit SEO Settings'))
-	return $this->DisplayErrorPage($this->Lang('accessdenied'));
+	return SEO_utils::DisplayErrorPage($this->Lang('accessdenied'));
 
 if (isset($_POST['cancel']))
 	$this->Redirect($id, 'defaultadmin', '', array('tab'=>'metasettings'));
@@ -51,20 +51,22 @@ else {
 	$back = true;
 }
 
-$smarty->assign('startform', $this->CreateFormStart(null, 'meta'));
-$smarty->assign('endform', $this->CreateFormEnd());
-$smarty->assign('title', $this->Lang('meta_title'));
+$tplvars = array(
+	'startform' => $this->CreateFormStart(null,'meta'),
+	'endform' => $this->CreateFormEnd(),
+	'title' => $this->Lang('meta_title')
+);
 //generate current metadata
 ob_start();
 include('action.default.php');
 $contents = ob_get_clean();
-$smarty->assign('content', nl2br(htmlentities($contents)));
+$tplvars['content'] = nl2br(htmlentities($contents));
 if ($back) {
-	$smarty->assign('submitbtn',$this->CreateInputSubmit(null, 'revertmeta', $this->lang('revert'),
-		'onclick="return confirm(\''.$this->Lang('confirm').'\');"'));
+	$tplvars['submitbtn'] = $this->CreateInputSubmit(null,'revertmeta',$this->lang('revert'),
+		'onclick="return confirm(\''.$this->Lang('confirm').'\');"');
 }
-$smarty->assign('cancelbtn', $this->CreateInputSubmit(null, 'cancel', $this->lang('close')));
+$tplvars['cancelbtn'] = $this->CreateInputSubmit(null,'cancel',$this->lang('close'));
 
-echo $this->ProcessTemplate('display.tpl');
+SEO_utils::ProcessTemplate($this,'display.tpl',$tplvars);
 
 ?>

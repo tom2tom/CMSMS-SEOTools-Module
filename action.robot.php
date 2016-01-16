@@ -6,7 +6,7 @@
 # Display and optionally regenerate robots.txt file
 
 if (!$this->CheckAccess('Edit SEO Settings'))
-	return $this->DisplayErrorPage($this->Lang('accessdenied'));
+	return SEO_utils::DisplayErrorPage($this->Lang('accessdenied'));
 
 if (isset($_POST['cancel']))
 	$this->Redirect($id, 'defaultadmin', '', array('tab'=>'sitemapsettings'));
@@ -36,19 +36,21 @@ else {
 	$back = true;
 }
 
-$smarty->assign('startform', $this->CreateFormStart(null, 'robot'));
-$smarty->assign('endform', $this->CreateFormEnd());
-$smarty->assign('title', $this->Lang('robots_title'));
-$fp = @fopen($fn, 'rb');
-$contents = @fread($fp, filesize($fn));
+$tplvars = array(
+	'startform' => $this->CreateFormStart(null,'robot'),
+	'endform' => $this->CreateFormEnd(),
+	'title' => $this->Lang('robots_title')
+);
+$fp = @fopen($fn,'rb');
+$contents = @fread($fp,filesize($fn));
 @fclose($fp);
-$smarty->assign('content', nl2br($contents));
+$tplvars['content'] = nl2br($contents);
 if ($back) {
-	$smarty->assign('submitbtn',$this->CreateInputSubmit(null, 'newrobotfile', $this->lang('regenerate'),
-		'onclick="return confirm(\''.$this->Lang('confirm').'\');"'));
+	$tplvars['submitbtn'] = $this->CreateInputSubmit(null, 'newrobotfile', $this->lang('regenerate'),
+		'onclick="return confirm(\''.$this->Lang('confirm').'\');"');
 }
-$smarty->assign('cancelbtn', $this->CreateInputSubmit(null, 'cancel', $this->lang('close')));
+$tplvars['cancelbtn'] = $this->CreateInputSubmit(null,'cancel',$this->lang('close'));
 
-echo $this->ProcessTemplate('display.tpl');
+SEO_utils::ProcessTemplate($this,'display.tpl',$tplvars);
 
 ?>

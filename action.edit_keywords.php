@@ -7,7 +7,7 @@
 # Setup and display template for editing a page's keywords
 
 if (isset($_POST['cancel'])) {
-	$this->Redirect($id, 'defaultadmin', '', array('tab'=>'pagedescriptions'));
+	$this->Redirect($id,'defaultadmin','',array('tab'=>'pagedescriptions'));
 }
 
 $pre = cms_db_prefix();
@@ -44,18 +44,18 @@ if ($kw == false) {
 	$kw = strtolower(implode($sep,$funcs->getKeywords($this,$_GET['content_id'])));
 }
 
-$smarty->assign('startform', $this->CreateFormStart(null, 'edit_keywords'));
-$smarty->assign('endform', $this->CreateFormEnd());
-$smarty->assign('hidden', $this->CreateInputHidden(null, 'content_id', $_GET['content_id']));
-$smarty->assign('prompt_kwords', $this->Lang('enter_new_keywords',$name));
-$smarty->assign('input_kwords',
-	$this->CreateTextArea(false, null, $kw, 'keywords', '', '', '', '', '60', '1','','','style="height:5em;"')
-	.'<br />'.$this->Lang('help_new_keywords'));
-$smarty->assign('submit',
-	$this->CreateInputSubmit(null, 'set_keywords', $this->Lang('save')));
-$smarty->assign('cancel',
-	$this->CreateInputSubmit(null, 'cancel', $this->Lang('cancel')));
+$tplvars = array(
+	'startform' => $this->CreateFormStart(null,'edit_keywords'),
+	'endform' => $this->CreateFormEnd(),
+	'hidden' => $this->CreateInputHidden(null,'content_id',$_GET['content_id']),
+	'prompt_kwords' => $this->Lang('enter_new_keywords',$name),
+	'input_kwords' =>
+		$this->CreateTextArea(false,null,$kw,'keywords','','','','','60','1','','','style="height:5em;"')
+		.'<br />'.$this->Lang('help_new_keywords'),
+	'submit' => $this->CreateInputSubmit(null,'set_keywords',$this->Lang('save')),
+	'cancel' => $this->CreateInputSubmit(null,'cancel',$this->Lang('cancel'))
+);
 
-echo $this->ProcessTemplate('keywordedit.tpl');
+SEO_utils::ProcessTemplate($this,'keywordedit.tpl',$tplvars);
 
 ?>

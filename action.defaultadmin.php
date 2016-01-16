@@ -114,9 +114,10 @@ function varpref_check(&$mod, &$out, $name, $def = 0) {
 $pset = $this->CheckAccess('Edit SEO Settings');
 $pdesc = $this->CheckAccess('Edit page descriptions');
 if (!($pset || $pdesc)) {
-	return $this->DisplayErrorPage($this->Lang('accessdenied'));
+	return SEO_utils::DisplayErrorPage($this->Lang('accessdenied'));
 }
-$smarty->assign('pset', $pset);
+
+$tplvars = array('pset' => $pset);
 
 if (isset($_GET['tab'])) {
 	$params['tab'] = $_GET['tab'];
@@ -238,10 +239,10 @@ if ($pset) {
 
 if (isset($params['message'])) {
 	if (isset($params['warning'])) {
-		$smarty->assign('message',$this->ShowErrors($this->Lang($params['message'])));
+		$tplvars['message'] = $this->ShowErrors($this->Lang($params['message']));
 	}
 	else {
-		$smarty->assign('message',$this->ShowMessage($this->Lang($params['message'])));
+		$tplvars['message'] = $this->ShowMessage($this->Lang($params['message']));
 	}
 }
 
@@ -270,7 +271,7 @@ if (isset($params['tab'])) {
 }
 
 if ($pset) {
-	$smarty->assign('tabs_header',$this->StartTabHeaders().
+	$tplvars['tabs_header'] = $this->StartTabHeaders().
 		$this->SetTabHeader('alerts',$this->Lang('title_alerts'),$indx==0).
 		$this->SetTabHeader('urgentfixes',$this->Lang('title_urgent'),$indx==1).
 		$this->SetTabHeader('importantfixes',$this->Lang('title_important'),$indx==2).
@@ -278,32 +279,34 @@ if ($pset) {
 		$this->SetTabHeader('metasettings',$this->Lang('title_metasettings'),$indx==4).
 		$this->SetTabHeader('keywordsettings',$this->Lang('title_keywordsettings'),$indx==5).
 		$this->SetTabHeader('sitemapsettings',$this->Lang('title_sitemapsettings'),$indx==6).
-		$this->EndTabHeaders().$this->StartTabContent());
+		$this->EndTabHeaders().$this->StartTabContent();
 }
 else {
-	$smarty->assign('tabs_header',$this->StartTabHeaders().
+	$tplvars['tabs_header'] = $this->StartTabHeaders().
 		$this->SetTabHeader('alerts',$this->Lang('friendlyname'),$indx==0).
 		$this->SetTabHeader('pagedescriptions',$this->Lang('title_descriptions'),$indx==3).
-		$this->EndTabHeaders().$this->StartTabContent());
+		$this->EndTabHeaders().$this->StartTabContent();
 }
 
-$smarty->assign('start_alerts_tab',$this->StartTab('alerts'));
+$tplvars['start_alerts_tab'] = $this->StartTab('alerts');
 if ($pset) {
-	$smarty->assign('start_urgent_tab',$this->StartTab('urgentfixes'));
-	$smarty->assign('start_important_tab',$this->StartTab('importantfixes'));
+	$tplvars['start_urgent_tab'] = $this->StartTab('urgentfixes');
+	$tplvars['start_important_tab'] = $this->StartTab('importantfixes');
 }
-$smarty->assign('start_description_tab',$this->StartTab('pagedescriptions'));
+$tplvars['start_description_tab'] = $this->StartTab('pagedescriptions');
 if ($pset) {
-	$smarty->assign('start_meta_tab',$this->StartTab('metasettings'));
-	$smarty->assign('start_keyword_tab',$this->StartTab('keywordsettings'));
-	$smarty->assign('start_sitemap_tab',$this->StartTab('sitemapsettings'));
+	$tplvars['start_meta_tab'] = $this->StartTab('metasettings');
+	$tplvars['start_keyword_tab'] = $this->StartTab('keywordsettings');
+	$tplvars['start_sitemap_tab'] = $this->StartTab('sitemapsettings');
 }
 
-$smarty->assign('end_set',$this->CreateFieldsetEnd());
 //NOTE CMSMS 2+ barfs if EndTab() is called before EndTabContent() - some craziness there !!!
-$smarty->assign('tabs_footer',$this->EndTabContent());
-$smarty->assign('end_tab',$this->EndTab());
-$smarty->assign('end_form',$this->CreateFormEnd());
+$tplvars = $tplvars + array(
+	'end_set' => $this->CreateFieldsetEnd(),
+	'tabs_footer' => $this->EndTabContent(),
+	'end_tab' => $this->EndTab(),
+	'end_form' => $this->CreateFormEnd()
+);
 
 if (isset($config['admin_url'])) {
 	$adminurl = $config['admin_url'];
@@ -318,11 +321,12 @@ $theme_url = $adminurl.'/themes/'.$theme->themeName.'/images/icons';
 
 if ($pset) {
 	/* Alerts and Fixes Tabs */
-
-	$smarty->assign('startform_problems',$this->CreateFormStart($id, 'allignore')); //several uses
-	$smarty->assign('start_urgent_set',$this->CreateFieldsetStart($id, 'alerts_urgent', $this->Lang('title_alerts_urgent')));
-	$smarty->assign('start_important_set',$this->CreateFieldsetStart($id, 'alerts_important', $this->Lang('title_alerts_important')));
-	$smarty->assign('start_notice_set',$this->CreateFieldsetStart($id, 'alerts_notices', $this->Lang('title_alerts_notices')));
+	$tplvars = $tplvars + array(
+		'startform_problems' => $this->CreateFormStart($id, 'allignore'), //several uses
+		'start_urgent_set' => $this->CreateFieldsetStart($id, 'alerts_urgent', $this->Lang('title_alerts_urgent')),
+		'start_important_set' => $this->CreateFieldsetStart($id, 'alerts_important', $this->Lang('title_alerts_important')),
+		'start_notice_set' => $this->CreateFieldsetStart($id, 'alerts_notices', $this->Lang('title_alerts_notices'))
+	);
 
 	$icontrue = '<img src="'.$theme_url.'/system/true.gif" class="systemicon" />';
 
@@ -347,14 +351,16 @@ if ($pset) {
 			}
 			$icon = '<img src="'.$theme_url.'/Notifications/1.gif" class="systemicon" />';
 			if ($count) {
-				$smarty->assign('urgent_icon',$icon);
-				$smarty->assign('urgent_text',$this->Lang('summary_urgent',$count));
-				$smarty->assign('urgent_link','['.$funcs->getTabLink(1,$this->Lang('view_all')).']');
+				$tplvars = $tplvara + array(
+					'urgent_icon' => $icon,
+					'urgent_text' => $this->Lang('summary_urgent',$count),
+					'urgent_link' => '['.$funcs->getTabLink(1,$this->Lang('view_all')).']'
+				);
 			}
 			else {
-				$smarty->assign('urgent_icon',$icontrue);
+				$tplvars['urgent_icon'] = $icontrue;
 				$key = ($more) ? 'nothing_but' : 'nothing_tofix';
-				$smarty->assign('urgent_text',$this->Lang($key));
+				$tplvars['urgent_text'] = $this->Lang($key);
 			}
 			$j = 0;
 			foreach($groups as $group => $galerts) {
@@ -437,10 +443,10 @@ if ($pset) {
 		}
 	}
 	else {
-		$smarty->assign('urgent_icon',$icontrue);
-		$smarty->assign('urgent_text',$this->Lang('nothing_tofix'));
+		$tplvars['urgent_icon'] = $icontrue;
+		$tplvars['urgent_text'] = $this->Lang('nothing_tofix');
 	}
-	$smarty->assign('urgents',$urgent);
+	$tplvars['urgents'] = $urgent;
 
 	$important = array();
 	$important_alerts = $funcs->getImportantAlerts($this);
@@ -458,14 +464,16 @@ if ($pset) {
 		}
 		$icon = '<img src="'.$theme_url.'/Notifications/2.gif" class="systemicon" />';
 		if ($count) {
-			$smarty->assign('important_icon',$icon);
-			$smarty->assign('important_text',$this->Lang('summary_important', $count));
-			$smarty->assign('important_link','['.$funcs->getTabLink(2,$this->Lang('view_all')).']');
+			$tplvars = $tplvars + array(
+				'important_icon' => $icon,
+				'important_text' => $this->Lang('summary_important', $count),
+				'important_link' => '['.$funcs->getTabLink(2,$this->Lang('view_all')).']'
+			);
 		}
 		else {
-			$smarty->assign('important_icon',$icontrue);
+			$tplvars['important_icon'] = $icontrue;
 			$key = ($more) ? 'nothing_but' : 'nothing_tofix';
-			$smarty->assign('important_text',$this->Lang($key));
+			$tplvars['important_text'] = $this->Lang($key);
 		}
 		$j = 0;
 		foreach($groups as $group => $galerts) {
@@ -549,10 +557,10 @@ if ($pset) {
 		}
 	}
 	else {
-		$smarty->assign('important_icon',$icontrue);
-		$smarty->assign('important_text',$this->Lang('nothing_tofix'));
+		$tplvars['important_icon'] = $icontrue;
+		$tplvars['important_text'] = $this->Lang('nothing_tofix');
 	}
-	$smarty->assign('importants',$important);
+	$tplvars['importants'] = $important;
 
 	$notice = array();
 	$notice_alerts = $funcs->getNoticeAlerts($this);
@@ -572,48 +580,51 @@ if ($pset) {
 		$oneset->text = $this->Lang('nothing_tofix');
 		$notice[] = $oneset;
 	}
-	$smarty->assign('notices',$notice);
+	$tplvars['notices'] = $notice;
 } //end if $pset
 
 
-$smarty->assign('start_resources_set',$this->CreateFieldsetStart(null, 'resources',$this->Lang('title_resources')));
-$smarty->assign('resource_links',array(
+$tplvars['start_resources_set'] = $this->CreateFieldsetStart(null, 'resources',$this->Lang('title_resources'));
+$tplvars['resource_links'] = array(
  '<a href="http://validator.w3.org">W3C validator</a>',
  '<a href="http://brokenlinkcheck.com">Link checker</a>',
  '<a href="http://www.feedthebot.com/tools">FeedtheBot</a>',
  '<a href="http://www.siteliner.com">Siteliner</a>'
-));
+);
 
 if ($pset) {
-	$smarty->assign('cancel',$this->CreateInputSubmit(null, 'cancel', $this->Lang('cancel')));
-
-	$smarty->assign('title_pages',$this->Lang('title_pages'));
-	$smarty->assign('title_active',$this->Lang('title_active'));
-	$smarty->assign('title_problem',$this->Lang('title_problem'));
-	$smarty->assign('title_ignored',$this->Lang('title_ignored'));
-	$smarty->assign('title_action',$this->Lang('title_action'));
-	$smarty->assign('ignore1',$this->CreateInputSubmit(null, 'ignore_selected',
-		$this->Lang('ignore'),'title="'.$this->Lang('help_ignore').'" onclick="return confirm_click(\'urgent\');"'));
-	$smarty->assign('unignore1',$this->CreateInputSubmit(null, 'unignore_selected',
-		$this->Lang('unignore'),'title="'.$this->Lang('help_unignore').'" onclick="return confirm_click(\'urgent\');"'));
-	$smarty->assign('ignore2',$this->CreateInputSubmit(null, 'ignore_selected',
-		$this->Lang('ignore'),'title="'.$this->Lang('help_ignore').'" onclick="return confirm_click(\'important\');"'));
-	$smarty->assign('unignore2',$this->CreateInputSubmit(null, 'unignore_selected',
-		$this->Lang('unignore'),'title="'.$this->Lang('help_unignore').'" onclick="return confirm_click(\'important\');"'));
+	$tplvars = $tplvars + array(
+		'cancel'] = $this->CreateInputSubmit(null, 'cancel', $this->Lang('cancel')),
+		'title_pages' => $this->Lang('title_pages'),
+		'title_active' => $this->Lang('title_active'),
+		'title_problem' => $this->Lang('title_problem'),
+		'title_ignored' => $this->Lang('title_ignored'),
+		'title_action' => $this->Lang('title_action'),
+		'ignore1' => $this->CreateInputSubmit(null, 'ignore_selected',
+			$this->Lang('ignore'),'title="'.$this->Lang('help_ignore').'" onclick="return confirm_click(\'urgent\');"'),
+		'unignore1' => $this->CreateInputSubmit(null, 'unignore_selected',
+			$this->Lang('unignore'),'title="'.$this->Lang('help_unignore').'" onclick="return confirm_click(\'urgent\');"'),
+		'ignore2' => $this->CreateInputSubmit(null, 'ignore_selected',
+			$this->Lang('ignore'),'title="'.$this->Lang('help_ignore').'" onclick="return confirm_click(\'important\');"'),
+		'unignore2' => $this->CreateInputSubmit(null, 'unignore_selected',
+			$this->Lang('unignore'),'title="'.$this->Lang('help_unignore').'" onclick="return confirm_click(\'important\');"')
+	);
 }
 
 $meta = $db->GetAssoc('SELECT mname,value,output,smarty,active FROM '.$pre.'module_seotools_meta ORDER BY mname');
 
 /* Page settings Tab */
 
-$smarty->assign('startform_pages',$this->CreateFormStart($id, 'allindex'));
-//$smarty->assign('title_id',$this->Lang('page_id'));
-$smarty->assign('title_name',$this->Lang('page_name'));
-$smarty->assign('title_priority',$this->Lang('priority'));
-$smarty->assign('title_ogtype',$this->Lang('og_type'));
-$smarty->assign('title_keywords',$this->Lang('keywords'));
-$smarty->assign('title_desc',$this->Lang('description'));
-$smarty->assign('title_index',$this->Lang('title_index'));
+$tplvars = $tplvars + array(
+	'startform_pages' => $this->CreateFormStart($id, 'allindex'),
+//	'title_id' => $this->Lang('page_id'),
+	'title_name' => $this->Lang('page_name'),
+	'title_priority' => $this->Lang('priority'),
+	'title_ogtype' => $this->Lang('og_type'),
+	'title_keywords' => $this->Lang('keywords'),
+	'title_desc' => $this->Lang('description'),
+	'title_index' => $this->Lang('title_index')
+);
 
 $iconreset = '<img src="'.$this->GetModuleURLPath().'/images/reset.png" class="systemicon" />';
 $iconedit = '<img src="'.$theme_url.'/system/edit.gif" class="systemicon" />';
@@ -735,21 +746,21 @@ if ($rst) {
 	$rst->Close();
 }
 
-$smarty->assign('items',$items);
+$tplvars['items'] = $items;
 
 if (!$pset) {
-	echo $this->ProcessTemplate('adminpanel.tpl');
+	SEO_utils::ProcessTemplate($this,'adminpanel.tpl',$tplvars);
 	return;
 }
 
-$smarty->assign('index',$this->CreateInputSubmit(null, 'index_selected',
-	$this->Lang('index'),'title="'.$this->Lang('help_index').'" onclick="return confirm_click(\'indx\');"'));
-$smarty->assign('unindex',$this->CreateInputSubmit(null, 'unindex_selected',
-	$this->Lang('unindex'),'title="'.$this->Lang('help_unindex').'" onclick="return confirm_click(\'indx\');"'));
+$tplvars['index'] = $this->CreateInputSubmit(null, 'index_selected',
+	$this->Lang('index'),'title="'.$this->Lang('help_index').'" onclick="return confirm_click(\'indx\');"');
+$tplvars['unindex'] = $this->CreateInputSubmit(null, 'unindex_selected',
+	$this->Lang('unindex'),'title="'.$this->Lang('help_unindex').'" onclick="return confirm_click(\'indx\');"');
 
 /* SEO Settings Tab */
 
-$smarty->assign('startform_settings',$this->CreateFormStart($id, 'changesettings'));
+$tplvars['startform_settings'] = $this->CreateFormStart($id,'changesettings');
 
 $metaset = array();
 
@@ -891,11 +902,12 @@ $metaset[] = array(
 	$extraset
 );
 
-$smarty->assign('metaset',$metaset);
-$smarty->assign('submit1',$this->CreateInputSubmit(null, 'save_meta_settings', $this->Lang('save')));
-$smarty->assign('display1',$this->CreateInputSubmit(null, 'display_metadata', $this->Lang('display'),
- 'title="'.$this->Lang('meta_display').'"'));
-
+$tplvars = $tplvars + array(
+	'metaset'] = $metaset,
+	'submit1'] = $this->CreateInputSubmit(null, 'save_meta_settings', $this->Lang('save')),
+	'display1'] = $this->CreateInputSubmit(null, 'display_metadata', $this->Lang('display'),
+		'title="'.$this->Lang('meta_display').'"')
+);
 /* KEYWORD Settings */
 
 $keywordset = array();
@@ -926,9 +938,11 @@ $keywordset[] = array(
 	$listset
 );
 
-$smarty->assign('keywordset',$keywordset);
-$smarty->assign('keyword_help',$this->Lang('help_keyword_generator'));
-$smarty->assign('submit2',$this->CreateInputSubmit(null, 'save_keyword_settings', $this->Lang('save')));
+$tplvars = $tplvars + array(
+	'keywordset' => $keywordset,
+	'keyword_help' => $this->Lang('help_keyword_generator'),
+	'submit2' => $this->CreateInputSubmit(null,'save_keyword_settings',$this->Lang('save'))
+);
 
 /* SITEMAP Settings */
 
@@ -954,11 +968,12 @@ $sitemapset[] = array(
 	$fileset
 );
 
-$smarty->assign('sitemapset',$sitemapset);
-$smarty->assign('submit3',$this->CreateInputSubmit(null, 'save_sitemap_settings', $this->Lang('save')));
-$smarty->assign('display',$this->CreateInputSubmit(null, 'display_robots_file', $this->Lang('display'),
- 'title="'.$this->Lang('robots_display').'"'));
-
+$tplvars = $tplvars + array(
+	'sitemapset' => $sitemapset,
+	'submit3' => $this->CreateInputSubmit(null,'save_sitemap_settings',$this->Lang('save')),
+	'display' => $this->CreateInputSubmit(null,'display_robots_file',$this->Lang('display'),
+		'title="'.$this->Lang('robots_display').'"'),
+);
 if ($this->GetPreference('create_sitemap',0))
 {
 	if ($this->GetPreference('create_robots',0))
@@ -972,12 +987,14 @@ else
 	$title = null;
 
 if ($title != null) {
-	$smarty->assign('start_regen_set',$this->CreateFieldsetStart(null, 'regenerate_sitemap', $this->Lang('title_regenerate_both')));
-	$smarty->assign('help_regenerate',$this->Lang('text_regenerate_sitemap'));
-	$smarty->assign('regenerate',$this->CreateInputSubmit(null, 'do_regenerate', $title));
-	$smarty->assign('sitemap_help',$this->Lang('help_sitemap_robots'));
+	$tplvars = $tplvars + array(
+		'start_regen_set' => $this->CreateFieldsetStart(null, 'regenerate_sitemap', $this->Lang('title_regenerate_both'),
+		'help_regenerate' => $this->Lang('text_regenerate_sitemap'),
+		'regenerate' => $this->CreateInputSubmit(null, 'do_regenerate', $title),
+		'sitemap_help' => $this->Lang('help_sitemap_robots')
+	);
 }
 
-echo $this->ProcessTemplate('adminpanel.tpl');
+SEO_utils::ProcessTemplate($this,'adminpanel.tpl',$tplvars);
 
 ?>
