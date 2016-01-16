@@ -6,15 +6,17 @@
 
 # Creates the SEO content for each page that has a {SEOTools} tag
 
+$tplvars = array();
+
 if ($params['action'] == 'default') { //this is frontend
 	$front = true;
 	// Get page data
 	//{CMSMS 1.6,1.7,1.8}::index.php if(...) $smarty->assign('content_obj',$contentobj);
-	/*$content = $smarty->get_template_vars('content_obj');
+/*	$content = $smarty->get_template_vars('content_obj');
 	if (!$content) {
-	*/
+*/
 		$content = cms_utils::get_current_content(); //CMSMS 1.9+
-	//}
+//	}
 	if (!$content) {
 		return;
 	}
@@ -41,9 +43,6 @@ else {
 	$title_keywords = 'ACTUALKEYWORDS';
 	$page_row = array('keywords'=>'ACTUALKEYWORDS','ogtype'=>'ACTUALTYPE');
 	$merged = false;
-	//dunno why these are needed
-	$smarty->assign('seo_keywords', '');
-	$smarty->assign('title_keywords', '');
 }
 
 $out = array();
@@ -55,7 +54,7 @@ if ($front) {
 	// Keywords
 	$sep = $this->GetPreference('keyword_separator',' ');
 	$pref = $this->GetPreference('keyword_default','');
-	$smarty->assign('default_keywords',$pref);
+	$tplvars['default_keywords'] = $pref;
 
 	$keywords = explode($sep,$pref);
 
@@ -65,15 +64,15 @@ if ($front) {
 	$funcs = new SEO_keyword();
 	$kw = (!empty($page_row['keywords'])) ? $page_row['keywords'] : ''; //NOT false
 	$other_keywords = $funcs->getKeywords($this, $page_id, $content, $kw);
-	$smarty->assign('page_keywords', implode($sep, $other_keywords));
+	$tplvars['page_keywords'] = implode($sep, $other_keywords);
 
 	$merged = array_unique(array_merge($keywords, $other_keywords));
 	foreach ($merged as $i => $val) {
 		if ($val == '') unset ($merged[$i]);
 	}
-	$smarty->assign('seo_keywords', implode($sep, $merged)); //CHECKME was always comma-separator
+	$tplvars['seo_keywords'] = implode($sep, $merged); //CHECKME was always comma-separator
 	$title_keywords = implode(' ',$merged);
-	$smarty->assign('title_keywords', $title_keywords); //never a comma-separator
+	$tplvars['title_keywords'] = $title_keywords; //never a comma-separator
 
 	// Page description
 	$description = $smarty->get_template_vars('page_description'); //dynamic content
@@ -99,6 +98,12 @@ if ($front) {
 	if (empty($params['showbase']) || strcasecmp($params['showbase'],'false') != 0)
 		$out[] = '<base href="'.$rooturl.'/" />';
 }
+else {
+	//dunno why these are needed
+	$tplvars['seo_keywords'] = '';
+	$tplvars['title_keywords'] = '';
+}
+$smarty->assign($tplvars);
 
 $coord = FALSE; //cache for first of lat. or long.
 
