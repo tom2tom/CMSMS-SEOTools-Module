@@ -91,7 +91,7 @@ if ($front) {
 			$keywords = reset($other_keywords);
 		}
 		$description = str_replace('{keywords}',$keywords,$this->GetPreference('description_auto',''));
-		$description = $this->ProcessTemplateFromData($description);
+		$description = SEO_utils::ProcessTemplateFromData($this,$description,$tplvars);
 	}
 
 	// Show base?
@@ -243,7 +243,7 @@ foreach ($rows as $name=>&$one) {
 	}
 	if ($val && $val !== 'UNUSED') {
 		if ($one['smarty']) {
-			$val = $this->ProcessTemplateFromData($val);
+			$val = SEO_utils::ProcessTemplateFromData($this,$val,$tplvars);
 		}
 		if ($one['output'] && $one['output'] !== 'UNUSED') {
 			$out[] = sprintf($one['output'], $val);

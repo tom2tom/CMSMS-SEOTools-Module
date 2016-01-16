@@ -5,7 +5,7 @@
 # Refer to licence and other details at the top of file SEOTools.module.php
 
 if (!$this->CheckAccess('Edit SEO Settings'))
-	return $this->DisplayErrorPage($this->Lang('accessdenied'));
+	return SEO_utils::DisplayErrorPage($this->Lang('accessdenied'));
 
 if (isset($_POST['cancel']))
 	$this->Redirect($id, 'defaultadmin');
