@@ -26,10 +26,10 @@ class SEO_utils
 		{
 			if($cache)
 			{
-				$cache_id = md5('pwbr'.$tplname.serialize(array_keys($tplvars)));
+				$cache_id = md5('seo'.$tplname.serialize(array_keys($tplvars)));
 				$lang = CmsNlsOperations::get_current_language();
-				$compile_id = md5('pwbr'.$tplname.$lang);
-				$tpl = $smarty->CreateTemplate($mod->GetFileResource($tplname),$cache_id,compile_id,$smarty);
+				$compile_id = md5('seo'.$tplname.$lang);
+				$tpl = $smarty->CreateTemplate($mod->GetFileResource($tplname),$cache_id,$compile_id,$smarty);
 				if(!$tpl->isCached())
 					$tpl->assign($tplvars);
 			}
