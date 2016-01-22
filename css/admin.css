@@ -1,5 +1,14 @@
-table.pagetable { padding:3px; border-spacing:0; margin-left:0; width:auto }
-p.pagetext { margin-top:0.5em; margin-bottom:0.5em; }
+.leftward { margin-left:0 !important }
+fieldset.settings { margin:10px 0; padding:0 5px 5px 5px; max-width:60em; }
+fieldset.settings legend { padding:5px; }
+
+table.leftside {
+ padding:3px;
+ border-spacing:0;
+ margin-left:0;
+ width:auto
+}
+
 /* CRAPPY one-eleven theme doesn't have 'admin-tooltip' classes */
 a.admin-tooltip {
  text-decoration: none;

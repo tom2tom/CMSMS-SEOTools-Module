@@ -56,7 +56,7 @@ function vardata_textarea(&$mod, &$meta, &$out, $name, $rows, $def = '') {
 	$oneset->help = langval($mod,$name.'_help',null);
 	$val = (!empty($meta[$name])) ? $meta[$name]['value']:$def;
 	$oneset->input = $mod->CreateTextArea(false, null, $val, $name,
-		'', '', '', '', 60, $rows, '', '', 'style="height:'.($rows+1).'em;"');
+		'', '', '', '', 55, $rows, '', '', 'style="height:'.($rows+1).'em;"');
 	$out[$name] = $oneset;
 }
 
@@ -96,7 +96,7 @@ function varpref_textarea(&$mod, &$out, $name, $rows, $def = '') {
 	$oneset->help = langval($mod,$name.'_help',null);
 	$val = $mod->GetPreference($name, $def);
 	$oneset->input = $mod->CreateTextArea(false, null, $val, $name,
-		'', '', '', '', 60, $rows, '', '', 'style="height:'.($rows+1).'em;"');
+		'', '', '', '', 55, $rows, '', '', 'style="height:'.($rows+1).'em;"');
 	$out[$name] = $oneset;
 }
 
@@ -323,9 +323,9 @@ if ($pset) {
 	/* Alerts and Fixes Tabs */
 	$tplvars = $tplvars + array(
 		'startform_problems' => $this->CreateFormStart($id, 'allignore'), //several uses
-		'start_urgent_set' => $this->CreateFieldsetStart($id, 'alerts_urgent', $this->Lang('title_alerts_urgent')),
-		'start_important_set' => $this->CreateFieldsetStart($id, 'alerts_important', $this->Lang('title_alerts_important')),
-		'start_notice_set' => $this->CreateFieldsetStart($id, 'alerts_notices', $this->Lang('title_alerts_notices'))
+		'urgent_set' => $this->Lang('title_alerts_urgent'),
+		'important_set' => $this->Lang('title_alerts_important'),
+		'notice_set' => $this->Lang('title_alerts_notices')
 	);
 
 	$icontrue = '<img src="'.$theme_url.'/system/true.gif" class="systemicon" />';
@@ -584,7 +584,7 @@ if ($pset) {
 } //end if $pset
 
 
-$tplvars['start_resources_set'] = $this->CreateFieldsetStart(null, 'resources',$this->Lang('title_resources'));
+$tplvars['resources_set'] = $this->Lang('title_resources');
 $tplvars['resource_links'] = array(
  '<a href="http://validator.w3.org">W3C validator</a>',
  '<a href="http://brokenlinkcheck.com">Link checker</a>',
@@ -783,7 +783,7 @@ varpref_check($this, $pagevals, 'description_auto_generate');
 varpref_textarea($this, $pagevals, 'description_auto', 2, 'This page covers the topics {keywords}');
 
 $metaset[] = array(
-	$this->CreateFieldsetStart(null, 'title_description', $this->Lang('title_title_description')),
+	$this->Lang('title_title_description'),
 	$pagevals
 );
 
@@ -799,7 +799,7 @@ foreach ($groups as $name=>$act) {
 }
 
 $metaset[] = array(
-	$this->CreateFieldsetStart(null, 'meta_type', $this->Lang('title_meta_type')),
+	$this->Lang('title_meta_type'),
 	$metatypes
 );
 
@@ -887,7 +887,7 @@ unset($data);
 unset($oneset);
 
 $metaset[] = array(
-	$this->CreateFieldsetStart(null, 'meta_values', $this->Lang('title_meta_values')),
+	$this->Lang('title_meta_values'),
 	$metavals
 );
 
@@ -898,7 +898,7 @@ $extraset = array();
 vardata_textarea($this, $meta, $extraset, 'meta_additional', 8);
 
 $metaset[] = array(
-	$this->CreateFieldsetStart(null, 'meta_additional', $this->Lang('title_meta_additional')),
+	$this->Lang('title_meta_additional'),
 	$extraset
 );
 
@@ -924,7 +924,7 @@ varpref_text($this, $keyset, 'keyword_headline_weight', 2, '2');
 varpref_text($this, $keyset, 'keyword_content_weight', 2, '1');
 
 $keywordset[] = array(
-	$this->CreateFieldsetStart(null, 'keyword_gener_description', $this->Lang('title_keyword_gener')),
+	$this->Lang('title_keyword_gener'),
 	$keyset
 );
 
@@ -934,7 +934,7 @@ varpref_textarea($this, $listset, 'keyword_default', 3);
 varpref_textarea($this, $listset, 'keyword_exclude', 5);
 
 $keywordset[] = array(
-	$this->CreateFieldsetStart(null, 'keyword_list_description', $this->Lang('title_keyword_lists')),
+	$this->Lang('title_keyword_lists'),
 	$listset
 );
 
@@ -964,7 +964,7 @@ varpref_textarea($this, $fileset, 'robot_start', 5);
 varpref_textarea($this, $fileset, 'robot_end', 5);
 
 $sitemapset[] = array(
-	$this->CreateFieldsetStart(null, 'sitemap_description', $this->Lang('title_sitemap_description')),
+	$this->Lang('title_sitemap_description'),
 	$fileset
 );
 
@@ -988,7 +988,7 @@ else
 
 if ($title != null) {
 	$tplvars = $tplvars + array(
-		'start_regen_set' => $this->CreateFieldsetStart(null,'regenerate_sitemap',$this->Lang('title_regenerate_both')),
+		'regen_set' => $this->Lang('title_regenerate_both'),
 		'help_regenerate' => $this->Lang('text_regenerate_sitemap'),
 		'regenerate' => $this->CreateInputSubmit(null,'do_regenerate',$title),
 		'sitemap_help' => $this->Lang('help_sitemap_robots')

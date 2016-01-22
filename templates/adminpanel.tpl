@@ -2,28 +2,32 @@
 {$tabs_header}
 
 {$start_alerts_tab}
-<div class="pageoverflow">
+<div class="pageinput pageoverflow">
 {if $pset}
-{$start_urgent_set}
+<fieldset class="settings">
+<legend>{$urgent_set}</legend>
 <p>{$urgent_icon}&nbsp;{$urgent_text}{if isset($urgent_link)}&nbsp;{$urgent_link}{/if}</p>
-{$end_set}
-{$start_important_set}
+</fieldset >
+<fieldset class="settings">
+<legend>{$important_set}</legend>
 <p>{$important_icon}&nbsp;{$important_text}{if isset($important_link)}&nbsp;{$important_link}{/if}</p>
-{$end_set}
+</fieldset>
 {if isset($notices)}
- {$start_notice_set}
+ <fieldset class="settings">
+ <legend>{$notice_set}</legend>
  {foreach from=$notices item=entry}
  <p>{$entry->icon}&nbsp;{$entry->text}{if isset($entry->link)}&nbsp;{$entry->link}{/if}</p>
  {/foreach}
- {$end_set}
+ </fieldset>
 {/if}
 {/if}{*pset*}
 {if !empty($resource_links)}
-{$start_resources_set}
+<fieldset class="settings">
+<legend>{$resources_set}</legend>
 <ul>
 {foreach from=$resource_links item=one}<li>{$one}</li>{/foreach}
 </ul>
-{$end_set}
+</fieldset>
 {/if}
 </div>
 {$end_tab}
@@ -33,7 +37,7 @@
 {$start_urgent_tab}
 {if !empty($urgents)}
 {$startform_problems}
-<div style="display:inline-block;" class="pageinput pageoverflow">
+<div class="pageinput pageoverflow" style="display:inline-block;">
 <table class="pagetable">
  <tr>
   <th>{$title_pages}</th>
@@ -145,22 +149,23 @@
 
 {$start_meta_tab}
 {$startform_settings}
-<div class="pageoverflow" style="margin-top:0;display:inline-block;">
+<div class="pageinput pageoverflow" style="display:inline-block;">
 {foreach from=$metaset item=row}
-{if $row[0]}{$row[0]}{/if}{*start set*}
+{if $row[0]}<fieldset class="settings">
+<legend>{$row[0]}</legend>{/if}
  {foreach from=$row[1] item=entry}
-  {if !empty($entry->head)}<h4 class="pagetext" style="margin-top:1.5em">{$entry->head}</h4>{/if}
+  {if !empty($entry->head)}<h4 class="pagetext leftward" style="margin-top:1.5em">{$entry->head}</h4>{/if}
   {if empty($entry->inline)}
-<p class="pagetext">{$entry->title}:</p>
-<p class="pageinput{if !empty($entry->help)} slidetip{/if}">{$entry->input}</p>
+<p class="pagetext leftward">{$entry->title}:</p>
+<p{if !empty($entry->help)} class="slidetip"{/if}>{$entry->input}</p>
   {else}
-<p class="pagetext{if !empty($entry->help)} slidetip{/if}">{$entry->title}:&nbsp;&nbsp;{$entry->input}</p>
+<p class="pagetext leftward{if !empty($entry->help)} slidetip{/if}">{$entry->title}:&nbsp;&nbsp;{$entry->input}</p>
   {/if}
 {if !empty($entry->help)}<div class="slidediv">
-<p class="pageinput">{$entry->help}</p>
+<p>{$entry->help}</p>
 </div>{/if}
  {/foreach}
-{if $row[0]}{$end_set}{/if}
+{if $row[0]}</fieldset>{/if}
 {/foreach}
 <br />
 <div style="float:right;">{$submit1}&nbsp;{$cancel}</div><div style="clear:both;"></div>
@@ -173,19 +178,20 @@
 {$startform_settings}
 <div class="pageoverflow" style="margin-top:0;display:inline-block;">
 {foreach from=$keywordset item=row}
-{$row[0]}{*start set*}
+<fieldset class="settings">
+<legend>{$row[0]}</legend>
  {foreach from=$row[1] item=entry}
 {if empty($entry->inline)}
-<p class="pagetext">{$entry->title}:</p>
-<p class="pageinput{if !empty($entry->help)} slidetip{/if}">{$entry->input}</p>
+<p class="pagetext leftward">{$entry->title}:</p>
+<p{if !empty($entry->help)}class="slidetip"{/if}>{$entry->input}</p>
 {else}
-<p class="pagetext{if !empty($entry->help)} slidetip{/if}">{$entry->title}:&nbsp;&nbsp;{$entry->input}</p>
+<p class="pagetext leftward{if !empty($entry->help)} slidetip{/if}">{$entry->title}:&nbsp;&nbsp;{$entry->input}</p>
 {/if}
 {if !empty($entry->help)}<div class="slidediv">
 <p class="pageinput">{$entry->help}</p>
 </div>{/if}
  {/foreach}
-{$end_set}
+</fieldset>
 {/foreach}
 <br />
 <div style="float:right;">{$submit2}&nbsp;{$cancel}</div><div style="clear:both;"></div>
@@ -197,30 +203,32 @@
 {$startform_settings}
 <div class="pageoverflow" style="margin-top:0;display:inline-block;">
 {foreach from=$sitemapset item=row name=bundle}
-{$row[0]}{*start set*}
+<fieldset class="settings">
+<legend>{$row[0]}</legend>
  {foreach from=$row[1] item=entry}
 {if empty($entry->inline)}
-<p class="pagetext">{$entry->title}:</p>
-<p class="pageinput{if !empty($entry->help)} slidetip{/if}">{$entry->input}</p>
+<p class="pagetext leftward">{$entry->title}:</p>
+<p{if !empty($entry->help)}class="slidetip"{/if}>{$entry->input}</p>
 {else}
-<p class="pagetext{if !empty($entry->help)} slidetip{/if}">{$entry->title}:&nbsp;&nbsp;{$entry->input}</p>
+<p class="pagetext leftward{if !empty($entry->help)} slidetip{/if}">{$entry->title}:&nbsp;&nbsp;{$entry->input}</p>
 {/if}
 {if !empty($entry->help)}<div class="slidediv">
-<p class="pageinput">{$entry->help}</p>
+<p>{$entry->help}</p>
 </div>{/if}
  {/foreach}
 {if $smarty.foreach.bundle.last}
 <br />
 <div style="float:right;">{$submit3}&nbsp;{$cancel}&nbsp;{$display}</div><div style="clear:both;"></div>
 {/if}
-{$end_set}
+</fieldset>
 {/foreach}
 {if isset($regenerate)}
- {$start_regen_set}
+ <fieldset class="settings">
+ <legend>{$regen_set}</legend>
   <p class="pageinput">{$help_regenerate}<br /><br />{$regenerate}</p>
   <br />
   <p style="max-width:50em;">{$sitemap_help}</p>
- {$end_set}
+ </fieldset>
 {/if}
 </div>
 {$end_form}
