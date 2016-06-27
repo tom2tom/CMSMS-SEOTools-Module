@@ -52,6 +52,6 @@ $tplvars = array(
 	'cancel' => $this->CreateInputSubmit(null,'cancel',$this->Lang('cancel'))
 );
 
-SEO_utils::ProcessTemplate($this,'ogedit.tpl',$tplvars);
+echo SEO_utils::ProcessTemplate($this,'ogedit.tpl',$tplvars);
 
 ?>

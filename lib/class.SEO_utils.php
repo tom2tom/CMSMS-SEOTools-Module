@@ -20,7 +20,7 @@ class SEO_utils
 		if($mod->before20)
 		{
 			$smarty->assign($tplvars);
-			echo $mod->ProcessTemplate($tplname);
+			return $mod->ProcessTemplate($tplname);
 		}
 		else
 		{
@@ -37,7 +37,7 @@ class SEO_utils
 			{
 				$tpl = $smarty->CreateTemplate($mod->GetFileResource($tplname),NULL,NULL,$smarty,$tplvars);
 			}
-			$tpl->display();
+			return $tpl->fetch();
 		}
 	}
 
@@ -74,7 +74,7 @@ class SEO_utils
 			'title_error' => $this->Lang('error'),
 			'message' => $message
 		);
-		self::ProcessTemplate($this,'error.tpl',$tplvars);
+		echo self::ProcessTemplate($this,'error.tpl',$tplvars);
 	}
 	
 }

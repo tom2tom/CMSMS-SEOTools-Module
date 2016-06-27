@@ -67,6 +67,6 @@ if ($back) {
 }
 $tplvars['cancelbtn'] = $this->CreateInputSubmit(null,'cancel',$this->lang('close'));
 
-SEO_utils::ProcessTemplate($this,'display.tpl',$tplvars);
+echo SEO_utils::ProcessTemplate($this,'display.tpl',$tplvars);
 
 ?>

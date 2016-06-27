@@ -749,7 +749,7 @@ if ($rst) {
 $tplvars['items'] = $items;
 
 if (!$pset) {
-	SEO_utils::ProcessTemplate($this,'adminpanel.tpl',$tplvars);
+	echo SEO_utils::ProcessTemplate($this,'adminpanel.tpl',$tplvars);
 	return;
 }
 
@@ -995,6 +995,6 @@ if ($title != null) {
 	);
 }
 
-SEO_utils::ProcessTemplate($this,'adminpanel.tpl',$tplvars);
+echo SEO_utils::ProcessTemplate($this,'adminpanel.tpl',$tplvars);
 
 ?>
