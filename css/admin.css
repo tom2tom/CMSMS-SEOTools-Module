@@ -20,7 +20,7 @@ a.admin-tooltip span {
  border:1px solid #aaa;
  padding:3px 5px;
  max-width:20%;
- width:auto; //override any ancestor
+ width:auto; /* override any ancestor */
  line-height:1.1;
 }
 a.admin-tooltip:hover span {
