@@ -1,5 +1,5 @@
 <?php
-$land['admin_title'] = 'SEO Tools Admin Panel';
+$lang['admin_title'] = 'SEO Tools Admin Panel';
 $lang['accessdenied'] = 'Access Denied. Please check your permissions.';
 $lang['activate_pretty_urls'] = 'Pretty-URLs are not enabled';
 $lang['admindescription'] = 'Helps with SEO in general, automatically generating XML sitemaps and comprehensive meta descriptions';
