@@ -17,24 +17,19 @@ class SEO_utils
 	public static function ProcessTemplate(&$mod,$tplname,$tplvars,$cache=TRUE)
 	{
 		global $smarty;
-		if($mod->before20)
-		{
+		if ($mod->before20) {
 			$smarty->assign($tplvars);
 			return $mod->ProcessTemplate($tplname);
-		}
-		else
-		{
-			if($cache)
-			{
+		} else {
+			if ($cache) {
 				$cache_id = md5('seo'.$tplname.serialize(array_keys($tplvars)));
 				$lang = CmsNlsOperations::get_current_language();
 				$compile_id = md5('seo'.$tplname.$lang);
 				$tpl = $smarty->CreateTemplate($mod->GetFileResource($tplname),$cache_id,$compile_id,$smarty);
-				if(!$tpl->isCached())
+				if (!$tpl->isCached()) {
 					$tpl->assign($tplvars);
-			}
-			else
-			{
+				}
+			} else {
 				$tpl = $smarty->CreateTemplate($mod->GetFileResource($tplname),NULL,NULL,$smarty,$tplvars);
 			}
 			return $tpl->fetch();
@@ -52,13 +47,10 @@ class SEO_utils
 	public static function ProcessTemplateFromData(&$mod,$data,$tplvars)
 	{
 		global $smarty;
-		if($mod->before20)
-		{
-			$smarty->assign($tplvars);
+		$smarty->assign($tplvars);
+		if ($mod->before20) {
 			return $mod->ProcessTemplateFromData($data);
-		}
-		else
-		{
+		} else {
 			$tpl = $smarty->CreateTemplate('eval:'.$data,NULL,NULL,$smarty,$tplvars);
 			return $tpl->fetch();
 		}
@@ -76,7 +68,5 @@ class SEO_utils
 		);
 		echo self::ProcessTemplate($this,'error.tpl',$tplvars);
 	}
-	
 }
-
 ?>
