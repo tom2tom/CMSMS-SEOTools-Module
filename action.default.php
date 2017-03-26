@@ -21,7 +21,11 @@ if ($params['action'] == 'default') { //this is frontend
 		return;
 	}
 	$page_id = (int)$content->Id();
-	$page_type = $content->Markup();
+	if ($this->before20) {
+		$page_type = $content->Markup();
+	} else {
+		$page_type = 'ACTUALTYPE';
+	}
 	$page_name = $content->Name();
 	$page_url = $content->GetURL();
 	$page_mdate = $content->GetModifiedDate();
@@ -30,8 +34,7 @@ if ($params['action'] == 'default') { //this is frontend
 	if ($page_image == -1) {
 		$page_image = '';
 	}
-}
-else {
+} else {
 	$front = false;
 	$page_type = 'ACTUALTYPE';
 	$page_name = 'ACTUALPAGENAME';
@@ -86,8 +89,7 @@ if ($front) {
 			$kw = $other_keywords;
 			$last_keyword = array_pop($kw);
 			$keywords = $this->Lang('and',implode(',',$kw),$last_keyword);
-		}
-		else {
+		} else {
 			$keywords = reset($other_keywords);
 		}
 		$description = str_replace('{keywords}',$keywords,$this->GetPreference('description_auto',''));
@@ -97,13 +99,11 @@ if ($front) {
 	// Show base?
 	if (empty($params['showbase']) || strcasecmp($params['showbase'],'false') != 0)
 		$out[] = '<base href="'.$rooturl.'/" />';
-}
-else {
+} else {
 	//dunno why these are needed
 	$tplvars['seo_keywords'] = '';
 	$tplvars['title_keywords'] = '';
 }
-$smarty->assign($tplvars);
 
 $coord = FALSE; //cache for first of lat. or long.
 
@@ -123,17 +123,17 @@ foreach ($rows as $name=>&$one) {
 			}
 			if ($val) {
 				$out[] = '<meta http-equiv="Content-Type" content="text/'.$val.'; charset='.$config['default_encoding'].'" />';
-			}
-			else {
+			} else {
 				$out[] = '<meta charset="'.$config['default_encoding'].'" />';
 			}
 			$val = 'UNUSED';
 			break;
 		 case 'indexable':
-			if (!array_key_exists('indexable',$page_row) || $page_row['indexable'] == "1")
+			if (!array_key_exists('indexable',$page_row) || $page_row['indexable'] == "1") {
 				$out[] = '<meta name="robots" content="index,follow" />';
-			else
+			} else {
 				$out[] = '<meta name="robots" content="noindex" />';
+			}
 			$val = 'UNUSED';
 			break;
 		 case 'title':
@@ -166,8 +166,7 @@ foreach ($rows as $name=>&$one) {
 			if (is_numeric($val) && is_numeric($coord)) {
 				$out[] = '<meta name="geo.position" content="'.$val.';'.$coord.'" />';
 				$out[] = '<meta name="ICBM" content="'.$val.','.$coord.'" />';
-			}
-			elseif ($val && ($coord === false)) {
+			} elseif ($val && ($coord === false)) {
 				$coord = $val;
 			}
 			$val = 'UNUSED';
@@ -179,8 +178,7 @@ foreach ($rows as $name=>&$one) {
 			if (is_numeric($val) && is_numeric($coord)) {
 				$out[] = '<meta name="geo.position" content="'.$coord.';'.$val.'" />';
 				$out[] = '<meta name="ICBM" content="'.$coord.','.$val.'" />';
-			}
-			elseif ($val && ($coord === false)) {
+			} elseif ($val && ($coord === false)) {
 				$coord = $val;
 			}
 			$val = 'UNUSED';
@@ -247,8 +245,7 @@ foreach ($rows as $name=>&$one) {
 		}
 		if ($one['output'] && $one['output'] !== 'UNUSED') {
 			$out[] = sprintf($one['output'], $val);
-		}
-		else {
+		} else {
 			$out[] = $val;
 		}
 	}
