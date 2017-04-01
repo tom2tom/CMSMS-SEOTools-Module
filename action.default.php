@@ -21,11 +21,7 @@ if ($params['action'] == 'default') { //this is frontend
 		return;
 	}
 	$page_id = (int)$content->Id();
-	if ($this->before20) {
-		$page_type = $content->Markup();
-	} else {
-		$page_type = 'ACTUALTYPE';
-	}
+	$page_type = ($this->before20) ? $content->Markup() : get_site_preference('default_contenttype', 'ACTUALTYPE');
 	$page_name = $content->Name();
 	$page_url = $content->GetURL();
 	$page_mdate = $content->GetModifiedDate();

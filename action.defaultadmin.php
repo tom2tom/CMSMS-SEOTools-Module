@@ -287,26 +287,24 @@ else {
 		$this->SetTabHeader('pagedescriptions',$this->Lang('title_descriptions'),$indx==3).
 		$this->EndTabHeaders().$this->StartTabContent();
 }
-
-$tplvars['start_alerts_tab'] = $this->StartTab('alerts');
-if ($pset) {
-	$tplvars['start_urgent_tab'] = $this->StartTab('urgentfixes');
-	$tplvars['start_important_tab'] = $this->StartTab('importantfixes');
-}
-$tplvars['start_description_tab'] = $this->StartTab('pagedescriptions');
-if ($pset) {
-	$tplvars['start_meta_tab'] = $this->StartTab('metasettings');
-	$tplvars['start_keyword_tab'] = $this->StartTab('keywordsettings');
-	$tplvars['start_sitemap_tab'] = $this->StartTab('sitemapsettings');
-}
-
-//NOTE CMSMS 2+ barfs if EndTab() is called before EndTabContent() - some craziness there !!!
-$tplvars = $tplvars + array(
-	'end_set' => $this->CreateFieldsetEnd(),
-	'tabs_footer' => $this->EndTabContent(),
+//workaround CMSMS2 crap 'auto-end', EndTab() & EndTabContent() before [1st] StartTab()
+$tplvars += array(
 	'end_tab' => $this->EndTab(),
-	'end_form' => $this->CreateFormEnd()
+	'tabs_footer' => $this->EndTabContent(),
+	'end_form' => $this->CreateFormEnd(),
+	'start_alerts_tab' => $this->StartTab('alerts'),
+	'start_description_tab' => $this->StartTab('pagedescriptions'),
+	'end_set' => $this->CreateFieldsetEnd()
 );
+if ($pset) {
+	$tplvars += array(
+		'start_urgent_tab' => $this->StartTab('urgentfixes'),
+		'start_important_tab' => $this->StartTab('importantfixes'),
+		'start_meta_tab' => $this->StartTab('metasettings'),
+		'start_keyword_tab' => $this->StartTab('keywordsettings'),
+		'start_sitemap_tab' => $this->StartTab('sitemapsettings')
+	);
+}
 
 if (isset($config['admin_url'])) {
 	$adminurl = $config['admin_url'];
@@ -321,7 +319,7 @@ $theme_url = $adminurl.'/themes/'.$theme->themeName.'/images/icons';
 
 if ($pset) {
 	/* Alerts and Fixes Tabs */
-	$tplvars = $tplvars + array(
+	$tplvars += array(
 		'startform_problems' => $this->CreateFormStart($id, 'allignore'), //several uses
 		'urgent_set' => $this->Lang('title_alerts_urgent'),
 		'important_set' => $this->Lang('title_alerts_important'),
@@ -351,7 +349,7 @@ if ($pset) {
 			}
 			$icon = '<img src="'.$theme_url.'/Notifications/1.gif" class="systemicon" />';
 			if ($count) {
-				$tplvars = $tplvars + array(
+				$tplvars += array(
 					'urgent_icon' => $icon,
 					'urgent_text' => $this->Lang('summary_urgent',$count),
 					'urgent_link' => '['.$funcs->getTabLink(1,$this->Lang('view_all')).']'
@@ -464,7 +462,7 @@ if ($pset) {
 		}
 		$icon = '<img src="'.$theme_url.'/Notifications/2.gif" class="systemicon" />';
 		if ($count) {
-			$tplvars = $tplvars + array(
+			$tplvars += array(
 				'important_icon' => $icon,
 				'important_text' => $this->Lang('summary_important', $count),
 				'important_link' => '['.$funcs->getTabLink(2,$this->Lang('view_all')).']'
@@ -593,7 +591,7 @@ $tplvars['resource_links'] = array(
 );
 
 if ($pset) {
-	$tplvars = $tplvars + array(
+	$tplvars += array(
 		'cancel' => $this->CreateInputSubmit(null, 'cancel', $this->Lang('cancel')),
 		'title_pages' => $this->Lang('title_pages'),
 		'title_active' => $this->Lang('title_active'),
@@ -615,7 +613,7 @@ $meta = $db->GetAssoc('SELECT mname,value,output,smarty,active FROM '.$pre.'modu
 
 /* Page settings Tab */
 
-$tplvars = $tplvars + array(
+$tplvars += array(
 	'startform_pages' => $this->CreateFormStart($id, 'allindex'),
 //	'title_id' => $this->Lang('page_id'),
 	'title_name' => $this->Lang('page_name'),
@@ -902,7 +900,7 @@ $metaset[] = array(
 	$extraset
 );
 
-$tplvars = $tplvars + array(
+$tplvars += array(
 	'metaset' => $metaset,
 	'submit1' => $this->CreateInputSubmit(null, 'save_meta_settings', $this->Lang('save')),
 	'display1' => $this->CreateInputSubmit(null, 'display_metadata', $this->Lang('display'),
@@ -938,7 +936,7 @@ $keywordset[] = array(
 	$listset
 );
 
-$tplvars = $tplvars + array(
+$tplvars += array(
 	'keywordset' => $keywordset,
 	'keyword_help' => $this->Lang('help_keyword_generator'),
 	'submit2' => $this->CreateInputSubmit(null,'save_keyword_settings',$this->Lang('save'))
@@ -968,7 +966,7 @@ $sitemapset[] = array(
 	$fileset
 );
 
-$tplvars = $tplvars + array(
+$tplvars += array(
 	'sitemapset' => $sitemapset,
 	'submit3' => $this->CreateInputSubmit(null,'save_sitemap_settings',$this->Lang('save')),
 	'display' => $this->CreateInputSubmit(null,'display_robots_file',$this->Lang('display'),
@@ -987,7 +985,7 @@ else
 	$title = null;
 
 if ($title != null) {
-	$tplvars = $tplvars + array(
+	$tplvars += array(
 		'regen_set' => $this->Lang('title_regenerate_both'),
 		'help_regenerate' => $this->Lang('text_regenerate_sitemap'),
 		'regenerate' => $this->CreateInputSubmit(null,'do_regenerate',$title),
