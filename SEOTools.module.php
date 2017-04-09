@@ -64,7 +64,7 @@ class SEOTools extends CMSModule
 
 	function GetVersion()
 	{
-		return '1.7.1';
+		return '1.8';
 	}
 
 	function GetHelp()
@@ -84,7 +84,7 @@ class SEOTools extends CMSModule
 
 	function GetChangeLog()
 	{
-		$fp = cms_join_path(dirname(__FILE__),'include','changelog.inc');
+		$fp = cms_join_path(dirname(__FILE__),'lib','doc','changelog.htm');
 		return file_get_contents($fp);
 	}
 
@@ -151,7 +151,7 @@ class SEOTools extends CMSModule
 	{
 		$url = $this->GetModuleURLPath();
 		return <<<EOS
-<script type="text/javascript" src="{$url}/include/module-admin.js"></script>
+<script type="text/javascript" src="{$url}/lib/js/module-admin.js"></script>
 <link rel="stylesheet" type="text/css" id="adminstyler" href="{$url}/css/admin.css" />
 EOS;
 	}
