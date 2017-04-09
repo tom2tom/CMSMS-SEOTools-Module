@@ -20,6 +20,9 @@ class SEO_utils
 			global $smarty;
 		} else {
 			$smarty = $mod->GetActionTemplateObject();
+			if (!$smarty) {
+				global $smarty;
+			}
 		}
 		$smarty->assign($tplvars);
 		if ($mod->oldtemplates) {
@@ -54,6 +57,9 @@ class SEO_utils
 			global $smarty;
 		} else {
 			$smarty = $mod->GetActionTemplateObject();
+			if (!$smarty) {
+				global $smarty;
+			}
 		}
 		$smarty->assign($tplvars);
 		if ($mod->oldtemplates) {
