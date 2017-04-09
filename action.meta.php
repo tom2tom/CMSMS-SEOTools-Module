@@ -58,7 +58,7 @@ $tplvars = array(
 );
 //generate current metadata
 ob_start();
-include('action.default.php');
+include 'action.default.php';
 $contents = ob_get_clean();
 $tplvars['content'] = nl2br(htmlentities($contents));
 if ($back) {
