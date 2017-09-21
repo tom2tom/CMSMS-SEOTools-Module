@@ -48,7 +48,7 @@ foreach (array(
 'after'=>1 //7
 ) as $name=>$act) {
 	$db->Execute($sql,array($name,$i,$act));
-	$i++;
+	++$i;
 }
 
 // meta table schema
@@ -84,7 +84,7 @@ foreach ($defs as $name=>$data) {
 		$i = 1;
 	}
 	else {
-		$i++;
+		++$i;
 	}
 	$db->Execute($sql,array(
 		$data['gid'],

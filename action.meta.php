@@ -28,7 +28,7 @@ VALUES (?,?,?,?,?,?,?,?)';
 			$i = 1;
 		}
 		else {
-			$i++;
+			++$i;
 		}
 		$db->Execute($query,array(
 			$data['gid'],

@@ -339,7 +339,7 @@ if ($pset) {
 			foreach($urgent_alerts as $alert) {
 				if (!array_key_exists('active', $alert) || $alert['active'] == true) {
 					if (empty($alert['ignored'])) {
-						$count++;
+						++$count;
 					}
 					else {
 						$more = true;
@@ -436,7 +436,7 @@ if ($pset) {
 				}
 
 				$urgent[] = $oneset;
-				$j++;
+				++$j;
 			}
 		}
 	}
@@ -455,7 +455,7 @@ if ($pset) {
 		//count non-ignored importants
 		foreach($important_alerts as $alert) {
 			if (empty($alert['ignored']))
-				$count++;
+				++$count;
 			else
 				$more = true;
 			$groups[$alert['group']][] = $alert;
@@ -550,7 +550,7 @@ if ($pset) {
 					$oneset->sel = ''; //TODO
 				}
 				$important[] = $oneset;
-				$j++;
+				++$j;
 			}
 		}
 	}
@@ -739,7 +739,7 @@ if ($rst) {
 			$oneset->sel = '';
 		}
 		$items[] = $oneset;
-		$j++;
+		++$j;
 	}
 	$rst->Close();
 }

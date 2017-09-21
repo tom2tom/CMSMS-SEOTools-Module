@@ -134,7 +134,7 @@ active I(1) NOTNULL DEFAULT 1
 		'after'=>1 //7
 	) as $name=>$act) {
 		$db->Execute($sql,array($name,$i,$act));
-		$i++;
+		++$i;
 	}
 	// meta table schema
 	$flds = '
@@ -194,7 +194,7 @@ VALUES (?,?,?,?,?,?,?,?)';
 			$gid = $data['gid'];
 			$i = 1;
 		} else {
-			$i++;
+			++$i;
 		}
 		$db->Execute($sql,array(
 			$data['gid'],
