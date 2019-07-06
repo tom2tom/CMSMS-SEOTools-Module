@@ -33,7 +33,7 @@ class SEOTools extends CMSModule
 		$this->before20 = (version_compare($CMS_VERSION,'2.0') < 0);
 		$this->oldtemplates = $this->before20 || 1; //TODO
 		$this->secstr = constant('CMS_SECURE_PARAM_NAME');
-		$this->RegisterModulePlugin(true);
+		$this->RegisterModulePlugin();
 	}
 
 	function AllowAutoInstall()
